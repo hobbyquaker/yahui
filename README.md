@@ -2,14 +2,14 @@
 
 "yet another homematic user interface"
 
-yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (vergleichbar mit WebMatic) für die HomeMatic CCU.
+yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (Funktionsumfang ähnlich WebMatic) für die HomeMatic CCU.
 Yahui verwendet die Software "CCU.IO" um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu nutze machen:
   * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
-  * Statusänderungen werden nicht in Intervallen von der CCU abgefragt ("Polling") sondern via Websocket-Verbindung von
-  CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden mit
-  geringerer Latenz angezeigt.
-  * Egal wieviele Instanzen von yahui oder DashUI geöffnet sind - die Belastung für die CCU bleibt gleich gering (CCU.IO
-  fungiert hier quasi als Proxy)
+  * Statusänderungen werden nicht (wie z.B. bei WebMatic) in Intervallen von der CCU abgefragt ("Polling") sondern von der
+  CCU via CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden
+  mit geringerer Latenz angezeigt.
+  * Egal wieviele Instanzen von yahui oder DashUI gleichzeitig geöffnet sind - die Belastung für die CCU bleibt gleich gering
+  (CCU.IO fungiert hier quasi als Proxy)
 
 
 ## Installation
@@ -39,6 +39,7 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
   * div Style-Anpassungen
   * Sortierung speichern
   * Link-Seite implementieren
+  * Service-Meldungen und Alarme (?)
 
 
 ## Lizenz / Copyright

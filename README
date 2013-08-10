@@ -1,4 +1,4 @@
-# yahui 0.5
+# yahui 0.6
 
 "yet another homematic user interface"
 
@@ -12,20 +12,16 @@ yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu instal
 yahui aus diesem Zip-File in den Ordner ccu.io/www/ zu kopieren.
 
 
-## Einbinden eigener Bilder/Icons
+## Einbinden eigener Bilder/Icons, Sortierung der Elemente
 
-Bilder bzw Icons müssen als Namen die ReGa-ID des/der jeweiligen Favoriten/Raum/Gewerk/Kanal/Variable/Programm tragen und
-im png Format vorliegen. Diese Bilder einfach in den Ordner yahui/images/user/ kopieren.
+Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (über
+http://.../yahui/?edit aufrufen). Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 ## Roadmap/ToDo
 
   * mehr angepasste Widgets für HomeMatic und CUxD Geräte
-  * Drag & Drop Sortierung
-  * Bilder-Upload per Drag & Drop
+  * Sortierung speichern
   * Link-Seite implementieren
-
-
-## Changelog
 
 
 ## Lizenz / Copyright

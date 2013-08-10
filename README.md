@@ -15,7 +15,8 @@ Yahui verwendet die Software "CCU.IO" um mit der CCU zu kommunizieren und kann s
 ## Installation
 
 yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genügt es dann den gesamten Ordner
-yahui aus diesem Zip-File in den Ordner ccu.io/www/ zu kopieren.
+yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
+zu kopieren.
 
 
 ## Konfiguration

@@ -2,8 +2,14 @@
 
 "yet another homematic user interface"
 
-yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche für die HomeMatic CCU. Oberflächlich ist yahui
-WebMatic sehr ähnlich.
+yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (vergleichbar mit WebMatic) für die HomeMatic CCU.
+Yahui verwendet die Software "CCU.IO" um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu nutze machen:
+  * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
+  * Statusänderungen werden nicht in Intervallen von der CCU abgefragt ("Polling") sondern via Websocket-Verbindung von
+  CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden mit
+  geringerer Latenz angezeigt.
+  * Egal wieviele Instanzen von yahui oder DashUI geöffnet sind - die Belastung für die CCU bleibt gleich gering (CCU.IO
+  fungiert hier quasi als Proxy)
 
 
 ## Installation
@@ -12,14 +18,25 @@ yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu instal
 yahui aus diesem Zip-File in den Ordner ccu.io/www/ zu kopieren.
 
 
-## Einbinden eigener Bilder/Icons, Sortierung der Elemente
+## Konfiguration
+
+### Einbinden eigener Bilder/Icons
 
 Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (über
-http://.../yahui/?edit aufrufen). Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
+http://.../yahui/?edit aufrufen). Es sind alle arten von Bilddateien erlaubt, empfohlen wird jedoch ein quadratisches
+Format mit 230x230 Pixel Größe.
+
+### Sortierung der Elemente
+
+Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
+
+### Hinzufügen von Links zur Link-Seite
 
 ## Roadmap/ToDo
 
+  * Variablen Editieren (falls nicht Webmatic-Readonly-Flag gesetzt ist)
   * mehr angepasste Widgets für HomeMatic und CUxD Geräte
+  * div Style-Anpassungen
   * Sortierung speichern
   * Link-Seite implementieren
 

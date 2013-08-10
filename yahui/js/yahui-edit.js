@@ -10,8 +10,11 @@ $(document).ready(function () {
 
 
 
+
     function initEditMode() {
         console.log("initEditMode()");
+
+
 /*
         $(".ui-listview").sortable({
             stop: function (e, ui) {
@@ -60,32 +63,35 @@ $(document).ready(function () {
             }
         });
         $("li.ui-li").each(function() {
-            if (!$(this).hasClass("dz-clickable")) {
+            var $this = $(this);
+            var id = $this.attr("data-hm-id");
+            if (!$this.hasClass("dz-clickable")) {
 
-                $(this).dropzone({
-                    url: "/upload/post?yahui",
+                $this.dropzone({
+                    url: "../upload?path=./www/yahui/images/user/&id=" + id,
+                    acceptedFiles: "image/*",
+                    uploadMultiple: false,
                     previewsContainer: "#uploadPreview",
                     clickable: true,
-                    xaddedfile: function (file) {
-                        console.log(file);
-                        // $("#popupUpload").popup("open");
-
-                    },
                     dragover: function (e) {
-                        console.log(e);
                         var el = $(e.toElement);
-
                         $(e.toElement).closest("li.ui-li").addClass("upload-start");
-
                     },
                     dragleave: function (e) {
-                        console.log("drag end");
                         $(e.toElement).closest("li.ui-li").removeClass("upload-start");
                     },
-                    drop: function (e) {
-                        console.log("drag end");
-                        $(e.toElement).closest("li.ui-li").removeClass("upload-start");
+                    drop: function (e, ui) {
+
+                        console.log(e, ui);
+                        var closest = $(e.toElement).closest("li.ui-li");
+                        closest.removeClass("upload-start");
                         $("#popupUpload").popup("open");
+                        /*setTimeout(function() {
+                            closest.find("img").attr("src", "images/default/dummy.png");
+                            setTimeout(function () {
+                                closest.find("img").attr("src", "images/user/"+);
+                            }, 50);
+                        }, 1200);*/
                     }
                 });
             }
@@ -96,12 +102,12 @@ $(document).ready(function () {
 
 
     $("body").append('<div data-role="popup" data-history="false" data-overlay-theme="a" id="popupUpload">' +
-        '<p id="uploadProgress">  <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>' +
-        '<div class="dz-success-mark"><span>?</span></div>' +
-        '<div class="dz-error-mark"><span>?</span></div>' +
-        '<div class="dz-error-message"><span data-dz-errormessage></span></div></p><p id="uploadPreview"></p>' +
+        '<p id="uploadProgress"> <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div></p>' +
+        '<p id="uploadPreview"></p>' +
+        '<p><input type="button" value="Seite neu laden" id="reload"/></p>' +
         '</div>');
 
     $("#popupUpload").popup();
+
 });
 

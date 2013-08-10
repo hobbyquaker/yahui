@@ -226,11 +226,16 @@ input.ui-slider-input {
     }
 }
 
-
+.responsive-grid .ui-listview .ui-btn.upload-start {
+    -moz-box-shadow: 0px 0px 5px 5px orange !important;
+    -webkit-box-shadow: 0px 0px 5px 5px orange !important;
+    box-shadow: 0px 0px 5px 5px orange !important;
+}
 
 .upload-start {
     background-color: orange;
     background-image: none;
+
 
 }
 

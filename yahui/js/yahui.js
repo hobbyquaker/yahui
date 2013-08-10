@@ -1,3 +1,6 @@
+var images = [];
+
+
 $(document).ready(function () {
 
     var body = $("body");
@@ -38,14 +41,13 @@ $(document).ready(function () {
     });
 
 
-    var images = [];
-    // Abfragen welche Bild-Dateien vorhanden sind
+    // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
     socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
         console.log(dirArr);
         for (var i = 0; i < dirArr.length; i++) {
-            dirArr[i] = parseInt(dirArr[i].replace(/\..*/, ""), 10);
+            var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
+            images[id] = dirArr[i];
         }
-        images = dirArr;
         console.log(images);
     });
 
@@ -111,22 +113,34 @@ $(document).ready(function () {
     // Menü-Seite (Favoriten, Räume und Gewerke) aufbauen
     function renderMenu(en, selector) {
         var domObj = $(selector);
-        var img = "images/default/page.png";
+        var img;
+        var defimg = "images/default/page.png";
+        var name, link;
         switch (en) {
             case "ENUM_ROOMS":
-                img = "images/default/room.png";
+                defimg = "images/default/room.png";
+                name = "R&auml;ume"
                 break;
             case "ENUM_FUNCTIONS":
-                img = "images/default/function.png";
+                defimg = "images/default/function.png";
+                name = "Gewerke";
                 break;
             case "FAVORITE":
-                img = "images/default/favorite.png";
+                defimg = "images/default/favorite.png";
+                name = "Favoriten";
                 break;
 
         }
         for (var i = 0; i < regaIndex[en].length; i++) {
             var enId = regaIndex[en][i];
             var enObj = (regaObjects[enId]);
+
+            // User Image vorhanden?
+            if (images[enId]) {
+                img = "images/user/" + images[enId];
+            } else {
+                img = defimg;
+            }
 
             var li = "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
                 "<img src='"+img+"'>" +
@@ -160,10 +174,31 @@ $(document).ready(function () {
     function renderPage(pageId, prepend) {
         console.log("renderPage("+pageId+")");
         var regaObj = (regaObjects[pageId]);
+        var name, link;
+        switch (regaObj.TypeName) {
+        case "FAVORITE":
+            name = "Favoriten";
+            link = "#favs";
+            break;
+        case "ENUM_ROOMS":
+            name = "R&auml;ume";
+            link = "#rooms";
+            break;
+        case "ENUM_FUNCTIONS":
+            name = "Gewerke";
+            link = "#funcs";
+            break;
+        default:
+            name = "Zur&uuml;ck";
+            link = "#";
+        }
 
-        var page = '<div id="page_'+pageId+'" data-role="page"><div data-role="header" data-position="fixed"><h1>' +
-            regaObj.Name +
-            '</h1> <a href="#" data-role="button" data-rel="back" data-icon="arrow-l">Zur&uuml;ck</a></div><div data-role="content">' +
+        var page = '<div id="page_'+pageId+'" data-role="page">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
+            '<a href="'+link+'" data-role="button" data-rel="back" data-icon="arrow-l" data-theme="b">'+name+'</a>' +
+            '<h1>' +regaObj.Name + '</h1>' +
+            //'<a href="?edit" data-icon="gear">Edit</a>' +
+            '</div><div data-role="content">' +
             '<ul data-role="listview" id="list_'+pageId+'"></ul></div></div>';
         if (prepend) {
             body.prepend(page);
@@ -182,17 +217,21 @@ $(document).ready(function () {
     function renderWidget(list, id) {
         var el = regaObjects[id];
         var elId = list.attr("id") + "_" + id;
-        var img = "images/default/widget.png";
+
+        var img, defimg = "images/default/widget.png";
+        if (images[id]) {
+            img = "images/user/" + images[id];
+        }
         console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {
         case "CHANNEL":
             switch (el.HssType) {
                 case "DIMMER":
-                    img = "images/default/dimmer.png";
+                    defimg = "images/default/dimmer.png";
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
-                    content = '<li class="yahui-widget"><img src="'+img+'">' +
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
                         '<select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_'+elId+'" data-role="slider">' +
@@ -218,10 +257,11 @@ $(document).ready(function () {
 
                     break;
                 case "BLIND":
-                    img = "images/default/blind.png";
+                    defimg = "images/default/blind.png";
+                    img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
-		            content = '<li class="yahui-widget"><img src="'+img+'">' +
+		            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b"><select data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
                         '<option value="0">Aus</option>' +
@@ -240,10 +280,11 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "KEY":
-                    img = "images/default/key.png";
+                    defimg = "images/default/key.png";
+                    img = (img ? img : defimg);
                     var shortId = regaObjects[id].DPs.PRESS_SHORT;
                     var longId = regaObjects[id].DPs.PRESS_LONG;
-                    content = '<li class="yahui-widget"><img src="'+img+'">' +
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
                         '<input type="button" data-hm-id="'+shortId+'" name="press_short" value="kurz" data-inline="true"/> ' +
@@ -251,9 +292,10 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "SWITCH":
-                    img = "images/default/switch.png";
+                    defimg = "images/default/switch.png";
+                    img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
-                    content = '<li class="yahui-widget"><img src="'+img+'">' +
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
  
@@ -270,7 +312,9 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 default:
-                    content = '<li class="yahui-widget"><img src="'+img+'">' +
+
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
                         '</div><div class="yahui-c"><table class="yahui-datapoints">';
@@ -289,14 +333,17 @@ $(document).ready(function () {
             }
             break;
         case "VARDP":
-            content = '<li class="yahui-widget"><img src="'+img+'">' +
+            img = (img ? img : defimg);
+            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                 '<div class="yahui-a">'+el.Name+'</div>' +
                 '<div class="yahui-bc">' +
                 "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
             list.append(content);
             break;
         case "PROGRAM":
-            content = '<li class="yahui-widget"><img src="'+img+'">' +
+
+            img = (img ? img : defimg);
+            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                 '<div class="yahui-a">'+el.Name+'</div>' +
                 '<div class="yahui-bc">' +
                 "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";

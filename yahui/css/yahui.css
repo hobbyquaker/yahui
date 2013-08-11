@@ -201,9 +201,13 @@ input.ui-slider-input {
     }
     .yahui-b {
         width: 20%;
+        margin-top:3px;
+        min-height:51px;
     }
     .yahui-c {
         width: 50%;
+        margin-top:5px;
+        min-height: 49px;
     }
     .yahui-bc {
         width: 70%;

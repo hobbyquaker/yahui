@@ -1,4 +1,4 @@
-# yahui 0.6
+# yahui
 
 "yet another homematic user interface"
 

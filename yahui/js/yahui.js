@@ -1,4 +1,21 @@
-var images = [];
+/**
+ *      yahui
+ *
+ *      yet another HomeMatic user interface
+ *
+ *      Copyright (c) 2013 http://hobbyquaker.github.io
+ *
+ *      CC BY-NC 3.0
+ *
+ *      Kommerzielle Nutzung nicht gestattet!
+ *
+ */
+
+
+var yahui = {
+    version: "0.7.1",
+    images: []
+};
 
 
 $(document).ready(function () {
@@ -46,9 +63,9 @@ $(document).ready(function () {
         console.log(dirArr);
         for (var i = 0; i < dirArr.length; i++) {
             var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
-            images[id] = dirArr[i];
+            yahui.images[id] = dirArr[i];
         }
-        console.log(images);
+        console.log(yahui.images);
     });
 
 
@@ -136,8 +153,8 @@ $(document).ready(function () {
             var enObj = (regaObjects[enId]);
 
             // User Image vorhanden?
-            if (images[enId]) {
-                img = "images/user/" + images[enId];
+            if (yahui.images[enId]) {
+                img = "images/user/" + yahui.images[enId];
             } else {
                 img = defimg;
             }
@@ -195,7 +212,7 @@ $(document).ready(function () {
 
         var page = '<div id="page_'+pageId+'" data-role="page">' +
             '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
-            '<a href="'+link+'" data-role="button" data-rel="back" data-icon="arrow-l" data-theme="b">'+name+'</a>' +
+            '<a href="'+link+'" data-role="button" data-icon="arrow-l" data-theme="b">'+name+'</a>' +
             '<h1>' +regaObj.Name + '</h1>' +
             //'<a href="?edit" data-icon="gear">Edit</a>' +
             '</div><div data-role="content">' +
@@ -219,8 +236,8 @@ $(document).ready(function () {
         var elId = list.attr("id") + "_" + id;
 
         var img, defimg = "images/default/widget.png";
-        if (images[id]) {
-            img = "images/user/" + images[id];
+        if (yahui.images[id]) {
+            img = "images/user/" + yahui.images[id];
         }
         console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {
@@ -333,11 +350,51 @@ $(document).ready(function () {
             }
             break;
         case "VARDP":
+            // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
+            var readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*r[^\)]*\)/) ? true : false );
             img = (img ? img : defimg);
-            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
-                '<div class="yahui-a">'+el.Name+'</div>' +
-                '<div class="yahui-bc">' +
-                "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+            if (readOnly) {
+                content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                    '<div class="yahui-a">'+el.Name+'</div>' +
+                    '<div class="yahui-bc">';
+                switch (regaObjects[id].ValueType) {
+                case 2:
+                case 16:
+                    var valueList = regaObjects[id].ValueList.split(";")
+                    var val = datapoints[id][0];
+                    if (val == true) { val = 1; }
+                    if (val == false) { val = 0; }
+                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    break;
+
+                default:
+                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                }
+
+
+            } else {
+                content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                    '<div class="yahui-a">'+el.Name+'</div>' +
+                    '<div class="yahui-bc">';
+                switch (regaObjects[id].ValueType) {
+                case 2:
+                case 16:
+                    var valueList = regaObjects[id].ValueList.split(";")
+                    var val = datapoints[id][0];
+                    if (val == true) { val = 1; }
+                    if (val == false) { val = 0; }
+                    content += "<select>";
+                    for (var i = 0; i < valueList.length; i++) {
+                        content += '<option value="'+i+'">'+valueList[i]+'</option>';
+                    }
+                    content += '</select>'+regaObjects[id].ValueUnit+"</div></li>";
+                    break;
+                default:
+                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+
+                }
+
+            }
             list.append(content);
             break;
         case "PROGRAM":
@@ -346,7 +403,8 @@ $(document).ready(function () {
             content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                 '<div class="yahui-a">'+el.Name+'</div>' +
                 '<div class="yahui-bc">' +
-                "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                '<a href="#" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +
+                "</div></li>";
             list.append(content);
             break;
         default:
@@ -357,11 +415,9 @@ $(document).ready(function () {
 
     function updateWidgets(id, val, ts, ack) {
         // Alle Elemente mit passender id suchen
-        $("*[data-hm-id='"+id+"']").each(function () {
+        $("span[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var datapoint   = regaObjects[id];
-            // Eltern-Element aus Index suchen
-            var channel     = regaObjects[regaObjects[id].Parent];
 
             if ($this.data("hm-val")) {
                 switch (datapoint.ValueType) {
@@ -375,28 +431,61 @@ $(document).ready(function () {
         });
 
         $("input[data-type='range'][data-hm-id='"+id+"']").each(function () {
-            var $this = $(this);
-            var pos = val;
-            if ($this.data("hm-factor")) {
-                pos = pos * $this.data("hm-factor");
+            var working = false;
+            var direction = 0;
+            // Eltern-Element aus Index suchen
+            var channel     = regaObjects[regaObjects[id].Parent];
+            if (channel) {
+                if (channel.DPs.WORKING) {
+                    working = datapoints[channel.DPs.WORKING][0];
+                }
+                if (channel.DPs.DIRECTION) {
+                    direction = datapoints[channel.DPs.WORKING][0];
+                }
             }
-            $this.val(pos).slider('refresh');
-
+            // Eltern-Element aus Index suchen
+            var channel     = regaObjects[regaObjects[id].Parent];
+            if (channel) {
+                if (channel.DPs.WORKING) {
+                    working = datapoints[channel.DPs.WORKING][0];
+                }
+            }
+            console.log(channel.Name+" working="+working);
+            if (!working) {
+                var $this = $(this);
+                var pos = val;
+                if ($this.data("hm-factor")) {
+                    pos = pos * $this.data("hm-factor");
+                }
+                $this.val(pos).slider('refresh');
+            }
         });
         $("select[data-role='slider'][data-hm-id='"+id+"']").each(function () {
-            console.log("toggle "+id)
             var $this = $(this);
-            if (!val) {
-                $this.find("option[value='1']").removeAttr("selected");
-                $this.find("option[value='0']").prop("selected", true);
-
-            } else {
-                $this.find("option[value='0']").removeAttr("selected");
-                $this.find("option[value='1']").prop("selected", true);
-
-
+            var working = false;
+            var direction = 0;
+            // Eltern-Element aus Index suchen
+            var channel     = regaObjects[regaObjects[id].Parent];
+            if (channel) {
+                if (channel.DPs.WORKING) {
+                    working = datapoints[channel.DPs.WORKING][0];
+                }
+                if (channel.DPs.DIRECTION) {
+                    direction = datapoints[channel.DPs.WORKING][0];
+                }
             }
-            $this.slider("refresh");
+            console.log(channel.Name+" working="+working);
+            if (!working) {
+                if (!val) {
+                    $this.find("option[value='1']").removeAttr("selected");
+                    $this.find("option[value='0']").prop("selected", true);
+                } else {
+                    $this.find("option[value='0']").removeAttr("selected");
+                    $this.find("option[value='1']").prop("selected", true);
+                }
+                $this.slider("refresh");
+            }
+
         });
     }
 

@@ -1,3 +1,17 @@
+/**
+ *      yahui
+ *
+ *      yet another HomeMatic user interface
+ *
+ *      Copyright (c) 2013 http://hobbyquaker.github.io
+ *
+ *      CC BY-NC 3.0
+ *
+ *      Kommerzielle Nutzung nicht gestattet!
+ *
+ */
+
+
 $(document).ready(function () {
 
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {

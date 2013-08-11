@@ -35,12 +35,20 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 ## Roadmap/ToDo
 
-  * Variablen Editieren (falls nicht Webmatic-Readonly-Flag gesetzt ist)
+### 1.0
+
+  * Variablen Editieren (falls nicht "Webmatic-Style" Readonly-Flag gesetzt ist)
+  * Programme starten
   * Sortierung speichern
   * Link-Seite implementieren
-  * Widget: Heizungsthermostat
-  * diverse Widgets
-  * Service-Meldungen und Alarme (?)
+  * Widgets: SHUTTER, SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, WEATHER, CLIMATECONTROL_REGULATOR, CLIMATECONTROL_VENT_DRIVE, SENSOR
+
+
+### 1.1
+
+  * Service-Meldungen und Alarme?
+  * neue und verbesserte Widgets
+  * Timestamps oder vergangene Zeit anzeigen?
 
 ## Lizenz / Copyright
 

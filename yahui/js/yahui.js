@@ -13,7 +13,7 @@
 
 
 var yahui = {
-    version: "0.7.1",
+    version: "0.9.0",
     images: []
 };
 
@@ -41,6 +41,7 @@ $(document).ready(function () {
         });
     }
 
+    $(".yahui-version").html(yahui.version);
 
     // Verbindung zu CCU.IO herstellen.
     var socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));

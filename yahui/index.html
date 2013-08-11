@@ -25,103 +25,135 @@
 </head>
 <body style="height:100%" >
 
-    <div id="favs" data-role="page" class="responsive-grid">
+<div id="favs" data-role="page" class="responsive-grid">
 
-        <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
-            <h1>Favoriten</h1>
-            <a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="ui-btn-right"></a>
-        </div>
+    <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
+        <h1>Favoriten</h1>
+        <a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>
+    </div>
 
-         <div data-role="content">
-            <ul id="listFavs" data-role="listview" data-inset="true">
+    <div data-role="content">
+        <ul id="listFavs" data-role="listview" data-inset="true">
+        </ul>
+    </div>
+
+    <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
+        <div data-role="navbar" data-grid="c">
+            <ul>
+                <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="star">Favoriten</a></li>
+                <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
+                <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                <li><a href="#links" data-icon="plus">Links</a></li>
             </ul>
         </div>
-
-        <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-            <div data-role="navbar" data-grid="c">
-                <ul>
-                    <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="star">Favoriten</a></li>
-                    <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
-                    <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
-                    <li><a href="#links" data-icon="plus">Links</a></li>
-                </ul>
-            </div>
-        </div>
-
     </div>
 
-    <div id="rooms" data-role="page"  class="responsive-grid" style="height:100%">
+</div>
 
-        <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
-            <h1>R&auml;ume</h1>
-        </div>
+<div id="rooms" data-role="page"  class="responsive-grid" style="height:100%">
 
-        <div data-role="content">
-            <ul id="listRooms" data-role="listview" data-inset="true">
+    <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
+        <h1>R&auml;ume</h1><!--
+        <a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>-->
+    </div>
+
+    <div data-role="content">
+        <ul id="listRooms" data-role="listview" data-inset="true">
+        </ul>
+    </div>
+
+
+    <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
+        <div data-role="navbar" data-grid="c">
+            <ul>
+                <li><a href="#favs" data-icon="star">Favoriten</a></li>
+                <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home">R&auml;ume</a></li>
+                <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                <li><a href="#links" data-icon="plus">Links</a></li>
             </ul>
         </div>
-
-
-        <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-            <div data-role="navbar" data-grid="c">
-                <ul>
-                    <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                    <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home">R&auml;ume</a></li>
-                    <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
-                    <li><a href="#links" data-icon="plus">Links</a></li>
-                </ul>
-            </div>
-        </div>
-
     </div>
 
-    <div id="funcs" data-role="page" class="responsive-grid" style="height:100%">
+</div>
 
-        <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
-            <h1>Gewerke</h1>
-        </div>
+<div id="funcs" data-role="page" class="responsive-grid" style="height:100%">
 
+    <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
+        <h1>Gewerke</h1>
+        <!--<a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>-->
+    </div>
+
+    <div data-role="content">
         <div data-role="content">
-            <div data-role="content">
-                <ul id="listFunctions" data-role="listview" data-inset="true">
-                </ul>
-            </div>
+            <ul id="listFunctions" data-role="listview" data-inset="true">
+            </ul>
         </div>
-
-        <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-            <div data-role="navbar" data-grid="c">
-                <ul>
-                    <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                    <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
-                    <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="grid">Gewerke</a></li>
-                    <li><a href="#links" data-icon="plus">Links</a></li>
-                </ul>
-            </div>
-        </div>
-
     </div>
 
-    <div id="links" data-role="page" style="height:100%">
-
-        <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
-            <h1>Links</h1>
+    <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
+        <div data-role="navbar" data-grid="c">
+            <ul>
+                <li><a href="#favs" data-icon="star">Favoriten</a></li>
+                <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
+                <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="grid">Gewerke</a></li>
+                <li><a href="#links" data-icon="plus">Links</a></li>
+            </ul>
         </div>
-
-        <div data-role="content">
-        </div>
-
-        <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-            <div data-role="navbar" data-grid="c">
-                <ul>
-                    <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                    <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
-                    <li><a href="#funcs" data-icon="grid">Gewerke</a></li>   
-                    <li><a href="#"  class="ui-btn-active ui-state-persist" data-icon="plus">Links</a></li>
-                </ul>
-            </div>
-        </div>
-
     </div>
+
+</div>
+
+<div id="links" data-role="page" style="height:100%">
+
+    <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
+        <h1>Links</h1>
+        <!--<a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>-->
+    </div>
+
+    <div data-role="content">
+    </div>
+
+    <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
+        <div data-role="navbar" data-grid="c">
+            <ul>
+                <li><a href="#favs" data-icon="star">Favoriten</a></li>
+                <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
+                <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                <li><a href="#"  class="ui-btn-active ui-state-persist" data-icon="plus">Links</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div id="info" data-role="page" data-history="false" data-theme="b">
+    <div data-role="header" data-theme="b"><h1>yahui <span class="yahui-version"></span></h1></div>
+    <div data-role="content" data-theme="b">
+        <h3>"yet another HomeMatic user interface"</h3>
+        <p>
+            <a href="https://github.com/hobbyquaker/yahui/blob/master/README.md" target="_blank">ReadMe</a>
+            <br/><br/>
+            Copyright (c) 2013 <a href="http://hobbyquaker.github.io" target="_blank">hobbyquaker</a>
+            <br/><br/>
+            Lizenz: <a href="http://creativecommons.org/licenses/by-nc/3.0/deed.de" target="_blank">CC BY-NC 3.0</a>
+        </p>
+        <p style="font-size: 10px">
+            Sie dürfen:
+            <br/><br/>
+            das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen
+            Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen
+            Zu den folgenden Bedingungen:
+            <br/><br/>
+            Namensnennung - Sie müssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.<br/>
+            Keine kommerzielle Nutzung - Dieses Werk bzw. dieser Inhalt darf nicht für kommerzielle Zwecke verwendet werden.<br/>
+            Wobei gilt:
+            <br/><br/>
+            Verzichtserklärung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrückliche Einwilligung des Rechteinhabers dazu erhalten.
+            <br/><br/>
+            Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
+        </p>
+    </div>
+</div>
 
 </body>
 </html>

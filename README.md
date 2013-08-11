@@ -36,12 +36,11 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 ## Roadmap/ToDo
 
   * Variablen Editieren (falls nicht Webmatic-Readonly-Flag gesetzt ist)
-  * mehr angepasste Widgets für HomeMatic und CUxD Geräte
-  * div Style-Anpassungen
   * Sortierung speichern
   * Link-Seite implementieren
+  * Widget: Heizungsthermostat
+  * diverse Widgets
   * Service-Meldungen und Alarme (?)
-
 
 ## Lizenz / Copyright
 
@@ -61,4 +60,4 @@ Wobei gilt:
 Verzichtserklärung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrückliche Einwilligung des Rechteinhabers dazu erhalten.
 Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
 
-Die Nutzung dieser Software er
+Die Nutzung dieser Software erfolgt auf eigenes Risiko!

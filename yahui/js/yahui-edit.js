@@ -29,35 +29,35 @@ $(document).ready(function () {
         console.log("initEditMode()");
 
 
-/*
-        $(".ui-listview").sortable({
-            stop: function (e, ui) {
-                ui.item.parent().listview("refresh");
-            }
-        });
-        $("li.ui-li").dropzone({
-            url: "/upload/post?yahui",
-            clickable: true,
-            addedfile: function (file) {
-                console.log(file);
-                // $("#popupUpload").popup("open");
-            },
-            dragover: function (e) {
-                console.log(e);
-                var el = $(e.toElement);
+        /*
+         $(".ui-listview").sortable({
+         stop: function (e, ui) {
+         ui.item.parent().listview("refresh");
+         }
+         });
+         $("li.ui-li").dropzone({
+         url: "/upload/post?yahui",
+         clickable: true,
+         addedfile: function (file) {
+         console.log(file);
+         // $("#popupUpload").popup("open");
+         },
+         dragover: function (e) {
+         console.log(e);
+         var el = $(e.toElement);
 
-                $(e.toElement).closest(".ui-li").find("img").addClass("upload-start");
+         $(e.toElement).closest(".ui-li").find("img").addClass("upload-start");
 
-            },
-            dragleave: function (e) {
-                console.log("drag end");
-                $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
-            },
-            drop: function (e) {
-                console.log("drag end");
-                $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
-            }
-        });*/
+         },
+         dragleave: function (e) {
+         console.log("drag end");
+         $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
+         },
+         drop: function (e) {
+         console.log("drag end");
+         $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
+         }
+         });*/
     }
 
     $(document).on( "pagechange", function (e, data) {
@@ -99,13 +99,15 @@ $(document).ready(function () {
                         console.log(e, ui);
                         var closest = $(e.toElement).closest("li.ui-li");
                         closest.removeClass("upload-start");
+                        $("#uploadProgress").html("");
+                        //$("#uploadPreview").html("");
                         $("#popupUpload").popup("open");
                         /*setTimeout(function() {
-                            closest.find("img").attr("src", "images/default/dummy.png");
-                            setTimeout(function () {
-                                closest.find("img").attr("src", "images/user/"+);
-                            }, 50);
-                        }, 1200);*/
+                         closest.find("img").attr("src", "images/default/dummy.png");
+                         setTimeout(function () {
+                         closest.find("img").attr("src", "images/user/"+);
+                         }, 50);
+                         }, 1200);*/
                     }
                 });
             }
@@ -115,13 +117,26 @@ $(document).ready(function () {
 
 
 
-    $("body").append('<div data-role="popup" data-history="false" data-overlay-theme="a" id="popupUpload">' +
+    $("body").append('<div data-role="popup" data-dismissible="false" data-history="false" data-overlay-theme="a" id="popupUpload">' +
+        '<h3>Upload vollständig</h3>' +
         '<p id="uploadProgress"> <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div></p>' +
         '<p id="uploadPreview"></p>' +
-        '<p><input type="button" value="Seite neu laden" id="reload"/></p>' +
+        '<p><a href="#" data-role="button" data-icon="refresh" id="refresh">Seite neu laden</a></p>' +
         '</div>');
 
-    $("#popupUpload").popup();
+    $("#refresh").button().click(function () {
+        window.location.reload();
+    });
+
+    $("#popupUpload").popup({
+        history: false
+    });
+
+    $("#popupUpload").on({
+        popupbeforeposition: function () {
+            $('.ui-popup-screen').off();
+        }
+    });
 
 });
 

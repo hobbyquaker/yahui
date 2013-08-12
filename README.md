@@ -2,20 +2,20 @@
 
 "yet another homematic user interface"
 
-yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
+yahui ist eine weitere jQuery Mobile basierte alternative WeboberflÃ¤che (Ã¤hnlich WebMatic) fÃ¼r die HomeMatic CCU.
 
 yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu Nutze machen:
   * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
-  * Statusänderungen werden nicht (wie z.B. bei WebMatic) in Intervallen von der CCU abgefragt ("Polling") sondern von der
-  CCU via CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden
+  * StatusÃ¤nderungen werden nicht (wie z.B. bei WebMatic) in Intervallen von der CCU abgefragt ("Polling") sondern von der
+  CCU via CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und StatusÃ¤nderungen werden
   mit geringerer Latenz angezeigt.
-  * Egal wieviele Instanzen von yahui oder DashUI gleichzeitig geöffnet sind - die Belastung für die CCU bleibt gleich gering
+  * Egal wieviele Instanzen von yahui oder DashUI gleichzeitig geÃ¶ffnet sind - die Belastung fÃ¼r die CCU bleibt gleich gering
   (CCU.IO fungiert hier quasi als Proxy)
 
 
 ## Installation
 
-yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
+yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genÃ¼gt es dann das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
 zu kopieren.
 
@@ -25,21 +25,21 @@ yahui ist sobald CCU.IO bereit ist unter http://ccu-io-host:ccu-io-port/yahui er
 
 ### Systemvariablen nur Anzeigen
 
-Systemvariablen können in yahui bearbeitet werden. Wie bei WebMatic können Systemvariablen über ein (r) in der
+Systemvariablen kÃ¶nnen in yahui bearbeitet werden. Wie bei WebMatic kÃ¶nnen Systemvariablen Ã¼ber ein (r) in der
 Variablenbeschreibung auf nur-lesen gesetzt werden.
 
 ### Einbinden eigener Bilder/Icons
 
-Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (über
+Bilder/Icons kÃ¶nnen einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (Ã¼ber
 http://ccu-io-host:ccu-io-port/yahui/?edit aufrufen). Es sind alle Arten von Bilddateien erlaubt, empfohlen wird jedoch
-ein quadratisches PNG mit 230x230 Pixel Größe und leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden
-sind können diese einfach in das Verzeichnis yahui/images/user/ kopiert werden.
+ein quadratisches PNG mit 230x230 Pixel GrÃ¶ÃŸe und leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden
+sind kÃ¶nnen diese einfach in das Verzeichnis yahui/images/user/ kopiert werden.
 
 ### Sortierung der Elemente
 
-Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
+Sortieren ist im Edit-Modus ebenfalls via Drag&Drop mÃ¶glich.
 
-### Hinzufügen von Links zur Link-Seite
+### HinzufÃ¼gen von Links zur Link-Seite
 
 zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js editieren...
 
@@ -47,7 +47,7 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
   * "inline" Anzeige von Links
 
-Fehlende Widgets ergänzen:
+Fehlende Widgets ergÃ¤nzen:
 
   * SHUTTER
   * SHUTTER_CONTACT
@@ -58,9 +58,9 @@ Fehlende Widgets ergänzen:
   * SENSOR
   * ... ?
 
-Später
+SpÃ¤ter
 
-  * Links hinzufügen etc komfortabler gestalten
+  * Links hinzufÃ¼gen etc komfortabler gestalten
   * Service-Meldungen und Alarme?
   * Timestamps oder vergangene Zeit anzeigen?
 
@@ -70,17 +70,17 @@ Später
 Copyright (c) 2013 hobbyquaker http://hobbyquaker.github.io
 Lizenz: CC BY-NC 3.0
 
-Sie dürfen:
+Sie dÃ¼rfen:
 
-das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen
+das Werk bzw. den Inhalt vervielfÃ¤ltigen, verbreiten und Ã¶ffentlich zugÃ¤nglich machen
 Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen
 Zu den folgenden Bedingungen:
 
-Namensnennung - Sie müssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.
-Keine kommerzielle Nutzung ? Dieses Werk bzw. dieser Inhalt darf nicht für kommerzielle Zwecke verwendet werden.
-Wobei gilt:
+Namensnennung - Sie mÃ¼ssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.
 
-Verzichtserklärung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrückliche Einwilligung des Rechteinhabers dazu erhalten.
-Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
+Keine kommerzielle Nutzung - Dieses Werk bzw. dieser Inhalt darf nicht fÃ¼r kommerzielle Zwecke verwendet werden.
 
-Die Nutzung dieser Software erfolgt auf eigenes Risiko!
+Wobei gilt
+VerzichtserklÃ¤rung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrÃ¼ckliche Einwilligung des Rechteinhabers dazu erhalten.
+
+Die VerÃ¶ffentlichung dieser Software erfolgt in der Hoffnung, daÃŸ sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÃœR EINEN BESTIMMTEN ZWECK. Die Nutzung dieser Software erfolgt auf eigenes Risiko!

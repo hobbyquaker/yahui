@@ -344,8 +344,8 @@ $(document).ready(function () {
 		            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b"><select data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
-                        '<option value="0">Aus</option>' +
-                        '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>An</option>' +
+                        '<option value="0">Zu</option>' +
+                        '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>Auf</option>' +
                         '</select></div><div class="yahui-c">' +
                         '<input type="range" data-hm-factor="100" data-hm-id="'+levelId +
                         '" name="slider-1" id="slider-1" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';

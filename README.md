@@ -67,7 +67,8 @@ Später
 ## Lizenz / Copyright
 
 Copyright (c) 2013 hobbyquaker http://hobbyquaker.github.io
-Lizenz: CC BY-NC 3.0
+
+Lizenz: CC BY-NC 3.0 http://creativecommons.org/licenses/by-nc/3.0/de/
 
 Sie dürfen das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen,
 Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen zu den folgenden Bedingungen:

@@ -69,11 +69,8 @@ Später
 Copyright (c) 2013 hobbyquaker http://hobbyquaker.github.io
 Lizenz: CC BY-NC 3.0
 
-Sie dürfen:
-
-das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen
-Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen
-Zu den folgenden Bedingungen:
+Sie dürfen das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen,
+Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen zu den folgenden Bedingungen:
 
 Namensnennung - Sie müssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.
 

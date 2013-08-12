@@ -49,7 +49,6 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 Fehlende Widgets ergänzen:
 
-  * SHUTTER
   * SHUTTER_CONTACT
   * ROTARY_HANDLE_SENSOR
   * WEATHER
@@ -80,7 +79,8 @@ Namensnennung - Sie müssen den Namen des Autors/Rechteinhabers in der von ihm f
 
 Keine kommerzielle Nutzung - Dieses Werk bzw. dieser Inhalt darf nicht für kommerzielle Zwecke verwendet werden.
 
-Wobei gilt
+Wobei gilt:
+
 Verzichtserklärung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrückliche Einwilligung des Rechteinhabers dazu erhalten.
 
 Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Die Nutzung dieser Software erfolgt auf eigenes Risiko!

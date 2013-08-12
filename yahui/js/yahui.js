@@ -46,7 +46,7 @@ $(document).ready(function () {
 
     // Von CCU.IO empfangene Events verarbeiten
     yahui.socket.on('event', function(obj) {
-        console.log(obj);
+        //console.log(obj);
         // id = obj[0], value = obj[1], timestamp = obj[2], acknowledge = obj[3]
 
         // Datenpunkt-Objekt aktualisieren
@@ -58,18 +58,18 @@ $(document).ready(function () {
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
     yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
-        console.log(dirArr);
+        //console.log(dirArr);
         for (var i = 0; i < dirArr.length; i++) {
             var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
             yahui.images[id] = dirArr[i];
         }
-        console.log(yahui.images);
+        //console.log(yahui.images);
     });
 
     // Sortierung laden
     yahui.socket.emit('readFile', 'yahui-sort.json', function (data) {
         if (data) { yahui.sortOrder = data; }
-        console.log(yahui.sortOrder);
+        //console.log(yahui.sortOrder);
 
         // ---------- "Hier geht's los" ----------- //
         getDatapoints();
@@ -85,7 +85,7 @@ $(document).ready(function () {
         });
         $.getScript("js/yahui-edit.js")
             .done(function(script, textStatus) {
-                console.log("edit mode");
+                //console.log("edit mode");
             })
             .fail(function(jqxhr, settings, exception) {
             });
@@ -143,7 +143,7 @@ $(document).ready(function () {
 
     // Menü-Seite (Favoriten, Räume und Gewerke) aufbauen
     function renderMenu(en, selector) {
-        console.log("renderMenu "+en);
+        //console.log("renderMenu "+en);
         var domObj = $(selector);
         var sortOrder = [];
         var index = [];
@@ -170,7 +170,7 @@ $(document).ready(function () {
 
         var alreadyRendered = [];
         if (sortOrder) {
-            console.log("SORT "+en)
+            //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
 
                 domObj.append(renderMenuItem(sortOrder[j]));
@@ -178,12 +178,12 @@ $(document).ready(function () {
             }
         }
 
-        console.log("AR ");
-        console.log(alreadyRendered);
+        //console.log("AR ");
+        //console.log(alreadyRendered);
         for (var i = 0; i < regaIndex[en].length; i++) {
-            console.log("... "+regaIndex[en][i]);
+            //console.log("... "+regaIndex[en][i]);
             if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
-                console.log("..! "+regaIndex[en][i]);
+                //console.log("..! "+regaIndex[en][i]);
                 domObj.append(renderMenuItem(regaIndex[en][i]));
             }
         }
@@ -250,7 +250,7 @@ $(document).ready(function () {
 
     // Baut eine Page auf
     function renderPage(pageId, prepend) {
-        console.log("renderPage("+pageId+")");
+        //console.log("renderPage("+pageId+")");
         var regaObj = (regaObjects[pageId]);
         var name, link;
         switch (regaObj.TypeName) {
@@ -302,7 +302,7 @@ $(document).ready(function () {
         } else {
             img = defimg;
         }
-        console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
+        //console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {
         case "CHANNEL":
             switch (el.HssType) {
@@ -325,11 +325,11 @@ $(document).ready(function () {
 
                     setTimeout(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
-                            console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
+                            //console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
                         });
                         $("#switch_"+elId).on( 'slidestop', function( event ) {
-                            console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
+                            //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
@@ -354,7 +354,7 @@ $(document).ready(function () {
 
                     setTimeout(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
-                            console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
+                            //console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
                         });
                     }, 500);
@@ -386,7 +386,7 @@ $(document).ready(function () {
                     list.append(content);
                     setTimeout(function () {
                         $("#switch_"+elId).on( 'slidestop', function( event ) {
-                            console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
+                            //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
@@ -456,7 +456,7 @@ $(document).ready(function () {
                         list.append(content);
                         setTimeout(function () {
                             $("#select_"+elId).on( 'change', function( event ) {
-                                console.log("select "+event.target.value+" "+event.target.dataset.hmId);
+                                //console.log("select "+event.target.value+" "+event.target.dataset.hmId);
                                 var val = parseInt($("#select_"+elId+" option:selected").val(), 10);
 
                                 yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), val]);
@@ -473,10 +473,10 @@ $(document).ready(function () {
                         list.append(content);
                         setTimeout(function () {
                             $("#input_"+id).change(function( event ) {
-                                console.log("input "+event.target.value+" "+event.target.dataset.hmId);
+                                //console.log("input "+event.target.value+" "+event.target.dataset.hmId);
                                 //var id = event.target.dataset.hmId;
                                 var val = $("#input_"+id).val();
-                                console.log("setState"+JSON.stringify([id, val]));
+                                //console.log("setState"+JSON.stringify([id, val]));
                                 yahui.socket.emit("setState", [id, val]);
                             });
                         }, 500);
@@ -499,7 +499,7 @@ $(document).ready(function () {
             list.append(content);
             setTimeout(function () {
                 $('a.yahui-program[data-hm-id="'+id+'"]').on('click', function( event ) {
-                    console.log("programExecute "+id);
+                    //console.log("programExecute "+id);
                     yahui.socket.emit("programExecute", [id]);
                 });
             }, 500);
@@ -571,7 +571,7 @@ $(document).ready(function () {
                     working = datapoints[channel.DPs.WORKING][0];
                 }
             }
-            console.log(channel.Name+" working="+working);
+            //console.log(channel.Name+" working="+working);
             if (!working) {
                 var $this = $(this);
                 var pos = val;
@@ -595,7 +595,7 @@ $(document).ready(function () {
                     direction = datapoints[channel.DPs.WORKING][0];
                 }
             }
-            console.log(channel.Name+" working="+working);
+            //console.log(channel.Name+" working="+working);
             if (!working) {
                 if (!val) {
                     $this.find("option[value='1']").removeAttr("selected");
@@ -610,7 +610,7 @@ $(document).ready(function () {
         });
 
         $("select[id^=select][data-hm-id='"+id+"']").each(function() {
-            console.log("select change");
+            //console.log("select change");
             var $this = $(this);
             $this.find("option").removeAttr("selected");
             $this.find("option[value='"+val+"']").prop("selected", true);

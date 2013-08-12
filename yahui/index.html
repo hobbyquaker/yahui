@@ -103,15 +103,17 @@
 
 </div>
 
-<div id="links" data-role="page" style="height:100%">
+<div id="links" data-role="page" style="height:100%" class="responsive-grid">
 
     <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
         <h1>Links</h1>
+
         <!--<a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>-->
     </div>
 
     <div data-role="content">
-    </div>
+        <ul id="listLinks" data-role="listview" data-inset="true">
+        </ul></div>
 
     <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
         <div data-role="navbar" data-grid="c">
@@ -131,11 +133,11 @@
     <div data-role="content" data-theme="b">
         <h3>"yet another HomeMatic user interface"</h3>
         <p>
-            <a href="https://github.com/hobbyquaker/yahui/blob/master/README.md" target="_blank">ReadMe</a>
+            <a data-ajax="false" href="https://github.com/hobbyquaker/yahui/blob/master/README.md" target="_blank">ReadMe</a>
             <br/><br/>
-            Copyright (c) 2013 <a href="http://hobbyquaker.github.io" target="_blank">hobbyquaker</a>
+            Copyright (c) 2013 <a data-ajax="false" href="http://hobbyquaker.github.io" target="_blank">hobbyquaker</a>
             <br/><br/>
-            Lizenz: <a href="http://creativecommons.org/licenses/by-nc/3.0/deed.de" target="_blank">CC BY-NC 3.0</a>
+            Lizenz: <a data-ajax="false" href="http://creativecommons.org/licenses/by-nc/3.0/deed.de" target="_blank">CC BY-NC 3.0</a>
         </p>
         <p style="font-size: 10px">
             Sie dürfen:

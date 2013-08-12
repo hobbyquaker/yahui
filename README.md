@@ -2,8 +2,9 @@
 
 "yet another homematic user interface"
 
-yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (Funktionsumfang ähnlich WebMatic) für die HomeMatic CCU.
-Yahui verwendet die Software "CCU.IO" um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu nutze machen:
+yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
+
+yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu Nutze machen:
   * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
   * Statusänderungen werden nicht (wie z.B. bei WebMatic) in Intervallen von der CCU abgefragt ("Polling") sondern von der
   CCU via CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden
@@ -14,18 +15,25 @@ Yahui verwendet die Software "CCU.IO" um mit der CCU zu kommunizieren und kann s
 
 ## Installation
 
-yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genügt es dann den gesamten Ordner
+yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
 zu kopieren.
 
+## Bedienung
 
-## Konfiguration
+yahui ist sobald CCU.IO bereit ist unter http://ccu-io-host:ccu-io-port/yahui erreichbar.
+
+### Systemvariablen nur Anzeigen
+
+Systemvariablen können in yahui bearbeitet werden. Wie bei WebMatic können Systemvariablen über ein (r) in der
+Variablenbeschreibung auf nur-lesen gesetzt werden.
 
 ### Einbinden eigener Bilder/Icons
 
 Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (über
-http://.../yahui/?edit aufrufen). Es sind alle arten von Bilddateien erlaubt, empfohlen wird jedoch ein quadratisches
-Format mit 230x230 Pixel Größe.
+http://ccu-io-host:ccu-io-port/yahui/?edit aufrufen). Es sind alle Arten von Bilddateien erlaubt, empfohlen wird jedoch
+ein quadratisches PNG mit 230x230 Pixel Größe und leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden
+sind können diese einfach in das Verzeichnis yahui/images/user/ kopiert werden.
 
 ### Sortierung der Elemente
 
@@ -33,22 +41,29 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 ### Hinzufügen von Links zur Link-Seite
 
-## Roadmap/ToDo
+zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js editieren...
 
-### 1.0
+## ToDo
 
-  * Variablen Editieren (falls nicht "Webmatic-Style" Readonly-Flag gesetzt ist)
-  * Programme starten
-  * Sortierung speichern
-  * Link-Seite implementieren
-  * Widgets: SHUTTER, SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, WEATHER, CLIMATECONTROL_REGULATOR, CLIMATECONTROL_VENT_DRIVE, SENSOR
+  * "inline" Anzeige von Links
 
+Fehlende Widgets ergänzen:
 
-### 1.1
+  * SHUTTER
+  * SHUTTER_CONTACT
+  * ROTARY_HANDLE_SENSOR
+  * WEATHER
+  * CLIMATECONTROL_REGULATOR
+  * CLIMATECONTROL_VENT_DRIVE
+  * SENSOR
+  * ... ?
 
+Später
+
+  * Links hinzufügen etc komfortabler gestalten
   * Service-Meldungen und Alarme?
-  * neue und verbesserte Widgets
   * Timestamps oder vergangene Zeit anzeigen?
+
 
 ## Lizenz / Copyright
 

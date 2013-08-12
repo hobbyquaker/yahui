@@ -14,6 +14,8 @@
 
 $(document).ready(function () {
 
+
+
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {
         $.getScript("/lib/js/jquery.ui.touch-punch.min.js").done(function(script, textStatus) {
             $.getScript("/lib/js/dropzone.js").done(function(script, textStatus) {
@@ -65,15 +67,20 @@ $(document).ready(function () {
         $(".ui-sortable").sortable("destroy");
         data.toPage.find(".ui-listview").sortable({
             start: function (e, ui) {
-                console.log("drag start");
-                console.log(ui.item);
                 ui.item.addClass("drag-start");
             },
             stop: function (e, ui) {
 
-                console.log("drag stop");
                 ui.item.parent().listview("refresh");
                 ui.item.removeClass("drag-start");
+                var sortOrder = [];
+                ui.item.parent().find("li").each(function () {
+                    var $this = $(this);
+                    sortOrder.push($(this).attr("data-hm-id"));
+                });
+
+                yahui.sortOrder[ui.item.parent().attr("id")] = sortOrder;
+                yahui.socket.emit("writeFile", "yahui-sort.json", yahui.sortOrder);
             }
         });
         $("li.ui-li").each(function() {

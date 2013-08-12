@@ -13,8 +13,17 @@
 
 
 var yahui = {
-    version: "0.9.0",
-    images: []
+    version: "0.9.1",
+    prefix: "",
+    images: [],
+    sortOrder: {},
+    socket: {},
+    links: [
+        {text:"HomeMatic WebUI", subtext:"", url: "http://homematic/", img: "homematic.png", inline: false},
+        {text:"CUxD", subtext:"", url: "http://homematic/addons/cuxd", img: "cuxd.png", inline: false},
+        {text:"CUxD-Highcharts", subtext:"", url: "http://homematic/addons/cuxchart/menu.html", img: "cuxcharts.png", inline: true},
+        {text:"yr.no Wetter", subtext:"", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "yr.png", inline: true}
+    ]
 };
 
 
@@ -24,30 +33,19 @@ $(document).ready(function () {
 
     var url = $.mobile.path.parseUrl(location.href);
 
-    console.log(url);
-
-    if (url.search == "?edit") {
-        // Edit Modus!
-        $.ajaxSetup({
-            cache: true
-        });
-        $.getScript("js/yahui-edit.js")
-        .done(function(script, textStatus) {
-            console.log("edit mode");
-
-        })
-        .fail(function(jqxhr, settings, exception) {
-
-        });
-    }
-
     $(".yahui-version").html(yahui.version);
+    $(".yahui-prefix").html(yahui.prefix);
+
+
+    // Diese 3 Objekte beinhalten die CCU Daten.
+    // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
+    var regaObjects, datapoints, regaIndex;
 
     // Verbindung zu CCU.IO herstellen.
-    var socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
+    yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
 
     // Von CCU.IO empfangene Events verarbeiten
-    socket.on('event', function(obj) {
+    yahui.socket.on('event', function(obj) {
         console.log(obj);
         // id = obj[0], value = obj[1], timestamp = obj[2], acknowledge = obj[3]
 
@@ -58,9 +56,8 @@ $(document).ready(function () {
         updateWidgets(obj[0], obj[1], obj[2], obj[3]);
     });
 
-
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
-    socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
+    yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
         console.log(dirArr);
         for (var i = 0; i < dirArr.length; i++) {
             var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
@@ -69,18 +66,34 @@ $(document).ready(function () {
         console.log(yahui.images);
     });
 
+    // Sortierung laden
+    yahui.socket.emit('readFile', 'yahui-sort.json', function (data) {
+        if (data) { yahui.sortOrder = data; }
+        console.log(yahui.sortOrder);
+
+        // ---------- "Hier geht's los" ----------- //
+        getDatapoints();
+        renderLinks();
+    });
 
 
-    // Diese 3 Objekte beinhalten die CCU Daten.
-    // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
-    var regaObjects, datapoints, regaIndex;
-
-    // "Hier geht's los"
-    getDatapoints();
+    // Sind wir im Edit-Mode?
+    if (url.search == "?edit") {
+        // Edit Modus!
+        $.ajaxSetup({
+            cache: true
+        });
+        $.getScript("js/yahui-edit.js")
+            .done(function(script, textStatus) {
+                console.log("edit mode");
+            })
+            .fail(function(jqxhr, settings, exception) {
+            });
+    }
 
     // Laedt die Werte und Timestamps aller Datenpunkte
     function getDatapoints() {
-        socket.emit('getDatapoints', function(obj) {
+        yahui.socket.emit('getDatapoints', function(obj) {
             datapoints = obj;
             // Weiter gehts mit den Rega Objekten
             getObjects();
@@ -89,7 +102,7 @@ $(document).ready(function () {
 
     // Laedt Metainformationen zu Rega Objekten
     function getObjects() {
-        socket.emit('getObjects', function(obj) {
+        yahui.socket.emit('getObjects', function(obj) {
 		console.log("received objects");
 		console.log(obj);
             regaObjects = obj;
@@ -113,7 +126,7 @@ $(document).ready(function () {
 
     // Laedt Index von ccu.io fuer komfortables auffinden von Objekten
     function getIndex() {
-        socket.emit('getIndex', function(obj) {
+        yahui.socket.emit('getIndex', function(obj) {
             regaIndex = obj;
 
             // Nun sind alle 3 Objekte (regaIndex, regaObjects und datapoints) von ccu.io geladen,
@@ -130,48 +143,74 @@ $(document).ready(function () {
 
     // Menü-Seite (Favoriten, Räume und Gewerke) aufbauen
     function renderMenu(en, selector) {
+        console.log("renderMenu "+en);
         var domObj = $(selector);
+        var sortOrder = [];
+        var index = [];
         var img;
-        var defimg = "images/default/page.png";
         var name, link;
         switch (en) {
             case "ENUM_ROOMS":
                 defimg = "images/default/room.png";
-                name = "R&auml;ume"
+                name = "Räume";
+                sortOrder = yahui.sortOrder["listRooms"];
                 break;
             case "ENUM_FUNCTIONS":
                 defimg = "images/default/function.png";
                 name = "Gewerke";
+                sortOrder = yahui.sortOrder["listFunctions"];
                 break;
             case "FAVORITE":
                 defimg = "images/default/favorite.png";
+                sortOrder = yahui.sortOrder["listFavs"];
                 name = "Favoriten";
                 break;
 
         }
-        for (var i = 0; i < regaIndex[en].length; i++) {
-            var enId = regaIndex[en][i];
-            var enObj = (regaObjects[enId]);
 
-            // User Image vorhanden?
-            if (yahui.images[enId]) {
-                img = "images/user/" + yahui.images[enId];
-            } else {
-                img = defimg;
+        var alreadyRendered = [];
+        if (sortOrder) {
+            console.log("SORT "+en)
+            for (var j = 0; j < sortOrder.length; j++) {
+
+                domObj.append(renderMenuItem(sortOrder[j]));
+                alreadyRendered.push(parseInt(sortOrder[j], 10));
             }
-
-            var li = "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
-                "<img src='"+img+"'>" +
-                "<h2>"+enObj.Name+ "</h2>"+
-                "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
-                "</a></li>";
-            domObj.append(li);
         }
+
+        console.log("AR ");
+        console.log(alreadyRendered);
+        for (var i = 0; i < regaIndex[en].length; i++) {
+            console.log("... "+regaIndex[en][i]);
+            if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
+                console.log("..! "+regaIndex[en][i]);
+                domObj.append(renderMenuItem(regaIndex[en][i]));
+            }
+        }
+
         if (domObj.hasClass('ui-listview')) {
             domObj.listview('refresh');
         } else {
             domObj.trigger("create");
         }
+    }
+
+    function renderMenuItem(enId) {
+        var enObj = (regaObjects[enId]);
+        var defimg = "images/default/page.png";
+
+        // User Image vorhanden?
+        if (yahui.images[enId]) {
+            img = "images/user/" + yahui.images[enId];
+        } else {
+            img = defimg;
+        }
+
+        return "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
+            "<img src='"+img+"'>" +
+            "<h2>"+enObj.Name+ "</h2>"+
+            "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
+            "</a></li>";
     }
 
     // Pages bei Bedarf rendern
@@ -187,6 +226,27 @@ $(document).ready(function () {
             }
         }
     });
+
+    // Link-Seite aufbauen
+    function renderLinks() {
+
+
+
+
+        for (var i = 0; i < yahui.links.length; i++) {
+            var link = yahui.links[i];
+
+            var item = "<li><a href='"+link.url+"'>" +
+                "<img src='images/user/"+link.img+"'>" +
+                "<h2>"+link.text+ "</h2>"+
+                "<p>"+link.subtext+"</p>" +
+                "</a></li>";
+
+            $("ul#listLinks").append(item);
+        }
+
+
+    }
 
     // Baut eine Page auf
     function renderPage(pageId, prepend) {
@@ -214,7 +274,7 @@ $(document).ready(function () {
         var page = '<div id="page_'+pageId+'" data-role="page">' +
             '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
             '<a href="'+link+'" data-role="button" data-icon="arrow-l" data-theme="b">'+name+'</a>' +
-            '<h1>' +regaObj.Name + '</h1>' +
+            '<h1>' +yahui.prefix+regaObj.Name + '</h1>' +
             //'<a href="?edit" data-icon="gear">Edit</a>' +
             '</div><div data-role="content">' +
             '<ul data-role="listview" id="list_'+pageId+'"></ul></div></div>';
@@ -264,11 +324,11 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
                             console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
-                            socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
                         });
                         $("#switch_"+elId).on( 'slidestop', function( event ) {
                             console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
-                            socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
 
@@ -293,7 +353,7 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
                             console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
-                            socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
                         });
                     }, 500);
                     break;
@@ -325,7 +385,7 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $("#switch_"+elId).on( 'slidestop', function( event ) {
                             console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
-                            socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
                     break;
@@ -344,7 +404,7 @@ $(document).ready(function () {
                         if (regaObjects[dpId].Name.match(/\.METER$/)) {
                             val = val.toFixed(3);
                         }
-                        content += "<tr><td>"+dp+"</td><td><span class='hm-val' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
+                        content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
                     }
                     content += "</table></div></li>";
                     list.append(content);
@@ -365,12 +425,14 @@ $(document).ready(function () {
                     var val = datapoints[id][0];
                     if (val == true) { val = 1; }
                     if (val == false) { val = 0; }
-                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    content += "<span class='hm-html' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
                     break;
 
                 default:
-                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    content += "<span class='hm-html' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
                 }
+                list.append(content);
+
 
 
             } else {
@@ -378,25 +440,51 @@ $(document).ready(function () {
                     '<div class="yahui-a">'+el.Name+'</div>' +
                     '<div class="yahui-bc">';
                 switch (regaObjects[id].ValueType) {
-                case 2:
-                case 16:
-                    var valueList = regaObjects[id].ValueList.split(";")
-                    var val = datapoints[id][0];
-                    if (val == true) { val = 1; }
-                    if (val == false) { val = 0; }
-                    content += "<select>";
-                    for (var i = 0; i < valueList.length; i++) {
-                        content += '<option value="'+i+'">'+valueList[i]+'</option>';
-                    }
-                    content += '</select>'+regaObjects[id].ValueUnit+"</div></li>";
-                    break;
-                default:
-                    content += "<span class='hm-val' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    case 2: // Boolean
+                    case 16: // Werteliste
+                        var valueList = regaObjects[id].ValueList.split(";")
+                        var val = datapoints[id][0];
+                        if (val == true) { val = 1; }
+                        if (val == false) { val = 0; }
+                        content += '<select id="select_'+elId+'" data-hm-id="'+id+'">';
+                        for (var i = 0; i < valueList.length; i++) {
+                            content += '<option  value="'+i+'">'+valueList[i]+'</option>';
+                        }
+                        content += '</select>'+regaObjects[id].ValueUnit+"</div></li>";
+                        list.append(content);
+                        setTimeout(function () {
+                            $("#select_"+elId).on( 'change', function( event ) {
+                                console.log("select "+event.target.value+" "+event.target.dataset.hmId);
+                                var val = parseInt($("#select_"+elId+" option:selected").val(), 10);
 
+                                yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), val]);
+                            });
+                        }, 500);
+                        break;
+
+                    case 4: // Zahlenwert
+                        var unit = regaObjects[id].ValueUnit;
+                    case 20: // Zeichenkette
+                        if (!unit) { unit = ""; }
+                        var val = datapoints[id][0];
+                        content += '<input type="text" id="input_'+id+'" class="hm-val" data-hm-id="'+id+'" value="'+String(datapoints[id][0]).replace(/"/g, "&quot;")+'"  />'+unit;
+                        list.append(content);
+                        setTimeout(function () {
+                            $("#input_"+id).change(function( event ) {
+                                console.log("input "+event.target.value+" "+event.target.dataset.hmId);
+                                //var id = event.target.dataset.hmId;
+                                var val = $("#input_"+id).val();
+                                console.log("setState"+JSON.stringify([id, val]));
+                                yahui.socket.emit("setState", [id, val]);
+                            });
+                        }, 500);
+                        break;
+                default:
+                    content += "<span class='hm-html' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    list.append(content);
                 }
 
             }
-            list.append(content);
             break;
         case "PROGRAM":
 
@@ -404,9 +492,15 @@ $(document).ready(function () {
             content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                 '<div class="yahui-a">'+el.Name+'</div>' +
                 '<div class="yahui-bc">' +
-                '<a href="#" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +
+                '<a href="#" class="yahui-program" data-hm-id="'+id+'" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +
                 "</div></li>";
             list.append(content);
+            setTimeout(function () {
+                $('a.yahui-program[data-hm-id="'+id+'"]').on('click', function( event ) {
+                    console.log("programExecute "+id);
+                    yahui.socket.emit("programExecute", [id]);
+                });
+            }, 500);
             break;
         default:
         }
@@ -415,19 +509,43 @@ $(document).ready(function () {
     }
 
     function updateWidgets(id, val, ts, ack) {
-        // Alle Elemente mit passender id suchen
-        $("span[data-hm-id='"+id+"']").each(function () {
+
+        $(".hm-html[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var datapoint   = regaObjects[id];
-
-            if ($this.data("hm-val")) {
-                switch (datapoint.ValueType) {
+            switch (datapoint.ValueType) {
                 case 2:
-                    $this.html(val);
+                case 16:
+                    var valueList = regaObjects[id].ValueList.split(";")
+                    if (val == true) { val = 1; }
+                    if (val == false) { val = 0; }
+                    $this.html(valueList[val]);
                     break;
+                default:
+                    $this.html(val);
 
-                }
             }
+
+
+        });
+        $(".hm-val[data-hm-id='"+id+"']").each(function () {
+            var $this = $(this);
+            var datapoint   = regaObjects[id];
+            switch (datapoint.ValueType) {
+                case 2:
+                case 16:
+                    var valueList = regaObjects[id].ValueList.split(";")
+                    if (val == true) { val = 1; }
+                    if (val == false) { val = 0; }
+                    $this.val(valueList[val]);
+                    break;
+                default:
+                    // Todo Update verhindern wenn Focus, allerdings muss dann Update erfolgen wenn Focus wieder weg ist.
+                    //if (!$this.parent().hasClass("ui-focus")) {
+                    $this.val(val);
+                    //}
+            }
+
 
         });
 
@@ -461,7 +579,7 @@ $(document).ready(function () {
                 $this.val(pos).slider('refresh');
             }
         });
-        $("select[data-role='slider'][data-hm-id='"+id+"']").each(function () {
+        $("select[id^='switch'][data-role='slider'][data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var working = false;
             var direction = 0;
@@ -487,6 +605,14 @@ $(document).ready(function () {
                 $this.slider("refresh");
             }
 
+        });
+
+        $("select[id^=select][data-hm-id='"+id+"']").each(function() {
+            console.log("select change");
+            var $this = $(this);
+            $this.find("option").removeAttr("selected");
+            $this.find("option[value='"+val+"']").prop("selected", true);
+            $this.selectmenu("refresh");
         });
     }
 

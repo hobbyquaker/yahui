@@ -299,6 +299,8 @@ $(document).ready(function () {
         var img, defimg = "images/default/widget.png";
         if (yahui.images[id]) {
             img = "images/user/" + yahui.images[id];
+        } else {
+            img = defimg;
         }
         console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {

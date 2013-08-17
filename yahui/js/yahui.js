@@ -417,6 +417,20 @@ $(document).ready(function () {
                         '</p></div></li>';
                     list.append(content);
                     break;
+                case "CLIMATECONTROL_VENT_DRIVE":
+                    //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span style="" data-hm-id="'+el.DPs.VALVE_STATE+'" class="hm-html">'+datapoints[el.DPs.VALVE_STATE][0]+'</span>' +
+                        regaObjects[el.DPs.VALVE_STATE].ValueUnit +
+                        //since +
+                        '</h3></div></li>';
+                    list.append(content);
+                    break;
+                case "WINDOW_SWITCH_RECEIVER":
+                    break;
                 case "WEATHER":
                     defimg = "images/default/motion.png";
                     img = (img ? img : defimg);

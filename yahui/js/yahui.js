@@ -429,6 +429,28 @@ $(document).ready(function () {
                         '</h3></div></li>';
                     list.append(content);
                     break;
+                case "CLIMATECONTROL_REGULATOR":
+                    //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c">' +
+                        '<div style="display: inline-block; width: 70px;">' +
+                        '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" id="input_'+id+'" class="hm-val" data-hm-id="'+el.DPs.SETPOINT+'" value="'+datapoints[el.DPs.SETPOINT][0]+'"  />' +
+                        '</div> '+
+                        regaObjects[el.DPs.SETPOINT].ValueUnit +
+                        '</div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("#input_"+id).change(function( event ) {
+                            //console.log("input "+event.target.value+" "+event.target.dataset.hmId);
+                            //var id = event.target.dataset.hmId;
+                            var val = $("#input_"+id).val();
+                            //console.log("setState"+JSON.stringify([id, val]));
+                            yahui.socket.emit("setState", [id, val]);
+                        });
+                    }, 500);
+                    break;
                 case "WINDOW_SWITCH_RECEIVER":
                     break;
                 case "WEATHER":

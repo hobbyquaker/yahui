@@ -366,6 +366,7 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "KEY":
+                case "VIRTUAL_KEY":
                     defimg = "images/default/key.png";
                     img = (img ? img : defimg);
                     var shortId = regaObjects[id].DPs.PRESS_SHORT;
@@ -402,28 +403,46 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "MOTION_DETECTOR":
-                    since = " <span class='yahui-since'>seit "+datapoints[el.DPs.MOTION][1]+"</span>";
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][1]+"</span></span>";
                     defimg = "images/default/motion.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
-                        (datapoints[el.DPs.MOTION][0] ? "Bewegung" : "Keine Bewegung") + since +
+                        '<span style="'+(datapoints[el.DPs.MOTION][0]?'display:none':'')+'" data-hm-id="'+el.DPs.MOTION+'" data-hm-state="false" style="">keine Bewegung</span>' +
+                        '<span style="'+(datapoints[el.DPs.MOTION][0]?'':'display:none')+'" data-hm-id="'+el.DPs.MOTION+'" data-hm-state="true" style="">Bewegung</span>' +
+                        since +
                         '</h3><p>Helligkeit: ' + datapoints[el.DPs.BRIGHTNESS][0] +
                         '</p></div></li>';
                     list.append(content);
                     break;
                 case "SHUTTER_CONTACT":
-                    since = " <span class='yahui-since'>seit "+datapoints[el.DPs.STATE][1]+"</span>";
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     defimg = "images/default/motion.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
-                        (datapoints[el.DPs.STATE][0] ? "<span style='color: #080'>geschlossen</span>" : "<span style='color: #c00'>geöffnet</span>") + since +
+                        '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">geschlossen</span>' +
+                        '<span style="color: #c00; '+(datapoints[el.DPs.STATE][0]?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">geöffnet</span>' +
+                        since +
                         '</h3></div></li>';
+                    list.append(content);
+                    break;
+                case "ROTARY_HANDLE_SENSOR":
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">geschlossen</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">gekippt</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">geöffnet</span>' +
+                        since + '</h3></div></li>';
                     list.append(content);
                     break;
 
@@ -566,11 +585,32 @@ $(document).ready(function () {
                     break;
                 default:
                     $this.html(val);
-
             }
-
-
         });
+
+        $(".hm-html-timestamp[data-hm-id='"+id+"']").each(function () {
+            $(this).html(ts);
+        });
+
+        $("[data-hm-state][data-hm-id='"+id+"']").each(function () {
+            var $this = $(this);
+            var datapoint   = regaObjects[id];
+            var state = $this.attr("data-hm-state");
+
+            if (state === "false") {
+                state = false;
+            } else if (state === "true") {
+                state = true;
+            } else {
+                state = parseInt(state, 10);
+            }
+            if (state == val) {
+                $this.show();
+            } else {
+                $this.hide();
+            }
+        });
+
         $(".hm-val[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var datapoint   = regaObjects[id];
@@ -586,11 +626,13 @@ $(document).ready(function () {
                     // Todo Update verhindern wenn Focus, allerdings muss dann Update erfolgen wenn Focus wieder weg ist.
                     //if (!$this.parent().hasClass("ui-focus")) {
                     $this.val(val);
-                    //}
+                //}
             }
 
 
         });
+
+
 
         $("input[data-type='range'][data-hm-id='"+id+"']").each(function () {
             var working = false;

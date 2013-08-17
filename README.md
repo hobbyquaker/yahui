@@ -45,6 +45,13 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 ## Changelog
 
+### 0.9.3
+
+  * neue Widgets: WEATHER, CLIMATECONTROL_VENT_DRIVE, CLIMATE_CONTROL_REGULATOR, SMOKE_DETECTOR_TEAM
+  * WINDOW_SWITCH_RECEIVER ausgeblendet
+  * Links in "Erweiterungen" umbenannt
+  * Neue Seiten Variablen und Programme unter Erweiterungen
+
 ### 0.9.2
 
   * neue Widgets: SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, MOTION_DETECTOR

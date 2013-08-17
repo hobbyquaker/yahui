@@ -13,7 +13,7 @@
 
 
 var yahui = {
-    version: "0.9.1",
+    version: "0.9.2",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -131,7 +131,7 @@ $(document).ready(function () {
 
             // Nun sind alle 3 Objekte (regaIndex, regaObjects und datapoints) von ccu.io geladen,
 
-            // Men�seiten Rendern
+            // Menüseiten Rendern
             renderMenu("FAVORITE", "ul#listFavs");
             renderMenu("ENUM_ROOMS", "ul#listRooms");
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
@@ -485,8 +485,8 @@ $(document).ready(function () {
                 case 16:
                     var valueList = regaObjects[id].ValueList.split(";")
                     var val = datapoints[id][0];
-                    if (val == true) { val = 1; }
-                    if (val == false) { val = 0; }
+                    if (val === true) { val = 1; }
+                    if (val === false) { val = 0; }
                     content += "<span class='hm-html' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
                     break;
 
@@ -504,13 +504,19 @@ $(document).ready(function () {
                 switch (regaObjects[id].ValueType) {
                     case 2: // Boolean
                     case 16: // Werteliste
+                        var selected = "";
                         var valueList = regaObjects[id].ValueList.split(";")
                         var val = datapoints[id][0];
                         if (val == true) { val = 1; }
                         if (val == false) { val = 0; }
                         content += '<select id="select_'+elId+'" data-hm-id="'+id+'">';
                         for (var i = 0; i < valueList.length; i++) {
-                            content += '<option  value="'+i+'">'+valueList[i]+'</option>';
+                            if (datapoints[id][0] == i) {
+                                selected = " selected";
+                            } else {
+                                selected = "";
+                            }
+                            content += '<option value="'+i+'"'+selected+'>'+valueList[i]+'</option>';
                         }
                         content += '</select>'+regaObjects[id].ValueUnit+"</div></li>";
                         list.append(content);

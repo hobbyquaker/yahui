@@ -43,18 +43,24 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js editieren...
 
+## Changelog
+
+### 0.9.2
+
+  * neue Widgets: SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, MOTION_DETECTOR
+  * Style-Anpassungen
+  * Fehler behoben bei Variablentyp Werteliste
+
 ## ToDo
 
+  * neuer Reiter Variablen
   * "inline" Anzeige von Links
 
 Fehlende Widgets ergänzen:
 
-  * SHUTTER_CONTACT
-  * ROTARY_HANDLE_SENSOR
   * WEATHER
   * CLIMATECONTROL_REGULATOR
   * CLIMATECONTROL_VENT_DRIVE
-  * SENSOR
   * ... ?
 
 Später

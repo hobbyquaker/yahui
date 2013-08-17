@@ -417,6 +417,40 @@ $(document).ready(function () {
                         '</p></div></li>';
                     list.append(content);
                     break;
+                case "WEATHER":
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    if (el.DPs.DEW_POINT) {
+                        // CUxD
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                            '<div class="yahui-a">'+el.Name+'</div>' +
+                            '<div class="yahui-b">' + lowbat +
+                            '</div><div class="yahui-c"><h3>' +
+                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
+                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
+                            ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
+                            regaObjects[el.DPs.TEMP_MIN_24H].ValueUnit +
+                            ' max <span data-hm-id="'+el.DPs.TEMP_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MAX_24H][0]+'</span>' +
+                            regaObjects[el.DPs.TEMP_MAX_24H].ValueUnit +
+                            ')</span></h3><p>Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
+                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit +
+                            ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
+                            '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit+'</p></div></li>';
+                    } else {
+                        // HomeMatic
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                            '<div class="yahui-a">'+el.Name+'</div>' +
+                            '<div class="yahui-b">' + lowbat +
+                            '</div><div class="yahui-c"><h3>' +
+                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
+                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
+                            '</h3><p>Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
+                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit +
+                            '</p></div></li>';
+                    }
+
+                    list.append(content);
+                    break;
                 case "SHUTTER_CONTACT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     defimg = "images/default/motion.png";

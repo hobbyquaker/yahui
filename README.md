@@ -50,6 +50,7 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
   * neue Widgets: SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, MOTION_DETECTOR
   * Style-Anpassungen
   * Fehler behoben bei Variablentyp Werteliste
+  * LOWBAT Meldung wird als leere-Batterie-Icon angezeigt
 
 ## ToDo
 

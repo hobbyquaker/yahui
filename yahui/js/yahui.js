@@ -19,6 +19,8 @@ var yahui = {
     sortOrder: {},
     socket: {},
     links: [
+        {text:"Variablen", subtext:"", url: "#variables", img: "dummy.png", inline: true},
+        {text:"Programme", subtext:"", url: "#programs", img: "dummy.png", inline: true},
         {text:"HomeMatic WebUI", subtext:"", url: "http://homematic/", img: "homematic.png", inline: false},
         {text:"CUxD", subtext:"", url: "http://homematic/addons/cuxd", img: "cuxd.png", inline: false},
         {text:"CUxD-Highcharts", subtext:"", url: "http://homematic/addons/cuxchart/menu.html", img: "cuxcharts.png", inline: true},
@@ -106,7 +108,6 @@ $(document).ready(function () {
 		console.log("received objects");
 		console.log(obj);
             regaObjects = obj;
-            // Nun sind alle 3 Objekte von CCU.IO empfangen worden
 
             // Starten wir mit einer Page? Wenn ja schnell Rendern.
             if ( url.hash.search(/^#page_/) !== -1 ) {
@@ -135,6 +136,9 @@ $(document).ready(function () {
             renderMenu("FAVORITE", "ul#listFavs");
             renderMenu("ENUM_ROOMS", "ul#listRooms");
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
+
+            // Variablen und Programmseite rendern
+            renderVariables();
 
             // "wir sind fertig".
 
@@ -259,7 +263,7 @@ $(document).ready(function () {
             link = "#favs";
             break;
         case "ENUM_ROOMS":
-            name = "R&auml;ume";
+            name = "Räume";
             link = "#rooms";
             break;
         case "ENUM_FUNCTIONS":
@@ -267,7 +271,7 @@ $(document).ready(function () {
             link = "#funcs";
             break;
         default:
-            name = "Zur&uuml;ck";
+            name = "Zurück";
             link = "#";
         }
 
@@ -288,7 +292,39 @@ $(document).ready(function () {
             var chId = regaObj.Channels[l];
             renderWidget(list, chId);
         }
+    }
 
+    function renderVariables() {
+        var page = '<div id="variables" data-role="page">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+            '<h1>Variablen</h1>' +
+            //'<a href="?edit" data-icon="gear">Edit</a>' +
+            '</div><div data-role="content">' +
+            '<ul data-role="listview" id="list_variables"></ul></div></div>';
+        body.prepend(page);
+        var list = $("ul#list_variables");
+        for (var l = 0; l < regaIndex.VARDP.length; l++) {
+            var chId = regaIndex.VARDP[l];
+            renderWidget(list, chId);
+        }
+        renderPrograms();
+    }
+
+    function renderPrograms() {
+        var page = '<div id="programs" data-role="page">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+            '<h1>Programme</h1>' +
+            //'<a href="?edit" data-icon="gear">Edit</a>' +
+            '</div><div data-role="content">' +
+            '<ul data-role="listview" id="list_programs"></ul></div></div>';
+        body.prepend(page);
+        var list = $("ul#list_programs");
+        for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
+            var chId = regaIndex.PROGRAM[l];
+            renderWidget(list, chId);
+        }
     }
 
     // erzeugt ein Bedien-/Anzeige-Element
@@ -557,8 +593,12 @@ $(document).ready(function () {
             }
             break;
         case "VARDP":
+            console.log("VARDP "+id);
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
-            var readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*r[^\)]*\)/) ? true : false );
+            var readOnly;
+            if (regaObjects[id].DPInfo) {
+                readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*r[^\)]*\)/) ? true : false );
+            }
             img = (img ? img : defimg);
             if (readOnly) {
                 content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
@@ -589,8 +629,10 @@ $(document).ready(function () {
                     case 2: // Boolean
                     case 16: // Werteliste
                         var selected = "";
-                        var valueList = regaObjects[id].ValueList.split(";")
-                        var val = datapoints[id][0];
+                        if (regaObjects[id].ValueList && regaObjects[id].ValueList != "") {
+                            var valueList = regaObjects[id].ValueList.split(";")
+                        }
+                         var val = datapoints[id][0];
                         if (val == true) { val = 1; }
                         if (val == false) { val = 0; }
                         content += '<select id="select_'+elId+'" data-hm-id="'+id+'">';

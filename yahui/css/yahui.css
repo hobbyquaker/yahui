@@ -10,7 +10,11 @@ li.yahui-widget {
 }
 
 
-
+.yahui-lowbat {
+    width: 16px;
+    padding-left: 3px;
+    vertical-align: bottom;
+}
 
 /* Eingabefeld neben Slider ausblenden */
 input.ui-slider-input {

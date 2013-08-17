@@ -38,7 +38,7 @@ $(document).ready(function () {
 
 
     // Diese 3 Objekte beinhalten die CCU Daten.
-    // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
+    // Unter http://hostname:8080/ccu.io/ kï¿½nnen diese Objekte inspiziert werden.
     var regaObjects, datapoints, regaIndex;
 
     // Verbindung zu CCU.IO herstellen.
@@ -131,7 +131,7 @@ $(document).ready(function () {
 
             // Nun sind alle 3 Objekte (regaIndex, regaObjects und datapoints) von ccu.io geladen,
 
-            // Menüseiten Rendern
+            // Menï¿½seiten Rendern
             renderMenu("FAVORITE", "ul#listFavs");
             renderMenu("ENUM_ROOMS", "ul#listRooms");
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
@@ -141,7 +141,7 @@ $(document).ready(function () {
         });
     }
 
-    // Menü-Seite (Favoriten, Räume und Gewerke) aufbauen
+    // Menï¿½-Seite (Favoriten, Rï¿½ume und Gewerke) aufbauen
     function renderMenu(en, selector) {
         //console.log("renderMenu "+en);
         var domObj = $(selector);
@@ -152,7 +152,7 @@ $(document).ready(function () {
         switch (en) {
             case "ENUM_ROOMS":
                 defimg = "images/default/room.png";
-                name = "Räume";
+                name = "Rï¿½ume";
                 sortOrder = yahui.sortOrder["listRooms"];
                 break;
             case "ENUM_FUNCTIONS":
@@ -294,6 +294,7 @@ $(document).ready(function () {
     // erzeugt ein Bedien-/Anzeige-Element
     function renderWidget(list, id) {
         var el = regaObjects[id];
+        var lowbat = "";
         var elId = list.attr("id") + "_" + id;
 
         var img, defimg = "images/default/widget.png";
@@ -305,6 +306,9 @@ $(document).ready(function () {
         //console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {
         case "CHANNEL":
+            if (el.DPs.LOWBAT && datapoints[el.DPs.LOWBAT].Value) {
+                lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
+            }
             switch (el.HssType) {
                 case "DIMMER":
                     defimg = "images/default/dimmer.png";
@@ -317,7 +321,7 @@ $(document).ready(function () {
                         '<select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Aus</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>An</option>' +
-                        '</select><span data-hm-id="'+directionId+'" class="yahui-direction"></span></div><div class="yahui-c">' +
+                        '</select>'+lowbat+'<span data-hm-id="'+directionId+'" class="yahui-direction"></span></div><div class="yahui-c">' +
                         '<input id="'+elId+'" type="range" data-hm-factor="100" data-hm-id="'+levelId +
                         '" name="slider_'+elId+'" id="slider_'+elId+'" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
 
@@ -368,7 +372,9 @@ $(document).ready(function () {
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
                         '<input type="button" data-hm-id="'+shortId+'" name="press_short" value="kurz" data-inline="true"/> ' +
-                        '<input type="button" data-hm-id="'+longId+'" name="press_long" value="lang" data-inline="true"/></div></li>';
+                        '<input type="button" data-hm-id="'+longId+'" name="press_long" value="lang" data-inline="true"/>' +
+                        lowbat +
+                        '</div></li>';
                     list.append(content);
                     break;
                 case "SWITCH":
@@ -382,7 +388,9 @@ $(document).ready(function () {
                         '<select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Aus</option>' +
                         '<option value="1"'+((datapoints[stateId][0] != 0) ? ' selected' : '')+'>An</option>' +
-                        '</select></div></li>';
+                        '</select>' +
+                        lowbat +
+                        '</div></li>';
                     list.append(content);
                     setTimeout(function () {
                         $("#switch_"+elId).on( 'slidestop', function( event ) {
@@ -397,6 +405,7 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
+                        lowbat +
                         '</div><div class="yahui-c"><table class="yahui-datapoints">';
                     for (var dp in regaObjects[id].DPs) {
                         var dpId = regaObjects[id].DPs[dp];
@@ -406,7 +415,11 @@ $(document).ready(function () {
                         if (regaObjects[dpId].Name.match(/\.METER$/)) {
                             val = val.toFixed(3);
                         }
-                        content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
+                        if (regaObjects[dpId].Name.match(/\.LOWBAT$/)) {
+
+                        } else {
+                            content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
+                        }
                     }
                     content += "</table></div></li>";
                     list.append(content);

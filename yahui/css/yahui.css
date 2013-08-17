@@ -16,6 +16,11 @@ li.yahui-widget {
     vertical-align: bottom;
 }
 
+.yahui-since {
+    font-size: 11px;
+    font-weight: normal;
+}
+
 /* Eingabefeld neben Slider ausblenden */
 input.ui-slider-input {
     display : none !important;

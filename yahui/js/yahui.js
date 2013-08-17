@@ -402,7 +402,7 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "MOTION_DETECTOR":
-                    since = " <span style='font-size:11px'>seit "+datapoints[el.DPs.MOTION][1]+"</span>";
+                    since = " <span class='yahui-since'>seit "+datapoints[el.DPs.MOTION][1]+"</span>";
                     defimg = "images/default/motion.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
@@ -413,7 +413,19 @@ $(document).ready(function () {
                         '</h3><p>Helligkeit: ' + datapoints[el.DPs.BRIGHTNESS][0] +
                         '</p></div></li>';
                     list.append(content);
-
+                    break;
+                case "SHUTTER_CONTACT":
+                    since = " <span class='yahui-since'>seit "+datapoints[el.DPs.STATE][1]+"</span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        (datapoints[el.DPs.STATE][0] ? "<span style='color: #080'>geschlossen</span>" : "<span style='color: #c00'>geöffnet</span>") + since +
+                        '</h3></div></li>';
+                    list.append(content);
+                    break;
 
                 default:
 

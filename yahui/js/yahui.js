@@ -646,10 +646,14 @@ $(document).ready(function () {
             switch (datapoint.ValueType) {
                 case 2:
                 case 16:
-                    var valueList = regaObjects[id].ValueList.split(";")
-                    if (val == true) { val = 1; }
-                    if (val == false) { val = 0; }
-                    $this.html(valueList[val]);
+                    if (regaObjects[id].ValueList && regaObjects[id].ValueList != "") {
+                        var valueList = regaObjects[id].ValueList.split(";")
+                        if (val == true) { val = 1; }
+                        if (val == false) { val = 0; }
+                        $this.html(valueList[val]);
+                    } else {
+                        $this.html(val);
+                    }
                     break;
                 default:
                     $this.html(val);

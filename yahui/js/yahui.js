@@ -294,6 +294,7 @@ $(document).ready(function () {
     // erzeugt ein Bedien-/Anzeige-Element
     function renderWidget(list, id) {
         var el = regaObjects[id];
+        var since = "";
         var lowbat = "";
         var elId = list.attr("id") + "_" + id;
 
@@ -310,6 +311,7 @@ $(document).ready(function () {
                 lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
             }
             switch (el.HssType) {
+
                 case "DIMMER":
                     defimg = "images/default/dimmer.png";
                     var levelId = regaObjects[id].DPs.LEVEL;
@@ -399,6 +401,20 @@ $(document).ready(function () {
                         });
                     }, 500);
                     break;
+                case "MOTION_DETECTOR":
+                    since = " <span style='font-size:11px'>seit "+datapoints[el.DPs.MOTION][1]+"</span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        (datapoints[el.DPs.MOTION][0] ? "Bewegung" : "Keine Bewegung") + since +
+                        '</h3><p>Helligkeit: ' + datapoints[el.DPs.BRIGHTNESS][0] +
+                        '</p></div></li>';
+                    list.append(content);
+
+
                 default:
 
                     img = (img ? img : defimg);

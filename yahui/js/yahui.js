@@ -19,12 +19,13 @@ var yahui = {
     sortOrder: {},
     socket: {},
     links: [
-        {text:"Variablen", subtext:"", url: "#variables", img: "dummy.png", inline: true},
-        {text:"Programme", subtext:"", url: "#programs", img: "dummy.png", inline: true},
-        {text:"HomeMatic WebUI", subtext:"", url: "http://homematic/", img: "homematic.png", inline: false},
-        {text:"CUxD", subtext:"", url: "http://homematic/addons/cuxd", img: "cuxd.png", inline: false},
-        {text:"CUxD-Highcharts", subtext:"", url: "http://homematic/addons/cuxchart/menu.html", img: "cuxcharts.png", inline: true},
-        {text:"yr.no Wetter", subtext:"", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "yr.png", inline: true}
+
+        {text:"CUxD-Highcharts", subtext:"", id:"cuxchart_menu", url: "http://homematic/addons/cuxchart/menu.html", img: "cuxcharts.png"},
+        {text:"yr.no Wetter", subtext:"", id:"yr_meteogramm", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "yr.png"},
+
+        {text:"Programme", subtext:"", url: "#programs", img: "dummy.png"},
+        {text:"Variablen", subtext:"", url: "#variables", img: "dummy.png"}
+
     ]
 };
 
@@ -114,6 +115,11 @@ $(document).ready(function () {
                 var pageId = (url.hash.slice(6));
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId, true);
+                }
+            } else if ( url.hash.search(/^#iframe_/) !== -1 ) {
+                var pageId = (url.hash.slice(8));
+                if (!$("div#iframe_"+pageId).html()) {
+                    renderIFrame(pageId);
                 }
             }
 
@@ -227,9 +233,39 @@ $(document).ready(function () {
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId);
                 }
+            } else if ( u.hash.search(/^#iframe_/) !== -1 ) {
+                var pageId = (u.hash.slice(8));
+                if (!$("div#iframe_"+pageId).html()) {
+                     renderIFrame(pageId);
+                }
             }
         }
     });
+
+    function renderIFrame(pageId) {
+        // URL zur id finden
+        for (var i=0; i< yahui.links.length; i++) {
+            if (yahui.links[i].id == pageId) {
+                var src = yahui.links[i].url;
+                var text = yahui.links[i].text;
+                continue;
+            }
+        }
+
+        var page = '<div id="iframe_'+pageId+'" data-role="page">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+            '<a href="#" id="refresh_'+pageId+'" data-role="button" data-inline="true" data-icon="refresh" data-iconpos="notext" class="yahui-info ui-btn-right"></a>' +
+            '<h1>' + text + '</h1>' +
+            '</div><div style="margin:0;padding:0;min-height:90%" data-role="content">' +
+            '<iframe style="width:100%; min-height:90%; border: none;" src="'+src+'" id="if_'+pageId+'"></iframe></div></div>';
+        body.prepend(page);
+        $("#refresh_"+pageId).click(function () {
+           $("#if_"+pageId).attr('src', function ( i, val ) { return val; });
+        });
+
+
+    }
 
     // Link-Seite aufbauen
     function renderLinks() {
@@ -240,13 +276,25 @@ $(document).ready(function () {
         for (var i = 0; i < yahui.links.length; i++) {
             var link = yahui.links[i];
 
-            var item = "<li><a href='"+link.url+"'>" +
-                "<img src='images/user/"+link.img+"'>" +
-                "<h2>"+link.text+ "</h2>"+
-                "<p>"+link.subtext+"</p>" +
-                "</a></li>";
+            if (link.id) {
+                var item = "<li><a href='#iframe_"+link.id+"'>" +
+                    "<img src='images/user/"+link.img+"'>" +
+                    "<h2>"+link.text+ "</h2>"+
+                    "<p>"+link.subtext+"</p>" +
+                    "</a></li>";
+                $("ul#listLinks").append(item);
 
-            $("ul#listLinks").append(item);
+            } else {
+                var item = "<li><a href='"+link.url+"'>" +
+                    "<img src='images/user/"+link.img+"'>" +
+                    "<h2>"+link.text+ "</h2>"+
+                    "<p>"+link.subtext+"</p>" +
+                    "</a></li>";
+
+                $("ul#listLinks").append(item);
+
+            }
+
         }
 
 

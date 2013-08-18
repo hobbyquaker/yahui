@@ -48,11 +48,13 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 ### 0.9.5
   * Rollladen Widget Fehler behoben
   * Speichern der Sortier-Reihenfolge Fehler behoben
+  * visualisierung der UNREACH Servicemeldung
 
 ### 0.9.4
   * Erweiterungen per iFrame (yr.no und CUxD-Highcharts als Beispiel konfiguriert)
   * DIRECTION bzw. WORKING Datenpunkte von Dimmern und Rollläden werden dargestellt
-  * Kleiner Bugfixes und Styleanpassungen
+  * LOWBAT visualisierung Fehler behoben
+  * Kleine Bugfixes und Styleanpassungen
 
 ### 0.9.3
 

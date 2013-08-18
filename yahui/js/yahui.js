@@ -347,9 +347,12 @@ $(document).ready(function () {
                 alreadyRendered.push(parseInt(sortOrder[j], 10));
             }
         }
+        console.log(alreadyRendered);
         for (var l in regaObj.Channels) {
-            var chId = regaObj.Channels[l];
-            if (alreadyRendered.indexOf(chId) == -1) {
+            var chId = parseInt(regaObj.Channels[l],10);
+            console.log(chId);
+            if (alreadyRendered.indexOf(chId) === -1) {
+                console.log("+ "+chId+ " "+alreadyRendered.indexOf(chId));
                 renderWidget(list, chId);
             }
         }
@@ -393,6 +396,7 @@ $(document).ready(function () {
         var el = regaObjects[id];
         var since = "";
         var lowbat = "";
+        var unreach = "";
         var elId = list.attr("id") + "_" + id;
 
         var img, defimg = "images/default/widget.png";
@@ -411,7 +415,14 @@ $(document).ready(function () {
             } else if (regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
                 if (serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
-                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
+                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig"/>';
+                }
+            }
+
+            if (regaObjects[el.Parent].Channels[0]) {
+                var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
+                if (serviceChannel.DPs.UNREACH && datapoints[serviceChannel.DPs.UNREACH][0]) {
+                    lowbat += '<img class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört"/>';
                 }
             }
 

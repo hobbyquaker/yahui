@@ -21,11 +21,13 @@ li.yahui-widget {
     font-weight: normal;
 }
 
-.yahui-direction {
+.yahui-direction, .yahui-lowbat {
     display: inline-block;
     vertical-align: 18px;
     margin-left: 12px;
 }
+
+
 
 /* Eingabefeld neben Slider ausblenden */
 input.ui-slider-input {

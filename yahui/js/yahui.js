@@ -162,7 +162,7 @@ $(document).ready(function () {
         switch (en) {
             case "ENUM_ROOMS":
                 defimg = "images/default/room.png";
-                name = "R�ume";
+                name = "Räume";
                 sortOrder = yahui.sortOrder["listRooms"];
                 break;
             case "ENUM_FUNCTIONS":
@@ -335,10 +335,23 @@ $(document).ready(function () {
         } else {
             body.append(page);
         }
+
         var list = $("ul#list_"+pageId);
+
+        var sortOrder = yahui.sortOrder["list_"+pageId];
+        var alreadyRendered = [];
+        if (sortOrder) {
+            //console.log("SORT "+en)
+            for (var j = 0; j < sortOrder.length; j++) {
+                renderWidget(list, sortOrder[j]);
+                alreadyRendered.push(parseInt(sortOrder[j], 10));
+            }
+        }
         for (var l in regaObj.Channels) {
             var chId = regaObj.Channels[l];
-            renderWidget(list, chId);
+            if (alreadyRendered.indexOf(chId) == -1) {
+                renderWidget(list, chId);
+            }
         }
     }
 
@@ -391,9 +404,17 @@ $(document).ready(function () {
         //console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
         switch (el.TypeName) {
         case "CHANNEL":
+
+
             if (el.DPs.LOWBAT && datapoints[el.DPs.LOWBAT].Value) {
                 lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
+            } else if (regaObjects[el.Parent].Channels[0]) {
+                var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
+                if (serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
+                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
+                }
             }
+
             switch (el.HssType) {
 
                 case "DIMMER":
@@ -441,7 +462,7 @@ $(document).ready(function () {
                     var directionId = regaObjects[id].DPs.DIRECTION;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
-                        '<div class="yahui-b"><select data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
+                        '<div class="yahui-b"><select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
                         '<option value="0">Zu</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>Auf</option>' +
                         '</select>';
@@ -453,7 +474,7 @@ $(document).ready(function () {
                     }
                     content += '</div><div class="yahui-c">' +
                         '<input type="range" data-hm-factor="100" data-hm-id="'+levelId +
-                        '" name="slider-1" id="slider-1" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
+                        '" name="slider-1" id="'+elId+'" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
 
                     list.append(content);
 
@@ -461,6 +482,10 @@ $(document).ready(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
                             //console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)]);
+                        });
+                        $("#switch_"+elId).on( 'slidestop', function( event ) {
+                            //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
                     break;

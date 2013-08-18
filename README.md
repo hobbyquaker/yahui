@@ -45,6 +45,10 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 ## Changelog
 
+### 0.9.5
+  * Rollladen Widget Fehler behoben
+  * Speichern der Sortier-Reihenfolge Fehler behoben
+
 ### 0.9.4
   * Erweiterungen per iFrame (yr.no und CUxD-Highcharts als Beispiel konfiguriert)
   * DIRECTION bzw. WORKING Datenpunkte von Dimmern und Rollläden werden dargestellt

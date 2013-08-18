@@ -660,7 +660,7 @@ $(document).ready(function () {
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
             if (regaObjects[id].DPInfo) {
-                readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*r[^\)]*\)/) ? true : false );
+                readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*[rR][^\)]*\)/) ? true : false );
             }
             img = (img ? img : defimg);
             if (readOnly) {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -107,8 +107,8 @@
 
     <div data-role="header" data-position="fixed" data-id="f2" data-theme="b">
         <h1>Erweiterungen</h1>
+        <a href="add_link" data-rel="dialog" data-role="button" data-inline="true" data-icon="plus" data-iconpos="notext" class="yahui-info ui-btn-right"></a>
 
-        <!--<a href="#" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>-->
     </div>
 
     <div data-role="content">
@@ -131,27 +131,22 @@
 <div id="info" data-role="page" data-history="false" data-theme="b">
     <div data-role="header" data-theme="b"><h1>yahui <span class="yahui-version"></span></h1></div>
     <div data-role="content" data-theme="b">
-        <h3>"yet another HomeMatic user interface"</h3>
+        <h3><i>Yet Another Homematic User Interface</i></h3>
         <p>
-            <a data-ajax="false" href="https://github.com/hobbyquaker/yahui/blob/master/README.md" target="_blank">ReadMe</a>
+            <a class="yahui-noedit" data-ajax="false" data-role="button" data-icon="gear" href="?edit" target="_self">Edit-Modus</a>
+            <a class="yahui-edit" data-ajax="false" data-role="button" data-icon="gear" href="./" target="_self">Edit-Modus beenden</a>
+            Im Edit-Modus können per Drag&Drop Elemente umsortiert und Bilder hochgeladen werden.
+        </p>
+        <br/>
+        <p>
+            <a data-ajax="false" data-role="button" data-icon="info" href="https://github.com/hobbyquaker/yahui/blob/master/README.md" target="_blank">Dokumentation</a>
+            <a data-ajax="false" data-role="button" data-icon="info" href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank">Forum</a>
             <br/><br/>
             Copyright (c) 2013 <a data-ajax="false" href="http://hobbyquaker.github.io" target="_blank">hobbyquaker</a>
             <br/><br/>
             Lizenz: <a data-ajax="false" href="http://creativecommons.org/licenses/by-nc/3.0/deed.de" target="_blank">CC BY-NC 3.0</a>
         </p>
         <p style="font-size: 10px">
-            Sie dürfen:
-            <br/><br/>
-            das Werk bzw. den Inhalt vervielfältigen, verbreiten und öffentlich zugänglich machen
-            Abwandlungen und Bearbeitungen des Werkes bzw. Inhaltes anfertigen
-            Zu den folgenden Bedingungen:
-            <br/><br/>
-            Namensnennung - Sie müssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.<br/>
-            Keine kommerzielle Nutzung - Dieses Werk bzw. dieser Inhalt darf nicht für kommerzielle Zwecke verwendet werden.<br/>
-            Wobei gilt:
-            <br/><br/>
-            Verzichtserklärung - Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die ausdrückliche Einwilligung des Rechteinhabers dazu erhalten.
-            <br/><br/>
             Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
         </p>
     </div>

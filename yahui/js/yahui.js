@@ -82,6 +82,9 @@ $(document).ready(function () {
 
     // Sind wir im Edit-Mode?
     if (url.search == "?edit") {
+        $(".yahui-edit").show();
+        $(".yahui-noedit").hide();
+
         // Edit Modus!
         $.ajaxSetup({
             cache: true
@@ -92,6 +95,9 @@ $(document).ready(function () {
             })
             .fail(function(jqxhr, settings, exception) {
             });
+    } else {
+        $(".yahui-noedit").show();
+        $(".yahui-edit").hide();
     }
 
     // Laedt die Werte und Timestamps aller Datenpunkte

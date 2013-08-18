@@ -66,21 +66,17 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 ## ToDo
 
-  * neuer Reiter Variablen
-  * "inline" Anzeige von Links
+  * Bugfixes...!
 
 Fehlende Widgets ergänzen:
 
-  * WEATHER
-  * CLIMATECONTROL_REGULATOR
-  * CLIMATECONTROL_VENT_DRIVE
   * ... ?
 
 Später
 
   * Links hinzufügen etc komfortabler gestalten
   * Service-Meldungen und Alarme?
-  * Timestamps oder vergangene Zeit anzeigen?
+  * vergangene Zeit statt Zeitpunkt anzeigen?
 
 
 ## Lizenz / Copyright

@@ -151,7 +151,7 @@ $(document).ready(function () {
         });
     }
 
-    // Men�-Seite (Favoriten, R�ume und Gewerke) aufbauen
+    // Menü-Seiten (Favoriten, Räume und Gewerke) aufbauen
     function renderMenu(en, selector) {
         //console.log("renderMenu "+en);
         var domObj = $(selector);
@@ -407,7 +407,14 @@ $(document).ready(function () {
                         '<select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Aus</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>An</option>' +
-                        '</select>'+lowbat+'<span data-hm-id="'+directionId+'" class="yahui-direction"></span></div><div class="yahui-c">' +
+                        '</select>'+lowbat;
+                    if (directionId) {
+                        content += '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="1" class="ui-icon ui-icon-arrow-u ui-icon-shadow yahui-direction">&nbsp;</span>' +
+                            '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="2" class="ui-icon ui-icon-arrow-d ui-icon-shadow yahui-direction">&nbsp;</span>';
+                    } else if (workingId) {
+                        content += '<span style="display:none;" data-hm-id="'+workingId+'" data-hm-state="true" class="ui-icon ui-icon-refresh ui-icon-shadow yahui-direction">&nbsp;</span>';
+                    }
+                    content += '</div><div class="yahui-c">' +
                         '<input id="'+elId+'" type="range" data-hm-factor="100" data-hm-id="'+levelId +
                         '" name="slider_'+elId+'" id="slider_'+elId+'" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
 
@@ -431,12 +438,20 @@ $(document).ready(function () {
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
-		            content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                    var directionId = regaObjects[id].DPs.DIRECTION;
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b"><select data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
                         '<option value="0">Zu</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>Auf</option>' +
-                        '</select></div><div class="yahui-c">' +
+                        '</select>';
+                    if (directionId) {
+                        content += '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="1" class="ui-icon ui-icon-arrow-u ui-icon-shadow yahui-direction">&nbsp;</span>' +
+                            '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="2" class="ui-icon ui-icon-arrow-d ui-icon-shadow yahui-direction">&nbsp;</span>';
+                    } else if (workingId) {
+                        content += '<span style="display:none;" data-hm-id="'+workingId+'" data-hm-state="true" class="ui-icon ui-icon-refresh ui-icon-shadow yahui-direction">&nbsp;</span>';
+                    }
+                    content += '</div><div class="yahui-c">' +
                         '<input type="range" data-hm-factor="100" data-hm-id="'+levelId +
                         '" name="slider-1" id="slider-1" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
 

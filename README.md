@@ -54,6 +54,7 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 ### 0.9.6
   * Konfiguration möglich über js/settings.js
   * Info-Button kann via settings.js ausgeblendet werden
+  * aktiver Edit-Modus wird nun in der Kopfzeile angezeigt.
   * "Swatches" für Kopfzeile, Inhalt und Menü können via settings.js konfiguriert werden
   * Vorbereitung für Verwaltung der Erweiterungen via GUI, noch unfertig
 

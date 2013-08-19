@@ -124,22 +124,6 @@ $(document).ready(function () {
 
             regaObjects = obj;
 
-            // Starten wir mit einer Page? Wenn ja schnell Rendern.
-            if ( url.hash.search(/^#page_/) !== -1 ) {
-                var pageId = (url.hash.slice(6));
-                if (!$("div#page_"+pageId).html()) {
-                    renderPage(pageId, true);
-                }
-            } else if ( url.hash.search(/^#iframe_/) !== -1 ) {
-                var pageId = (url.hash.slice(8));
-                if (!$("div#iframe_"+pageId).html()) {
-                    renderIFrame(pageId);
-                }
-            }
-
-            // jqMobile initialisieren
-            $.mobile.initializePage();
-
             // Weiter gehts mit dem Laden des Index
             getIndex();
         });
@@ -161,6 +145,26 @@ $(document).ready(function () {
             renderVariables();
 
             // "wir sind fertig".
+
+            // Starten wir mit einer Page? Wenn ja schnell Rendern.
+            if ( url.hash.search(/^#page_/) !== -1 ) {
+                var pageId = (url.hash.slice(6));
+                if (!$("div#page_"+pageId).html()) {
+                    renderPage(pageId, true);
+                }
+            } else if ( url.hash.search(/^#iframe_/) !== -1 ) {
+                var pageId = (url.hash.slice(8));
+                if (!$("div#iframe_"+pageId).html()) {
+                    renderIFrame(pageId);
+                }
+            } else if (url.hash == "#programs") {
+                renderPrograms();
+            } else if (url.hash == "#variables") {
+                renderVariables();
+            }
+
+            // jqMobile initialisieren
+            $.mobile.initializePage();
 
         });
     }
@@ -260,6 +264,10 @@ $(document).ready(function () {
                 if (!$("div#iframe_"+pageId).html()) {
                      renderIFrame(pageId);
                 }
+            } else if (u.hash == "#programs") {
+                renderPrograms();
+            } else if (u.hash == "#variables") {
+                renderVariables();
             }
         }
     });
@@ -353,7 +361,7 @@ $(document).ready(function () {
             page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
         }
         page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_'+pageId+'"></ul></div></div>';
+            '<ul data-role="listview" id="list_'+pageId+'" class="yahui-page"></ul></div></div>';
         if (prepend) {
             body.prepend(page);
         } else {
@@ -381,29 +389,33 @@ $(document).ready(function () {
 
     function renderVariables() {
         var page = '<div id="variables" data-role="page" data-theme="'+settings.swatches.content+'">' +
-            '<div data-role="header" data-position="fixed" data-id="f2">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
             '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
-            '<h1>Variablen</h1>' +
-            //'<a href="?edit" data-icon="gear">Edit</a>' +
-            '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_variables"></ul></div></div>';
+            '<h1>Variablen</h1>';
+        if (!settings.hideInfoButton) {
+            page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+        }
+
+        page += '</div><div data-role="content">' +
+            '<ul data-role="listview" id="list_variables" class="yahui-page"></ul></div></div>';
         body.prepend(page);
         var list = $("ul#list_variables");
         for (var l = 0; l < regaIndex.VARDP.length; l++) {
             var chId = regaIndex.VARDP[l];
             renderWidget(list, chId);
         }
-        renderPrograms();
     }
 
     function renderPrograms() {
         var page = '<div id="programs" data-role="page" data-theme="'+settings.swatches.content+'">' +
             '<div data-role="header" data-position="fixed" data-id="f2"  data-theme="'+settings.swatches.header+'">' +
             '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
-            '<h1>Programme</h1>' +
-            //'<a href="?edit" data-icon="gear">Edit</a>' +
-            '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_programs"></ul></div></div>';
+            '<h1>Programme</h1>';
+        if (!settings.hideInfoButton) {
+            page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+        }
+        page += '</div><div data-role="content">' +
+            '<ul data-role="listview" id="list_programs" class="yahui-page"></ul></div></div>';
         body.prepend(page);
         var list = $("ul#list_programs");
         for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
@@ -435,14 +447,14 @@ $(document).ready(function () {
                 lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
             } else if (regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-                if (serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
+                if (serviceChannel && serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
                     lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig"/>';
                 }
             }
 
             if (regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-                if (serviceChannel.DPs.UNREACH && datapoints[serviceChannel.DPs.UNREACH][0]) {
+                if (serviceChannel && serviceChannel.DPs.UNREACH && datapoints[serviceChannel.DPs.UNREACH][0]) {
                     lowbat += '<img class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört"/>';
                 }
             }
@@ -536,6 +548,7 @@ $(document).ready(function () {
                         '</div></li>';
                     list.append(content);
                     break;
+                case "ALARMACTUATOR":
                 case "SWITCH":
                     defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
@@ -657,6 +670,7 @@ $(document).ready(function () {
                         '</h3></div></li>';
                     list.append(content);
                     break;
+                case "TILT_SENSOR":
                 case "SHUTTER_CONTACT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     defimg = "images/default/motion.png";
@@ -667,6 +681,20 @@ $(document).ready(function () {
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">geschlossen</span>' +
                         '<span style="color: #c00; '+(datapoints[el.DPs.STATE][0]?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">geöffnet</span>' +
+                        since +
+                        '</h3></div></li>';
+                    list.append(content);
+                    break;
+                case "RAINDETECTOR":
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">Trockenheit</span>' +
+                        '<span style="color: #c00; '+(datapoints[el.DPs.STATE][0]?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">Regen</span>' +
                         since +
                         '</h3></div></li>';
                     list.append(content);
@@ -682,6 +710,34 @@ $(document).ready(function () {
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">geschlossen</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">gekippt</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">geöffnet</span>' +
+                        since + '</h3></div></li>';
+                    list.append(content);
+                    break;
+                case "WATERDETECTIONSENSOR":
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">Trocken</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">Feuchtigkeit erkannt</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">Wasserstand erkannt</span>' +
+                        since + '</h3></div></li>';
+                    list.append(content);
+                    break;
+                case "SENSOR_FOR_CARBON_DIOXIDE":
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
+                    defimg = "images/default/motion.png";
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">CO2-Konz. normal</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">CO2-Konz. erhöht</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">CO2-Konz. stark erhöht</span>' +
                         since + '</h3></div></li>';
                     list.append(content);
                     break;

@@ -41,12 +41,22 @@ input.ui-slider-input {
 
 
 /* a, b und c mit voller breite und untereinander */
+.yahui-page .ui-li-has-thumb {
+    padding-left:10px !important;
+    padding-right:35px !important;
+}
+
+.yahui-page .ui-li-has-thumb img {
+    display:none;
+}
+
 .yahui-a {
     display: inline-block;
     vertical-align: middle;
     float: left;
     width: 100%;
     font-size: 18px;
+    min-height: 36px;
 
 }
 .yahui-b {
@@ -67,7 +77,13 @@ input.ui-slider-input {
 
 /* erster breakpoint bei 768px (iPad hochformat). 3 spaltiges layout.  */
 @media all and (min-width: 768px){
-
+    .yahui-page .ui-li-has-thumb img {
+        display:inline;
+    }
+    .yahui-page .ui-li-has-thumb {
+        padding-left:100px !important;
+        padding-right:25px !important;
+    }
     /* a und b nebeneinander, c mit voller breite drunter */
     .yahui-a {
         width: 40%;
@@ -208,7 +224,10 @@ input.ui-slider-input {
 }
 /* Zweiter breakpoint. 4 spaltiges layout. iPad querformat */
 @media all and (min-width: 1020px){
-
+    .yahui-page .ui-li-has-thumb {
+        padding-left:100px !important;
+        padding-right:15px !important;
+    }
     /* a, b und c nebeneinander */
     .yahui-a {
         width: 30%;

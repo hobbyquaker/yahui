@@ -43,7 +43,8 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
 vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
-http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken".
+http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 14 der index.html muss dann die URL
+der jquerymobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
 
 ### Hinzufügen von Links zur Link-Seite
 
@@ -51,12 +52,17 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 ## Changelog
 
+### 0.9.7
+  * Neue Kanaltypen unterstützt: ALARMACTUATOR, RAINDETECTOR, SENSOR_FOR_CARBON_DIOXIDE, TILT_SENSOR, WATERDETECTIONSENSOR
+  * Fehler behoben der dazu führen konnte das keine Darstellung von Geräten mehr erfolgt ist. (Danke Rascal)
+  * Layout/Style-Anpassungen für kleine Auflösungen (Danke Pix)
+
 ### 0.9.6
   * Konfiguration möglich über js/settings.js
   * Info-Button kann via settings.js ausgeblendet werden
   * aktiver Edit-Modus wird nun in der Kopfzeile angezeigt.
-  * "Swatches" für Kopfzeile, Inhalt und Menü können via settings.js konfiguriert werden
-  * Vorbereitung für Verwaltung der Erweiterungen via GUI, noch unfertig
+  * "Swatches" (Farb-Schemata) für Kopfzeile, Inhalt und Menü können via settings.js getrennt konfiguriert werden
+  * Vorbereitung für Verwaltung der "Erweiterungen" via GUI, noch unfertig
 
 ### 0.9.5
   * Rollladen Widget Fehler behoben

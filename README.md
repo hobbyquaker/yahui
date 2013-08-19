@@ -39,6 +39,12 @@ sind können diese einfach in das Verzeichnis yahui/images/user/ kopiert werden.
 
 Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
+### Ändern der Farben
+
+in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
+vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
+http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken".
+
 ### Hinzufügen von Links zur Link-Seite
 
 zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js editieren...

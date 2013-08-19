@@ -13,15 +13,15 @@
 
 
 var yahui = {
-    version: "0.9.5",
+    version: "0.9.6",
     prefix: "",
     images: [],
     sortOrder: {},
     socket: {},
     links: [
 
-        {text:"CUxD-Highcharts", subtext:"", id:"cuxchart_menu", url: "http://homematic/addons/cuxchart/menu.html", img: "cuxcharts.png"},
-        {text:"yr.no Wetter", subtext:"", id:"yr_meteogramm", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "yr.png"},
+        {text:"CUxD-Highcharts", subtext:"", id:"cuxchart_menu", url: "http://homematic/addons/cuxchart/menu.html", img: "dummy.png"},
+        {text:"yr.no Wetter", subtext:"", id:"yr_meteogramm", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "dummy.png"},
 
         {text:"Programme", subtext:"", url: "#programs", img: "dummy.png"},
         {text:"Variablen", subtext:"", url: "#variables", img: "dummy.png"}
@@ -39,6 +39,15 @@ $(document).ready(function () {
     $(".yahui-version").html(yahui.version);
     $(".yahui-prefix").html(yahui.prefix);
 
+    // Themes
+    $("[data-role='header']").attr("data-theme", settings.swatches.header);
+    $("[data-role='page']").attr("data-theme", settings.swatches.content);
+    $("[data-role='footer']").attr("data-theme", settings.swatches.footer);
+
+    // ggf Info-Button ausblenden
+    if (settings.hideInfoButton) {
+        $("a[href='#info']").hide();
+    }
 
     // Diese 3 Objekte beinhalten die CCU Daten.
     // Unter http://hostname:8080/ccu.io/ k�nnen diese Objekte inspiziert werden.
@@ -84,7 +93,7 @@ $(document).ready(function () {
     if (url.search == "?edit") {
         $(".yahui-edit").show();
         $(".yahui-noedit").hide();
-
+        $("#edit_indicator").show();
         // Edit Modus!
         $.ajaxSetup({
             cache: true
@@ -112,8 +121,7 @@ $(document).ready(function () {
     // Laedt Metainformationen zu Rega Objekten
     function getObjects() {
         yahui.socket.emit('getObjects', function(obj) {
-		console.log("received objects");
-		console.log(obj);
+
             regaObjects = obj;
 
             // Starten wir mit einer Page? Wenn ja schnell Rendern.
@@ -233,6 +241,14 @@ $(document).ready(function () {
     $(document).bind( "pagebeforechange", function( e, data ) {
         if ( typeof data.toPage === "string" ) {
             var u = $.mobile.path.parseUrl( data.toPage );
+
+            if ($.mobile.activePage) {
+                $("a.yahui-noedit.yahui-editswitch").attr("href", "./?edit#"+ $.mobile.activePage.attr('id'));
+                $("a.yahui-edit.yahui-editswitch ").attr("href", "./#"+ $.mobile.activePage.attr('id'));
+
+            }
+
+
             // Kommt die Zeichenkette #page_ im Hash vor?
             if ( u.hash.search(/^#page_/) !== -1 ) {
                 var pageId = (u.hash.slice(6));
@@ -258,9 +274,9 @@ $(document).ready(function () {
             }
         }
 
-        var page = '<div id="iframe_'+pageId+'" data-role="page">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
-            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+        var page = '<div id="iframe_'+pageId+'" data-role="page" data-theme="'+settings.swatches.content+'">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
             '<a href="#" id="refresh_'+pageId+'" data-role="button" data-inline="true" data-icon="refresh" data-iconpos="notext" class="yahui-info ui-btn-right"></a>' +
             '<h1>' + text + '</h1>' +
             '</div><div style="margin:0;padding:0;min-height:90%" data-role="content">' +
@@ -329,12 +345,14 @@ $(document).ready(function () {
             link = "#";
         }
 
-        var page = '<div id="page_'+pageId+'" data-role="page">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
-            '<a href="'+link+'" data-role="button" data-icon="arrow-l" data-theme="b">'+name+'</a>' +
-            '<h1>' +yahui.prefix+regaObj.Name + '</h1>' +
-            //'<a href="?edit" data-icon="gear">Edit</a>' +
-            '</div><div data-role="content">' +
+        var page = '<div id="page_'+pageId+'" data-role="page" data-theme="'+settings.swatches.content+'">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
+            '<a href="'+link+'" data-role="button" data-icon="arrow-l">'+name+'</a>' +
+            '<h1>' +yahui.prefix+regaObj.Name + '</h1>';
+        if (!settings.hideInfoButton) {
+            page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+        }
+        page += '</div><div data-role="content">' +
             '<ul data-role="listview" id="list_'+pageId+'"></ul></div></div>';
         if (prepend) {
             body.prepend(page);
@@ -353,21 +371,18 @@ $(document).ready(function () {
                 alreadyRendered.push(parseInt(sortOrder[j], 10));
             }
         }
-        console.log(alreadyRendered);
         for (var l in regaObj.Channels) {
             var chId = parseInt(regaObj.Channels[l],10);
-            console.log(chId);
             if (alreadyRendered.indexOf(chId) === -1) {
-                console.log("+ "+chId+ " "+alreadyRendered.indexOf(chId));
                 renderWidget(list, chId);
             }
         }
     }
 
     function renderVariables() {
-        var page = '<div id="variables" data-role="page">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
-            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+        var page = '<div id="variables" data-role="page" data-theme="'+settings.swatches.content+'">' +
+            '<div data-role="header" data-position="fixed" data-id="f2">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
             '<h1>Variablen</h1>' +
             //'<a href="?edit" data-icon="gear">Edit</a>' +
             '</div><div data-role="content">' +
@@ -382,9 +397,9 @@ $(document).ready(function () {
     }
 
     function renderPrograms() {
-        var page = '<div id="programs" data-role="page">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="b">' +
-            '<a href="#links" data-role="button" data-icon="arrow-l" data-theme="b">Erweiterungen</a>' +
+        var page = '<div id="programs" data-role="page" data-theme="'+settings.swatches.content+'">' +
+            '<div data-role="header" data-position="fixed" data-id="f2"  data-theme="'+settings.swatches.header+'">' +
+            '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
             '<h1>Programme</h1>' +
             //'<a href="?edit" data-icon="gear">Edit</a>' +
             '</div><div data-role="content">' +
@@ -698,7 +713,6 @@ $(document).ready(function () {
             }
             break;
         case "VARDP":
-            console.log("VARDP "+id);
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
             if (regaObjects[id].DPInfo) {
@@ -938,7 +952,10 @@ $(document).ready(function () {
             var $this = $(this);
             $this.find("option").removeAttr("selected");
             $this.find("option[value='"+val+"']").prop("selected", true);
-            $this.selectmenu("refresh");
+            if ($this.parent().parent().hasClass("ui-select")) {
+                $this.selectmenu("refresh");
+            }
+
         });
     }
 

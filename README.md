@@ -45,6 +45,12 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 
 ## Changelog
 
+### 0.9.6
+  * Konfiguration möglich über js/settings.js
+  * Info-Button kann via settings.js ausgeblendet werden
+  * "Swatches" für Kopfzeile, Inhalt und Menü können via settings.js konfiguriert werden
+  * Vorbereitung für Verwaltung der Erweiterungen via GUI, noch unfertig
+
 ### 0.9.5
   * Rollladen Widget Fehler behoben
   * Speichern der Sortier-Reihenfolge Fehler behoben

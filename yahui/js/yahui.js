@@ -13,7 +13,7 @@
 
 
 var yahui = {
-    version: "0.9.6",
+    version: "0.9.7",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -288,7 +288,7 @@ $(document).ready(function () {
             '<a href="#" id="refresh_'+pageId+'" data-role="button" data-inline="true" data-icon="refresh" data-iconpos="notext" class="yahui-info ui-btn-right"></a>' +
             '<h1>' + text + '</h1>' +
             '</div><div style="margin:0;padding:0;min-height:90%" data-role="content">' +
-            '<iframe style="width:100%; min-height:90%; border: none;" src="'+src+'" id="if_'+pageId+'"></iframe></div></div>';
+            '<iframe style="position:absolute; top:0px; left:0px; width:100%; height:100%; padding-top:42px; border: none;" src="'+src+'" id="if_'+pageId+'"></iframe></div></div>';
         body.prepend(page);
         $("#refresh_"+pageId).click(function () {
            $("#if_"+pageId).attr('src', function ( i, val ) { return val; });

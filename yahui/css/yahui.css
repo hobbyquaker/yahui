@@ -46,7 +46,7 @@ input.ui-slider-input {
     padding-right:35px !important;
 }
 
-.yahui-page .ui-li-has-thumb img {
+.yahui-page .ui-li-has-thumb img.ui-li-thumb {
     display:none;
 }
 

@@ -77,7 +77,7 @@ input.ui-slider-input {
 
 /* erster breakpoint bei 768px (iPad hochformat). 3 spaltiges layout.  */
 @media all and (min-width: 768px){
-    .yahui-page .ui-li-has-thumb img {
+    .yahui-page .ui-li-has-thumb img.ui-li-thumb {
         display:inline;
     }
     .yahui-page .ui-li-has-thumb {

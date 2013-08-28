@@ -68,7 +68,7 @@ $(document).ready(function () {
             var id = dirArr[i].replace(/\..*$/, "");
             yahui.images[id] = dirArr[i];
         }
-        console.log(yahui.images);
+        //console.log(yahui.images);
     });
 
 
@@ -282,7 +282,7 @@ $(document).ready(function () {
         // URL zur id finden
         //for (var i=0; i< yahui.links.length; i++) {
 
-        console.log("renderIFrame("+pageId+")");
+        //console.log("renderIFrame("+pageId+")");
 
         for (var id in yahui.extensions) {
             var link = yahui.extensions[id];
@@ -312,7 +312,7 @@ $(document).ready(function () {
     // Link-Seite aufbauen
     function renderLinks() {
 
-        console.log("renderLinks()");
+        //console.log("renderLinks()");
         var extHref, extClass;
 
         var alreadyRendered = [];
@@ -595,11 +595,11 @@ $(document).ready(function () {
                         '</div></li>';
                     list.append(content);
                     $("#press_short_"+elId).click(function (e) {
-                        console.log("press short "+id);
+                        //console.log("press short "+id);
                         yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
                     });
                     $("#press_long_"+elId).click(function (e) {
-                        console.log("press long "+id);
+                        //console.log("press long "+id);
                         yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
                     });
 

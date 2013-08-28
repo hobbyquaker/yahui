@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.8",
+    version: "0.9.9",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -589,11 +589,21 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
-                        '<input type="button" data-hm-id="'+shortId+'" name="press_short" value="kurz" data-inline="true"/> ' +
-                        '<input type="button" data-hm-id="'+longId+'" name="press_long" value="lang" data-inline="true"/>' +
+                        '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="kurz" data-inline="true"/> ' +
+                        '<input type="button" data-hm-id="'+longId+'" id="press_long_'+elId+'" name="press_long_'+id+'" value="lang" data-inline="true"/>' +
                         lowbat +
                         '</div></li>';
                     list.append(content);
+                    $("#press_short_"+elId).click(function (e) {
+                        console.log("press short "+id);
+                        yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
+                    });
+                    $("#press_long_"+elId).click(function (e) {
+                        console.log("press long "+id);
+                        yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
+                    });
+
+
                     break;
                 case "ALARMACTUATOR":
                 case "SWITCH":

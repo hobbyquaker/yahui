@@ -396,7 +396,7 @@ $(document).ready(function () {
             page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
         }
         page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_'+pageId+'" class="yahui-page"></ul></div></div>';
+            '<ul data-role="listview" id="list_'+pageId+'" class="yahui-page yahui-sortable"></ul></div></div>';
         if (prepend) {
             body.prepend(page);
         } else {
@@ -423,40 +423,52 @@ $(document).ready(function () {
     }
 
     function renderVariables() {
-        var page = '<div id="variables" data-role="page" data-theme="'+settings.swatches.content+'">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
-            '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
-            '<h1>Variablen</h1>';
-        if (!settings.hideInfoButton) {
-            page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
-        }
+        if (!$("div#variables").html()) {
 
-        page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_variables" class="yahui-page"></ul></div></div>';
-        body.prepend(page);
-        var list = $("ul#list_variables");
-        for (var l = 0; l < regaIndex.VARDP.length; l++) {
-            var chId = regaIndex.VARDP[l];
-            renderWidget(list, chId, true);
+
+            var page = '<div id="variables" data-role="page" data-theme="'+settings.swatches.content+'">' +
+                '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
+                '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
+                '<h1>Variablen</h1>';
+            if (!settings.hideInfoButton) {
+                page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+            }
+
+            page += '</div><div data-role="content">' +
+                '<ul data-role="listview" id="list_variables" class="yahui-page"></ul></div></div>';
+            body.prepend(page);
+            var list = $("ul#list_variables");
+
+            regaIndex.VARDP.sort(regaObjectAlphabetically);
+
+            for (var l = 0; l < regaIndex.VARDP.length; l++) {
+                var chId = regaIndex.VARDP[l];
+                renderWidget(list, chId, true);
+            }
         }
     }
 
     function renderPrograms() {
-        var page = '<div id="programs" data-role="page" data-theme="'+settings.swatches.content+'">' +
-            '<div data-role="header" data-position="fixed" data-id="f2"  data-theme="'+settings.swatches.header+'">' +
-            '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
-            '<h1>Programme</h1>';
-        if (!settings.hideInfoButton) {
-            page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+        if (!$("div#programs").html()) {
+            var page = '<div id="programs" data-role="page" data-theme="'+settings.swatches.content+'">' +
+                '<div data-role="header" data-position="fixed" data-id="f2"  data-theme="'+settings.swatches.header+'">' +
+                '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
+                '<h1>Programme</h1>';
+            if (!settings.hideInfoButton) {
+                page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+            }
+            page += '</div><div data-role="content">' +
+                '<ul data-role="listview" id="list_programs" class="yahui-page"></ul></div></div>';
+            body.prepend(page);
+            var list = $("ul#list_programs");
+            regaIndex.PROGRAM.sort(regaObjectAlphabetically);
+
+            for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
+                var chId = regaIndex.PROGRAM[l];
+                renderWidget(list, chId);
+            }
         }
-        page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_programs" class="yahui-page"></ul></div></div>';
-        body.prepend(page);
-        var list = $("ul#list_programs");
-        for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
-            var chId = regaIndex.PROGRAM[l];
-            renderWidget(list, chId);
-        }
+
     }
 
     // erzeugt ein Bedien-/Anzeige-Element
@@ -1086,5 +1098,14 @@ $(document).ready(function () {
         }, 1000);
     }
 
+    function regaObjectAlphabetically(a,b) {
+        if (regaObjects[a].Name.toLowerCase() < regaObjects[b].Name.toLowerCase()) {
+            return -1;
+        }
+        if (regaObjects[a].Name.toLowerCase() > regaObjects[b].Name.toLowerCase()) {
+            return 1;
+        }
+        return 0;
+    }
 
 });

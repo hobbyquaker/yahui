@@ -107,7 +107,7 @@ $(document).ready(function () {
         //console.log(data.toPage[0].id);
 
         $(".ui-sortable").sortable("destroy");
-        data.toPage.find(".ui-listview").sortable({
+        data.toPage.find(".ui-listview.yahui-sortable").sortable({
             start: function (e, ui) {
                 ui.item.addClass("drag-start");
             },

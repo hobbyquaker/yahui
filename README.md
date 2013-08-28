@@ -6,7 +6,7 @@ yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnli
 
 yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu Nutze machen:
   * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
-  * Statusänderungen werden nicht (wie z.B. bei WebMatic) in Intervallen von der CCU abgefragt ("Polling") sondern von der
+  * Statusänderungen werden nicht in Intervallen von der CCU abgefragt ("Polling") sondern von der
   CCU via CCU.IO an yahui gesendet (Push-Prinzip). Dies reduziert die Belastung der CCU erheblich und Statusänderungen werden
   mit geringerer Latenz angezeigt.
   * Egal wieviele Instanzen von yahui oder DashUI gleichzeitig geöffnet sind - die Belastung für die CCU bleibt gleich gering
@@ -23,6 +23,10 @@ zu kopieren.
 
 yahui ist sobald CCU.IO bereit ist unter http://ccu-io-host:ccu-io-port/yahui erreichbar.
 
+### Favoriten
+
+Es werden nur Favoriten angezeigt die dem Benutzer "admin" zugeordnet sind.
+
 ### Systemvariablen nur Anzeigen
 
 Systemvariablen können in yahui bearbeitet werden. Wie bei WebMatic können Systemvariablen über ein (r) in der
@@ -30,10 +34,11 @@ Variablenbeschreibung auf nur-lesen gesetzt werden.
 
 ### Einbinden eigener Bilder/Icons
 
-Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (über
-http://ccu-io-host:ccu-io-port/yahui/?edit aufrufen). Es sind alle Arten von Bilddateien erlaubt, empfohlen wird jedoch
-ein quadratisches PNG mit 230x230 Pixel Größe und leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden
-sind können diese einfach in das Verzeichnis yahui/images/user/ kopiert werden.
+Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (im
+Info-Dialog - erreichbar über den i-Button oben rechts - kann der Edit-Modus aktiviert und deaktiviert werden).
+Es sind alle Arten von Bilddateien erlaubt, empfohlen wird jedoch ein quadratisches PNG mit 230x230 Pixel Größe und
+leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden sind können diese einfach in das Verzeichnis
+yahui/images/user/ kopiert werden.
 
 ### Sortierung der Elemente
 
@@ -48,9 +53,16 @@ der jquerymobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte D
 
 ### Hinzufügen von Links zur Link-Seite
 
-zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js editieren...
+Wenn man sich im Edit-Modus befindet kann über den Button "hinzufügen" oben links ein neuer Link angelegt werden. Zum
+bearbeiten oder löschen von Links einfach den Link anklicken.
+
 
 ## Changelog
+
+### 0.9.8
+  * Fehlerkorrektur Layout/Style für kleine Auflösungen
+  * Variablen unter Erweiterungen->Variablen sind nun grundsätzlich editierbar (auch wenn (r) Flag gesetzt ist)
+  * Links können nun via GUI hinzugefügt, bearbeitet und gelöscht werden
 
 ### 0.9.7
   * Neue Kanaltypen unterstützt: ALARMACTUATOR, RAINDETECTOR, SENSOR_FOR_CARBON_DIOXIDE, TILT_SENSOR, WATERDETECTIONSENSOR
@@ -92,6 +104,7 @@ zur Zeit muss man dazu leider noch etwas unkomfortabel in yahui/js/yahui.js edit
 ## ToDo
 
   * Bugfixes...!
+  * Alphabetische Sortierung Variablen und Programme
 
 Fehlende Widgets ergänzen:
 

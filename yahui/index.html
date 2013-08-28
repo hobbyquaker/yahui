@@ -19,6 +19,7 @@
         $(document).on("mobileinit", function(){
             $.mobile.autoInitializePage = false;
         });
+        var google;
     </script>
     <script src="/lib/js/jquery.mobile-1.3.2.min.js"></script>
     <script src="js/settings.js"></script>
@@ -161,11 +162,30 @@
         <label for="link_url">Unteritel</label><input type="text" name="link_subtext" id="link_subtext"/>
         <label for="link_url">URL</label><input type="text" name="link_url" id="link_url"/>
         <label for="link_iframe">Typ</label>
-            <select name="link_iframe" id="link_iframe">
-                <option value="true">in yahui integriert anzeigen</option>
-                <option value="false">in neuem Browser-Fenster öffnen</option>
-            </select>
+        <select name="link_iframe" id="link_iframe">
+            <option value="true">in yahui integriert anzeigen</option>
+            <option value="false">in neuem Browser-Fenster öffnen</option>
+        </select>
+        <p>&nbsp;</p>
+        <a href="#" data-role="button" data-icon="plus" id="link_add">hinzufügen</a>
+    </div>
+</div>
 
+<div id="edit_link" data-role="dialog" data-history="false" data-theme="b">
+    <div data-role="header" data-theme="b"><h1>Erweiterung editieren</h1></div>
+    <div data-role="content" data-theme="b">
+        <input type="hidden" id="edit_link_id"/>
+        <label for="link_url">Titel</label><input type="text" name="link_text" id="edit_link_text"/>
+        <label for="link_url">Unteritel</label><input type="text" name="link_subtext" id="edit_link_subtext"/>
+        <label for="link_url">URL</label><input type="text" name="link_url" id="edit_link_url"/>
+        <label for="link_iframe">Typ</label>
+        <select name="link_iframe" id="edit_link_iframe">
+            <option value="true">in yahui integriert anzeigen</option>
+            <option value="false">in neuem Browser-Fenster öffnen</option>
+        </select>
+        <p>&nbsp;</p>
+        <a href="#" data-role="button" data-icon="check" id="link_edit">speichern</a>
+        <a href="#" data-role="button" data-icon="delete" id="link_del">löschen</a>
     </div>
 </div>
 

@@ -31,6 +31,46 @@ $(document).ready(function () {
         console.log("initEditMode()");
 
 
+        $("a.yahui-extension").click(function (e) {
+            var id = $(this).attr("id").slice(4);
+            console.log("CLICK "+id);
+            $("#edit_link_id").val(id);
+            $("#edit_link_text").val(yahui.extensions[id].text);
+            $("#edit_link_subtext").val(yahui.extensions[id].subtext);
+            $("#edit_link_url").val(yahui.extensions[id].url);
+            if (yahui.extensions[id].inline) {
+                $("#edit_link_iframe option[value='true']").attr("selected", true);
+                $("#edit_link_iframe option[value='false']").removeAttr("selected");
+
+            } else {
+                $("#edit_link_iframe option[value='false']").attr("selected", true);
+                $("#edit_link_iframe option[value='true']").removeAttr("selected");
+
+            }
+            if ($("#edit_link_iframe").parent().parent().hasClass("ui-select")) {
+                $("#edit_link_iframe").selectmenu("refresh");
+            }
+
+            //e.preventDefault();
+            //return false;
+
+        });
+
+
+
+        console.log("change Links");
+        $("a.yahui-extension").each(function () {
+
+            var $this = $(this);
+
+
+
+            $this.prop("href", "#edit_link");
+            $this.prop("data-rel", "dialog");
+
+
+        });
+
         /*
          $(".ui-listview").sortable({
          stop: function (e, ui) {
@@ -63,7 +103,9 @@ $(document).ready(function () {
     }
 
     $(document).on( "pagechange", function (e, data) {
-        console.log("pagechange");
+        //console.log("pagechange ");
+        //console.log(data.toPage[0].id);
+
         $(".ui-sortable").sortable("destroy");
         data.toPage.find(".ui-listview").sortable({
             start: function (e, ui) {
@@ -76,7 +118,14 @@ $(document).ready(function () {
                 var sortOrder = [];
                 ui.item.parent().find("li").each(function () {
                     var $this = $(this);
-                    sortOrder.push($(this).attr("data-hm-id"));
+
+                    var id = $(this).attr("data-hm-id");
+
+                    if (!id) {
+                        id = $(this).attr("data-ext-id");
+                    }
+
+                    sortOrder.push(id);
                 });
 
                 yahui.sortOrder[ui.item.parent().attr("id")] = sortOrder;
@@ -86,6 +135,9 @@ $(document).ready(function () {
         $("li.ui-li").each(function() {
             var $this = $(this);
             var id = $this.attr("data-hm-id");
+            if (!id) {
+                id = "ext_"+$this.attr("data-ext-id");
+            }
             if (!$this.hasClass("dz-clickable")) {
 
                 $this.dropzone({
@@ -144,6 +196,78 @@ $(document).ready(function () {
             $('.ui-popup-screen').off();
         }
     });
+
+    // Erweiterung editieren
+    $("#link_edit").click(function () {
+        var id = $("#edit_link_id").val();
+        console.log("EDIT LINK "+id);
+
+        var link = {
+            text:       $("#edit_link_text").val(),
+            subtext:    $("#edit_link_subtext").val(),
+            url:        $("#edit_link_url").val(),
+            inline:     $("#edit_link_iframe option:selected").val()
+        }
+        console.log(link);
+        yahui.extensions[id] = link;
+        $("#edit_link").dialog("close");
+        $.mobile.loading("show");
+        yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
+            window.location.reload();
+        });
+
+    });
+
+    // Erweiterung löschen
+    $("#link_del").click(function () {
+        var id = $("#edit_link_id").val();
+
+        $("#edit_link").dialog("close");
+        $.mobile.loading("show");
+
+        delete yahui.extensions[id];
+
+        yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
+            window.location.reload();
+        });
+
+    });
+
+    // Erweiterung hinzufügen
+    $("#link_add").click(function () {
+        var id = nextExtId();
+        console.log("ADD LINK "+id);
+
+        var link = {
+            text:       $("#link_text").val(),
+            subtext:    $("#link_subtext").val(),
+            url:        $("#link_url").val(),
+            inline:     $("#link_iframe option:selected").val()
+        };
+
+        console.log(link);
+        yahui.extensions[id] = link;
+        $("#add_link").dialog("close");
+        $.mobile.loading("show");
+        yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
+            window.location.reload();
+        });
+
+    });
+
+    // gibt nächste freie ID für Extension zurück
+    function nextExtId() {
+        var ids = [];
+        for (var id in yahui.extensions) {
+            ids.push(parseInt(id,10));
+        }
+        console.log(ids);
+        id = 0;
+        while (ids.indexOf(id) !== -1) {
+            id += 1;
+        }
+        return id;
+    }
 
 });
 

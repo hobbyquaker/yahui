@@ -12,21 +12,14 @@
  */
 
 
+
 var yahui = {
-    version: "0.9.7",
+    version: "0.9.8",
     prefix: "",
     images: [],
     sortOrder: {},
     socket: {},
-    links: [
-
-        {text:"CUxD-Highcharts", subtext:"", id:"cuxchart_menu", url: "http://homematic/addons/cuxchart/menu.html", img: "dummy.png"},
-        {text:"yr.no Wetter", subtext:"", id:"yr_meteogramm", url: "http://www.yr.no/place/Germany/Baden-W%C3%BCrttemberg/Stuttgart/meteogram.png", img: "dummy.png"},
-
-        {text:"Programme", subtext:"", url: "#programs", img: "dummy.png"},
-        {text:"Variablen", subtext:"", url: "#variables", img: "dummy.png"}
-
-    ]
+    extensions: {}
 };
 
 
@@ -70,22 +63,40 @@ $(document).ready(function () {
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
     yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
-        //console.log(dirArr);
         for (var i = 0; i < dirArr.length; i++) {
-            var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
+            //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
+            var id = dirArr[i].replace(/\..*$/, "");
             yahui.images[id] = dirArr[i];
         }
-        //console.log(yahui.images);
+        console.log(yahui.images);
     });
 
-    // Sortierung laden
-    yahui.socket.emit('readFile', 'yahui-sort.json', function (data) {
-        if (data) { yahui.sortOrder = data; }
-        //console.log(yahui.sortOrder);
 
-        // ---------- "Hier geht's los" ----------- //
-        getDatapoints();
-        renderLinks();
+
+    // Extensions laden
+    yahui.socket.emit('readFile', 'yahui-extensions.json', function (data) {
+        if (data) {
+            yahui.extensions = data;
+        } else {
+            yahui.extensions = {
+                0: {"text":"Variablen","subtext":"","url":"#variables","special":true},
+                1: {"text":"Programme","subtext":"","url":"#programs","special":true}
+            };
+            yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions);
+        }
+
+        // Sortierung laden
+        yahui.socket.emit('readFile', 'yahui-sort.json', function (data) {
+            if (data) {
+                yahui.sortOrder = data;
+            }
+
+            // ---------- "Hier geht's los" ----------- //
+            getDatapoints();
+            renderLinks();
+
+        });
+
     });
 
 
@@ -121,9 +132,7 @@ $(document).ready(function () {
     // Laedt Metainformationen zu Rega Objekten
     function getObjects() {
         yahui.socket.emit('getObjects', function(obj) {
-
             regaObjects = obj;
-
             // Weiter gehts mit dem Laden des Index
             getIndex();
         });
@@ -140,9 +149,6 @@ $(document).ready(function () {
             renderMenu("FAVORITE", "ul#listFavs");
             renderMenu("ENUM_ROOMS", "ul#listRooms");
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
-
-            // Variablen und Programmseite rendern
-            renderVariables();
 
             // "wir sind fertig".
 
@@ -274,10 +280,16 @@ $(document).ready(function () {
 
     function renderIFrame(pageId) {
         // URL zur id finden
-        for (var i=0; i< yahui.links.length; i++) {
-            if (yahui.links[i].id == pageId) {
-                var src = yahui.links[i].url;
-                var text = yahui.links[i].text;
+        //for (var i=0; i< yahui.links.length; i++) {
+
+        console.log("renderIFrame("+pageId+")");
+
+        for (var id in yahui.extensions) {
+            var link = yahui.extensions[id];
+
+            if (id == pageId) {
+                var src = link.url;
+                var text = link.text;
                 continue;
             }
         }
@@ -300,34 +312,57 @@ $(document).ready(function () {
     // Link-Seite aufbauen
     function renderLinks() {
 
+        console.log("renderLinks()");
+        var extHref, extClass;
 
+        var alreadyRendered = [];
 
-
-        for (var i = 0; i < yahui.links.length; i++) {
-            var link = yahui.links[i];
-
-            if (link.id) {
-                var item = "<li><a href='#iframe_"+link.id+"'>" +
-                    "<img src='images/user/"+link.img+"'>" +
-                    "<h2>"+link.text+ "</h2>"+
-                    "<p>"+link.subtext+"</p>" +
-                    "</a></li>";
-                $("ul#listLinks").append(item);
-
-            } else {
-                var item = "<li><a href='"+link.url+"'>" +
-                    "<img src='images/user/"+link.img+"'>" +
-                    "<h2>"+link.text+ "</h2>"+
-                    "<p>"+link.subtext+"</p>" +
-                    "</a></li>";
-
-                $("ul#listLinks").append(item);
-
+        for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
+            if (yahui.extensions[yahui.sortOrder.listLinks[i]]) {
+                renderLink(yahui.sortOrder.listLinks[i]);
+                alreadyRendered.push(yahui.sortOrder.listLinks[i]);
             }
-
         }
 
+        for (var id in yahui.extensions) {
+            if (alreadyRendered.indexOf(id) === -1) {
+                renderLink(id);
+            }
+        }
 
+    }
+
+    // Ein einzelnen Link rendern
+    function renderLink(id) {
+        var link = yahui.extensions[id];
+
+        if (link.special) {
+            extClass = "";
+        } else {
+            extClass = "yahui-extension";
+        }
+
+        if (link.inline) {
+            extHref = "#iframe_"+id;
+        } else {
+            extHref = link.url;
+        }
+
+        var img;
+
+        if (yahui.images["ext_"+id]) {
+            img = yahui.images["ext_"+id];
+        } else {
+            img = "dummy.png";
+        }
+
+        var item = "<li data-ext-id='"+id+"'><a class='"+extClass+"' id='ext_"+id+"' href='"+extHref+"'>" +
+            "<img src='images/user/"+img+"'>" +
+            "<h2>"+link.text+ "</h2>"+
+            "<p>"+link.subtext+"</p>" +
+            "</a></li>";
+
+        $("ul#listLinks").append(item);
     }
 
     // Baut eine Page auf
@@ -402,7 +437,7 @@ $(document).ready(function () {
         var list = $("ul#list_variables");
         for (var l = 0; l < regaIndex.VARDP.length; l++) {
             var chId = regaIndex.VARDP[l];
-            renderWidget(list, chId);
+            renderWidget(list, chId, true);
         }
     }
 
@@ -425,7 +460,7 @@ $(document).ready(function () {
     }
 
     // erzeugt ein Bedien-/Anzeige-Element
-    function renderWidget(list, id) {
+    function renderWidget(list, id, varEdit) {
         var el = regaObjects[id];
         var since = "";
         var lowbat = "";
@@ -771,7 +806,7 @@ $(document).ready(function () {
         case "VARDP":
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
-            if (regaObjects[id].DPInfo) {
+            if (!varEdit && regaObjects[id].DPInfo) {
                 readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*[rR][^\)]*\)/) ? true : false );
             }
             img = (img ? img : defimg);
@@ -1014,5 +1049,42 @@ $(document).ready(function () {
 
         });
     }
+
+    if (google && google.bookmarkbubble) {
+        setTimeout(function() {
+            var bubble = new google.bookmarkbubble.Bubble();
+
+            var parameter = 'bmb=1';
+
+            bubble.hasHashParameter = function() {
+                return window.location.hash.indexOf(parameter) != -1;
+            };
+
+            bubble.setHashParameter = function() {
+                if (!this.hasHashParameter()) {
+                    window.location.hash += parameter;
+                }
+            };
+
+            bubble.getViewportHeight = function() {
+                return window.innerHeight;
+            };
+
+            bubble.getViewportScrollY = function() {
+                return window.pageYOffset;
+            };
+
+            bubble.registerScrollHandler = function(handler) {
+                window.addEventListener('scroll', handler, false);
+            };
+
+            bubble.deregisterScrollHandler = function(handler) {
+                window.removeEventListener('scroll', handler, false);
+            };
+
+            bubble.showIfAllowed();
+        }, 1000);
+    }
+
 
 });

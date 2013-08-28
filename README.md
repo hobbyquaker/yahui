@@ -59,6 +59,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.9
+  * (VIRTUAL_)KEY PRESS_LONG/PRESS_SHORT implementiert
+
 ### 0.9.8
   * Fehlerkorrektur Layout/Style für kleine Auflösungen
   * Variablen unter Erweiterungen->Variablen sind nun grundsätzlich editierbar (auch wenn (r) Flag gesetzt ist) (auf Wunsch

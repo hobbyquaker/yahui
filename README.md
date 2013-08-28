@@ -61,8 +61,10 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ### 0.9.8
   * Fehlerkorrektur Layout/Style für kleine Auflösungen
-  * Variablen unter Erweiterungen->Variablen sind nun grundsätzlich editierbar (auch wenn (r) Flag gesetzt ist)
+  * Variablen unter Erweiterungen->Variablen sind nun grundsätzlich editierbar (auch wenn (r) Flag gesetzt ist) (auf Wunsch
+  von Pix)
   * Links können nun via GUI hinzugefügt, bearbeitet und gelöscht werden
+  * Variablen und Programme unter Erweiterungen sind nun alphabetisch sortiert (auf Wunsch von Rascal)
 
 ### 0.9.7
   * Neue Kanaltypen unterstützt: ALARMACTUATOR, RAINDETECTOR, SENSOR_FOR_CARBON_DIOXIDE, TILT_SENSOR, WATERDETECTIONSENSOR

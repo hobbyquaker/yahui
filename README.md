@@ -59,6 +59,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.10
+  * Fehler behoben beim Update von booleschen Variablen
+
 ### 0.9.9
   * (VIRTUAL_)KEY PRESS_LONG/PRESS_SHORT implementiert
 

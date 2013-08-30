@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.9",
+    version: "0.9.10",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -867,6 +867,7 @@ $(document).ready(function () {
                          var val = datapoints[id][0];
                         if (val == true) { val = 1; }
                         if (val == false) { val = 0; }
+
                         content += '<select id="select_'+elId+'" data-hm-id="'+id+'">';
                         for (var i = 0; i < valueList.length; i++) {
                             if (datapoints[id][0] == i) {
@@ -1064,6 +1065,10 @@ $(document).ready(function () {
             //console.log("select change");
             var $this = $(this);
             $this.find("option").removeAttr("selected");
+
+            if (val == true) { val = 1; }
+            if (val == false) { val = 0; }
+
             $this.find("option[value='"+val+"']").prop("selected", true);
             if ($this.parent().parent().hasClass("ui-select")) {
                 $this.selectmenu("refresh");

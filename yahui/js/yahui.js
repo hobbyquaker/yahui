@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.12",
+    version: "0.9.14",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -316,11 +316,15 @@ $(document).ready(function () {
 
         var alreadyRendered = [];
 
-        for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
-            if (yahui.extensions[yahui.sortOrder.listLinks[i]]) {
-                renderLink(yahui.sortOrder.listLinks[i]);
-                alreadyRendered.push(yahui.sortOrder.listLinks[i]);
+
+        if (yahui.sortOrder && yahui.sortOrder.listLinks) {
+            for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
+                if (yahui.extensions[yahui.sortOrder.listLinks[i]]) {
+                    renderLink(yahui.sortOrder.listLinks[i]);
+                    alreadyRendered.push(yahui.sortOrder.listLinks[i]);
+                }
             }
+
         }
 
         for (var id in yahui.extensions) {
@@ -342,7 +346,7 @@ $(document).ready(function () {
             extClass = "yahui-extension";
         }
 
-        console.log("link "+id+" "+link.inline);
+        //console.log("link "+id+" "+link.inline);
         if (link.inline == true) {
             extHref = "#iframe_"+id;
             extTarget = "";

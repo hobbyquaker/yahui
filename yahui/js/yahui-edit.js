@@ -28,7 +28,7 @@ $(document).ready(function () {
 
 
     function initEditMode() {
-        console.log("initEditMode()");
+        //console.log("initEditMode()");
 
 
         $("a.yahui-extension").click(function (e) {
@@ -56,7 +56,7 @@ $(document).ready(function () {
 
 
 
-        console.log("change Links");
+        //console.log("change Links");
         $("a.yahui-extension").each(function () {
 
             var $this = $(this);
@@ -80,22 +80,22 @@ $(document).ready(function () {
          url: "/upload/post?yahui",
          clickable: true,
          addedfile: function (file) {
-         console.log(file);
+         //console.log(file);
          // $("#popupUpload").popup("open");
          },
          dragover: function (e) {
-         console.log(e);
+         //console.log(e);
          var el = $(e.toElement);
 
          $(e.toElement).closest(".ui-li").find("img").addClass("upload-start");
 
          },
          dragleave: function (e) {
-         console.log("drag end");
+         //console.log("drag end");
          $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
          },
          drop: function (e) {
-         console.log("drag end");
+         //console.log("drag end");
          $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
          }
          });*/
@@ -154,7 +154,7 @@ $(document).ready(function () {
                     },
                     drop: function (e, ui) {
 
-                        console.log(e, ui);
+                        //console.log(e, ui);
                         var closest = $(e.toElement).closest("li.ui-li");
                         closest.removeClass("upload-start");
                         $("#uploadProgress").html("");
@@ -199,7 +199,7 @@ $(document).ready(function () {
     // Erweiterung editieren
     $("#link_edit").click(function () {
         var id = $("#edit_link_id").val();
-        console.log("EDIT LINK "+id);
+        //console.log("EDIT LINK "+id);
 
         var link = {
             text:       $("#edit_link_text").val(),
@@ -207,7 +207,7 @@ $(document).ready(function () {
             url:        $("#edit_link_url").val(),
             inline:     ($("#edit_link_iframe option:selected").val() == "true" ? true : false)
         }
-        console.log(link);
+        //console.log(link);
         yahui.extensions[id] = link;
         $("#edit_link").dialog("close");
         $.mobile.loading("show");
@@ -235,7 +235,7 @@ $(document).ready(function () {
     // Erweiterung hinzufügen
     $("#link_add").click(function () {
         var id = nextExtId();
-        console.log("ADD LINK "+id);
+        //console.log("ADD LINK "+id);
 
         var link = {
             text:       $("#link_text").val(),
@@ -244,7 +244,7 @@ $(document).ready(function () {
             inline:     ($("#link_iframe option:selected").val() == "true" ? true : false)
         };
 
-        console.log(link);
+        //console.log(link);
         yahui.extensions[id] = link;
         $("#add_link").dialog("close");
         $.mobile.loading("show");
@@ -260,7 +260,7 @@ $(document).ready(function () {
         for (var id in yahui.extensions) {
             ids.push(parseInt(id,10));
         }
-        console.log(ids);
+        //console.log(ids);
         id = 0;
         while (ids.indexOf(id) !== -1) {
             id += 1;

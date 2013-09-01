@@ -59,6 +59,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.11
+  * Fehler behoben bei Auswahl Erweiterung als iFrame oder in neuem Fenster öffnen
+
 ### 0.9.10
   * Fehler behoben beim Update von booleschen Variablen
 

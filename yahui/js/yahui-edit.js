@@ -32,27 +32,25 @@ $(document).ready(function () {
 
 
         $("a.yahui-extension").click(function (e) {
+
             var id = $(this).attr("id").slice(4);
-            console.log("CLICK "+id);
+
             $("#edit_link_id").val(id);
             $("#edit_link_text").val(yahui.extensions[id].text);
             $("#edit_link_subtext").val(yahui.extensions[id].subtext);
             $("#edit_link_url").val(yahui.extensions[id].url);
+
             if (yahui.extensions[id].inline) {
                 $("#edit_link_iframe option[value='true']").attr("selected", true);
                 $("#edit_link_iframe option[value='false']").removeAttr("selected");
-
             } else {
                 $("#edit_link_iframe option[value='false']").attr("selected", true);
                 $("#edit_link_iframe option[value='true']").removeAttr("selected");
-
             }
+
             if ($("#edit_link_iframe").parent().parent().hasClass("ui-select")) {
                 $("#edit_link_iframe").selectmenu("refresh");
             }
-
-            //e.preventDefault();
-            //return false;
 
         });
 
@@ -67,6 +65,7 @@ $(document).ready(function () {
 
             $this.prop("href", "#edit_link");
             $this.prop("data-rel", "dialog");
+            $this.removeAttr("target");
 
 
         });
@@ -206,7 +205,7 @@ $(document).ready(function () {
             text:       $("#edit_link_text").val(),
             subtext:    $("#edit_link_subtext").val(),
             url:        $("#edit_link_url").val(),
-            inline:     $("#edit_link_iframe option:selected").val()
+            inline:     ($("#edit_link_iframe option:selected").val() == "true" ? true : false)
         }
         console.log(link);
         yahui.extensions[id] = link;
@@ -242,7 +241,7 @@ $(document).ready(function () {
             text:       $("#link_text").val(),
             subtext:    $("#link_subtext").val(),
             url:        $("#link_url").val(),
-            inline:     $("#link_iframe option:selected").val()
+            inline:     ($("#link_iframe option:selected").val() == "true" ? true : false)
         };
 
         console.log(link);

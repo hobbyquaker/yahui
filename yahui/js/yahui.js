@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.10",
+    version: "0.9.11",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -313,7 +313,6 @@ $(document).ready(function () {
     function renderLinks() {
 
         //console.log("renderLinks()");
-        var extHref, extClass;
 
         var alreadyRendered = [];
 
@@ -335,6 +334,7 @@ $(document).ready(function () {
     // Ein einzelnen Link rendern
     function renderLink(id) {
         var link = yahui.extensions[id];
+        var extHref, extClass, extTarget;
 
         if (link.special) {
             extClass = "";
@@ -342,10 +342,13 @@ $(document).ready(function () {
             extClass = "yahui-extension";
         }
 
-        if (link.inline) {
+        console.log("link "+id+" "+link.inline);
+        if (link.inline == true) {
             extHref = "#iframe_"+id;
+            extTarget = "";
         } else {
             extHref = link.url;
+            extTarget = " target='_blank'";
         }
 
         var img;
@@ -356,7 +359,7 @@ $(document).ready(function () {
             img = "dummy.png";
         }
 
-        var item = "<li data-ext-id='"+id+"'><a class='"+extClass+"' id='ext_"+id+"' href='"+extHref+"'>" +
+        var item = "<li data-ext-id='"+id+"'><a class='"+extClass+"' id='ext_"+id+"' href='"+extHref+"'"+extTarget+">" +
             "<img src='images/user/"+img+"'>" +
             "<h2>"+link.text+ "</h2>"+
             "<p>"+link.subtext+"</p>" +

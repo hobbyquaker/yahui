@@ -62,6 +62,12 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 ### 0.9.14
   * Fehler behoben bei Darstellung der Erweiterungen
 
+### 0.9.13
+  * diverse console.log entfernt
+
+### 0.9.12
+  * Style-Anpassung iFrame Höhe, nutzt CSS3 calc() - funktioniert nur auf modernen Browsern
+
 ### 0.9.11
   * Fehler behoben bei Auswahl Erweiterung als iFrame oder in neuem Fenster öffnen
 

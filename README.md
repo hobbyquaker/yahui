@@ -63,6 +63,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.15
+  * Fehler behoben Erweiterungen->Variablen/Programme Link Target
+
 ### 0.9.14
   * Fehler behoben bei Darstellung der Erweiterungen
 

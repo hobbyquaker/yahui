@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.14",
+    version: "0.9.15",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -71,8 +71,6 @@ $(document).ready(function () {
         //console.log(yahui.images);
     });
 
-
-
     // Extensions laden
     yahui.socket.emit('readFile', 'yahui-extensions.json', function (data) {
         if (data) {
@@ -102,6 +100,7 @@ $(document).ready(function () {
 
     // Sind wir im Edit-Mode?
     if (url.search == "?edit") {
+        // JA!
         $(".yahui-edit").show();
         $(".yahui-noedit").hide();
         $("#edit_indicator").show();
@@ -109,15 +108,19 @@ $(document).ready(function () {
         $.ajaxSetup({
             cache: true
         });
+
         $.getScript("js/yahui-edit.js")
             .done(function(script, textStatus) {
                 //console.log("edit mode");
             })
             .fail(function(jqxhr, settings, exception) {
             });
+
     } else {
+        // Kein Edit-Mode
         $(".yahui-noedit").show();
         $(".yahui-edit").hide();
+
     }
 
     // Laedt die Werte und Timestamps aller Datenpunkte
@@ -158,6 +161,8 @@ $(document).ready(function () {
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId, true);
                 }
+
+            // Starten wir mit einer Erweiterung? Wenn ja - schnell rendern.
             } else if ( url.hash.search(/^#iframe_/) !== -1 ) {
                 var pageId = (url.hash.slice(8));
                 if (!$("div#iframe_"+pageId).html()) {
@@ -202,7 +207,9 @@ $(document).ready(function () {
 
         }
 
+        // Wir merken uns welche Widgets bereits gerendert wurden
         var alreadyRendered = [];
+        // Sortierung abarbeiten
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
@@ -212,8 +219,7 @@ $(document).ready(function () {
             }
         }
 
-        //console.log("AR ");
-        //console.log(alreadyRendered);
+        // noch nicht gerenderte Widgets (nicht in Sortierung vorhanden) rendern
         for (var i = 0; i < regaIndex[en].length; i++) {
             //console.log("... "+regaIndex[en][i]);
             if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
@@ -222,6 +228,7 @@ $(document).ready(function () {
             }
         }
 
+        // jqMobile listview bereits initialisiert? Wenn ja refresh - wenn nein jetzt erledigen.
         if (domObj.hasClass('ui-listview')) {
             domObj.listview('refresh');
         } else {
@@ -229,6 +236,7 @@ $(document).ready(function () {
         }
     }
 
+    // Ein Element auf der Menüseite rendern
     function renderMenuItem(enId) {
         var enObj = (regaObjects[enId]);
         var defimg = "images/default/page.png";
@@ -258,13 +266,13 @@ $(document).ready(function () {
 
             }
 
-
             // Kommt die Zeichenkette #page_ im Hash vor?
             if ( u.hash.search(/^#page_/) !== -1 ) {
                 var pageId = (u.hash.slice(6));
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId);
                 }
+            // Erweiterungen
             } else if ( u.hash.search(/^#iframe_/) !== -1 ) {
                 var pageId = (u.hash.slice(8));
                 if (!$("div#iframe_"+pageId).html()) {
@@ -278,12 +286,8 @@ $(document).ready(function () {
         }
     });
 
+    // Eine Erweiterung "inline" (im iFrame) rendern
     function renderIFrame(pageId) {
-        // URL zur id finden
-        //for (var i=0; i< yahui.links.length; i++) {
-
-        //console.log("renderIFrame("+pageId+")");
-
         for (var id in yahui.extensions) {
             var link = yahui.extensions[id];
 
@@ -306,17 +310,14 @@ $(document).ready(function () {
            $("#if_"+pageId).attr('src', function ( i, val ) { return val; });
         });
 
-
     }
 
     // Link-Seite aufbauen
     function renderLinks() {
 
-        //console.log("renderLinks()");
-
         var alreadyRendered = [];
 
-
+        // Sortierung abarbeiten
         if (yahui.sortOrder && yahui.sortOrder.listLinks) {
             for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
                 if (yahui.extensions[yahui.sortOrder.listLinks[i]]) {
@@ -327,6 +328,7 @@ $(document).ready(function () {
 
         }
 
+        // Noch nicht gerenderte (in Sortierung nicht vorhandene) rendern
         for (var id in yahui.extensions) {
             if (alreadyRendered.indexOf(id) === -1) {
                 renderLink(id);
@@ -338,15 +340,10 @@ $(document).ready(function () {
     // Ein einzelnen Link rendern
     function renderLink(id) {
         var link = yahui.extensions[id];
-        var extHref, extClass, extTarget;
+        var extHref,
+            extClass = "",
+            extTarget = "";
 
-        if (link.special) {
-            extClass = "";
-        } else {
-            extClass = "yahui-extension";
-        }
-
-        //console.log("link "+id+" "+link.inline);
         if (link.inline == true) {
             extHref = "#iframe_"+id;
             extTarget = "";
@@ -355,8 +352,15 @@ $(document).ready(function () {
             extTarget = " target='_blank'";
         }
 
-        var img;
+        if (link.special) {
+            extClass = "";
+            extTarget = "";
+        } else {
+            extClass = "yahui-extension";
+        }
 
+        var img;
+        // Bild vorhanden? Falls nicht dummy.png anzeigen
         if (yahui.images["ext_"+id]) {
             img = yahui.images["ext_"+id];
         } else {
@@ -429,9 +433,9 @@ $(document).ready(function () {
         }
     }
 
+    // Variablen-Erweiterung rendern
     function renderVariables() {
         if (!$("div#variables").html()) {
-
 
             var page = '<div id="variables" data-role="page" data-theme="'+settings.swatches.content+'">' +
                 '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
@@ -446,6 +450,7 @@ $(document).ready(function () {
             body.prepend(page);
             var list = $("ul#list_variables");
 
+            // Alphabetisch sortieren
             regaIndex.VARDP.sort(regaObjectAlphabetically);
 
             for (var l = 0; l < regaIndex.VARDP.length; l++) {
@@ -455,6 +460,7 @@ $(document).ready(function () {
         }
     }
 
+    // Programme-Erweiterung rendern
     function renderPrograms() {
         if (!$("div#programs").html()) {
             var page = '<div id="programs" data-role="page" data-theme="'+settings.swatches.content+'">' +
@@ -468,6 +474,8 @@ $(document).ready(function () {
                 '<ul data-role="listview" id="list_programs" class="yahui-page"></ul></div></div>';
             body.prepend(page);
             var list = $("ul#list_programs");
+
+            // Alphabetisch sortieren
             regaIndex.PROGRAM.sort(regaObjectAlphabetically);
 
             for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
@@ -492,11 +500,10 @@ $(document).ready(function () {
         } else {
             img = defimg;
         }
-        //console.log("renderWidget("+id+") "+el.TypeName+" "+el.Name);
+
+        // Um was handelt es sich?
         switch (el.TypeName) {
         case "CHANNEL":
-
-
             if (el.DPs.LOWBAT && datapoints[el.DPs.LOWBAT].Value) {
                 lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
             } else if (regaObjects[el.Parent].Channels[0]) {

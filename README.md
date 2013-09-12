@@ -134,16 +134,7 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## ToDo
 
-  * Bugfixes...!
-  * Alphabetische Sortierung Variablen und Programme
-
-Fehlende Widgets ergänzen:
-
-  * ... ?
-
-Später
-
-  * Links hinzufügen etc komfortabler gestalten
+  * Fehlende Widgets ergänzen: ... ?
   * Service-Meldungen und Alarme?
   * vergangene Zeit statt Zeitpunkt anzeigen?
 

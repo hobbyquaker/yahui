@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.15",
+    version: "0.9.16",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -42,8 +42,10 @@ $(document).ready(function () {
         $("a[href='#info']").hide();
     }
 
+    $("#ccu-io-disconnect").popup();
+
     // Diese 3 Objekte beinhalten die CCU Daten.
-    // Unter http://hostname:8080/ccu.io/ k�nnen diese Objekte inspiziert werden.
+    // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
     var regaObjects, datapoints, regaIndex;
 
     // Verbindung zu CCU.IO herstellen.
@@ -60,6 +62,45 @@ $(document).ready(function () {
         // UI Widgets aktualisieren
         updateWidgets(obj[0], obj[1], obj[2], obj[3]);
     });
+
+    yahui.socket.on('connect', function () {
+        $("#ccu-io-disconnect").popup("close");
+        console.log((new Date()) + " socket.io connect");
+    });
+
+    yahui.socket.on('connecting', function () {
+        console.log((new Date()) + " socket.io connecting");
+    });
+
+    yahui.socket.on('disconnect', function () {
+        $("#ccu-io-disconnect").popup("open");
+        console.log((new Date()) + " socket.io disconnect");
+    });
+
+    yahui.socket.on('disconnecting', function () {
+        console.log((new Date()) + " socket.io disconnecting");
+    });
+
+    yahui.socket.on('reconnect', function () {
+        $("#ccu-io-disconnect").popup("close");
+
+        console.log((new Date()) + " socket.io reconnect");
+    });
+
+    yahui.socket.on('reconnecting', function () {
+        console.log((new Date()) + " socket.io reconnecting");
+    });
+
+    yahui.socket.on('reconnect_failed', function () {
+        console.log((new Date()) + " socket.io reconnect failed");
+    });
+    
+    yahui.socket.on('error', function () {
+        console.log((new Date()) + " socket.io error");
+    });
+
+
+
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
     yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
@@ -712,6 +753,15 @@ $(document).ready(function () {
                             '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit +
                             ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
                             '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit+'</p></div></li>';
+                    } else if (!el.DPs.HUMIDITY) {
+                        // CUxD Thermostat Wrapper
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                            '<div class="yahui-a">'+el.Name+'</div>' +
+                            '<div class="yahui-b">' + lowbat +
+                            '</div><div class="yahui-c"><h3>' +
+                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
+                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
+                            '</div></li>';
                     } else {
                         // HomeMatic
                         content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +

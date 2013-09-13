@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.16",
+    version: "0.9.17",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -65,38 +65,38 @@ $(document).ready(function () {
 
     yahui.socket.on('connect', function () {
         $("#ccu-io-disconnect").popup("close");
-        console.log((new Date()) + " socket.io connect");
+        //console.log((new Date()) + " socket.io connect");
     });
 
     yahui.socket.on('connecting', function () {
-        console.log((new Date()) + " socket.io connecting");
+        //console.log((new Date()) + " socket.io connecting");
     });
 
     yahui.socket.on('disconnect', function () {
         $("#ccu-io-disconnect").popup("open");
-        console.log((new Date()) + " socket.io disconnect");
+        //console.log((new Date()) + " socket.io disconnect");
     });
 
     yahui.socket.on('disconnecting', function () {
-        console.log((new Date()) + " socket.io disconnecting");
+        //console.log((new Date()) + " socket.io disconnecting");
     });
 
     yahui.socket.on('reconnect', function () {
         $("#ccu-io-disconnect").popup("close");
 
-        console.log((new Date()) + " socket.io reconnect");
+        //console.log((new Date()) + " socket.io reconnect");
     });
 
     yahui.socket.on('reconnecting', function () {
-        console.log((new Date()) + " socket.io reconnecting");
+        //console.log((new Date()) + " socket.io reconnecting");
     });
 
     yahui.socket.on('reconnect_failed', function () {
-        console.log((new Date()) + " socket.io reconnect failed");
+        //console.log((new Date()) + " socket.io reconnect failed");
     });
     
     yahui.socket.on('error', function () {
-        console.log((new Date()) + " socket.io error");
+        //console.log((new Date()) + " socket.io error");
     });
 
 
@@ -717,64 +717,55 @@ $(document).ready(function () {
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c">' +
                         '<div style="display: inline-block; width: 70px;">' +
-                        '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" id="input_'+id+'" class="hm-val" data-hm-id="'+el.DPs.SETPOINT+'" value="'+datapoints[el.DPs.SETPOINT][0]+'"  />' +
+                        '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" class="hm-val" data-hm-id="'+el.DPs.SETPOINT+'" value="'+datapoints[el.DPs.SETPOINT][0]+'"  />' +
                         '</div> '+
-                        regaObjects[el.DPs.SETPOINT].ValueUnit +
-                        '</div></li>';
+                        regaObjects[el.DPs.SETPOINT].ValueUnit;
+                    if (el.DPs.STATE) {
+                        // CUxD Thermostat Wrapper
+                        content += '<br/><span class="yahui-since"><span data-hm-id="'+el.DPs.STATE+'" class="hm-html">'+datapoints[el.DPs.STATE][0]+'</span>';
+                    }
+
+                    content += '</div></li>';
                     list.append(content);
                     setTimeout(function () {
                         $("#input_"+id).change(function( event ) {
                             //console.log("input "+event.target.value+" "+event.target.dataset.hmId);
-                            //var id = event.target.dataset.hmId;
                             var val = $("#input_"+id).val();
-                            //console.log("setState"+JSON.stringify([id, val]));
-                            yahui.socket.emit("setState", [id, val]);
+                            var dpId = event.target.dataset.hmId;
+                            //console.log("setState"+JSON.stringify([dpId, val]));
+                            yahui.socket.emit("setState", [dpId, val]);
                         });
                     }, 500);
                     break;
                 case "WINDOW_SWITCH_RECEIVER":
                     break;
                 case "WEATHER":
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/weather.png";
                     img = (img ? img : defimg);
-                    if (el.DPs.DEW_POINT) {
-                        // CUxD
-                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
-                            '<div class="yahui-a">'+el.Name+'</div>' +
-                            '<div class="yahui-b">' + lowbat +
-                            '</div><div class="yahui-c"><h3>' +
-                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
-                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
-                            ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' + lowbat +
+                        '</div><div class="yahui-c"><h3>' +
+                        '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
+                        regaObjects[el.DPs.TEMPERATURE].ValueUnit;
+                    if (el.DPs.TEMP_MIN_24H && el.DPs.TEMP_MAX_24H) {
+                        content += ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
                             regaObjects[el.DPs.TEMP_MIN_24H].ValueUnit +
                             ' max <span data-hm-id="'+el.DPs.TEMP_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MAX_24H][0]+'</span>' +
                             regaObjects[el.DPs.TEMP_MAX_24H].ValueUnit +
-                            ')</span></h3><p>Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
-                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit +
-                            ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
-                            '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit+'</p></div></li>';
-                    } else if (!el.DPs.HUMIDITY) {
-                        // CUxD Thermostat Wrapper
-                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
-                            '<div class="yahui-a">'+el.Name+'</div>' +
-                            '<div class="yahui-b">' + lowbat +
-                            '</div><div class="yahui-c"><h3>' +
-                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
-                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
-                            '</div></li>';
-                    } else {
-                        // HomeMatic
-                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
-                            '<div class="yahui-a">'+el.Name+'</div>' +
-                            '<div class="yahui-b">' + lowbat +
-                            '</div><div class="yahui-c"><h3>' +
-                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
-                            regaObjects[el.DPs.TEMPERATURE].ValueUnit +
-                            '</h3><p>Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
-                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit +
-                            '</p></div></li>';
+                            ')</span>';
+                    }
+                    content += '</h3><p>';
+                    if (el.DPs.HUMIDITY) {
+                        content += 'Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
+                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit;
                     }
 
+                    if (el.DPs.DEW_POINT) {
+                        content += ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
+                            '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit;
+                    }
+                    content += '</p></div></li>';
                     list.append(content);
                     break;
                 case "SMOKE_DETECTOR_TEAM":

@@ -63,6 +63,10 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.17
+  * Bugfixes WEATHER und CLIMATE_CONTROL_REGULATOR
+  * diverse console.log entfernt
+
 ### 0.9.16
   * CUxD Thermostat Wrapper
   * Popup falls Verbindung zu CCU.IO unterbrochen ist

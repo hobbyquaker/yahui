@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 0.9.19
+aktuelle Version: 0.9.20
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -62,6 +62,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 
 ## Changelog
+
+### 0.9.20
+  * Fehler behoben im Fall dass keine Favoriten angelegt sind
 
 ### 0.9.19
   * Kanaltyp RAINDETECTOR_HEAT ergänzt

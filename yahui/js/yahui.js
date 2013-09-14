@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.19",
+    version: "0.9.20",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -190,7 +190,9 @@ $(document).ready(function () {
             // Nun sind alle 3 Objekte (regaIndex, regaObjects und datapoints) von ccu.io geladen,
 
             // Menüseiten Rendern
-            renderMenu("FAVORITE", "ul#listFavs");
+            if (regaIndex["FAVORITE"]) {
+                renderMenu("FAVORITE", "ul#listFavs");
+            }
             renderMenu("ENUM_ROOMS", "ul#listRooms");
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
 

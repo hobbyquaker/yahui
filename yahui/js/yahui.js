@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.17",
+    version: "0.9.18",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -263,7 +263,7 @@ $(document).ready(function () {
         // noch nicht gerenderte Widgets (nicht in Sortierung vorhanden) rendern
         for (var i = 0; i < regaIndex[en].length; i++) {
             //console.log("... "+regaIndex[en][i]);
-            if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
+            if ($.inArray(regaIndex[en][i], alreadyRendered) == -1) {
                 //console.log("..! "+regaIndex[en][i]);
                 domObj.append(renderMenuItem(regaIndex[en][i]));
             }
@@ -371,7 +371,7 @@ $(document).ready(function () {
 
         // Noch nicht gerenderte (in Sortierung nicht vorhandene) rendern
         for (var id in yahui.extensions) {
-            if (alreadyRendered.indexOf(id) === -1) {
+            if ($.inArray(id, alreadyRendered) === -1) {
                 renderLink(id);
             }
         }
@@ -468,7 +468,7 @@ $(document).ready(function () {
         }
         for (var l in regaObj.Channels) {
             var chId = parseInt(regaObj.Channels[l],10);
-            if (alreadyRendered.indexOf(chId) === -1) {
+            if ($.inArray(chId, alreadyRendered) === -1) {
                 renderWidget(list, chId);
             }
         }
@@ -1139,7 +1139,7 @@ $(document).ready(function () {
             var parameter = 'bmb=1';
 
             bubble.hasHashParameter = function() {
-                return window.location.hash.indexOf(parameter) != -1;
+                return $.inArray(parameter, window.location.hash) != -1;
             };
 
             bubble.setHashParameter = function() {

@@ -63,6 +63,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.18
+  * indexOf() durch jQuery.inArray() ersetzt zweckes Internet Explorer 8 Kompatibilität
+
 ### 0.9.17
   * Bugfixes WEATHER und CLIMATE_CONTROL_REGULATOR
   * diverse console.log entfernt

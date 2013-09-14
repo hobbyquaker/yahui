@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.18",
+    version: "0.9.19",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -662,6 +662,7 @@ $(document).ready(function () {
                     break;
                 case "ALARMACTUATOR":
                 case "SWITCH":
+                case "RAINDETECTOR_HEAT":
                     defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;

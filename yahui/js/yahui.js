@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.20",
+    version: "0.9.21",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -83,7 +83,9 @@ $(document).ready(function () {
 
     yahui.socket.on('reconnect', function () {
         $("#ccu-io-disconnect").popup("close");
-
+        setTimeout(function () {
+            window.location.reload();
+        }, 500);
         //console.log((new Date()) + " socket.io reconnect");
     });
 
@@ -129,6 +131,7 @@ $(document).ready(function () {
             if (data) {
                 yahui.sortOrder = data;
             }
+
 
             // ---------- "Hier geht's los" ----------- //
             getDatapoints();
@@ -254,11 +257,15 @@ $(document).ready(function () {
         var alreadyRendered = [];
         // Sortierung abarbeiten
         if (sortOrder) {
+            for (var i = 0; i < sortOrder.length; i++) {
+                sortOrder[i] = parseInt(sortOrder[i], 10);
+            }
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
-
-                domObj.append(renderMenuItem(sortOrder[j]));
-                alreadyRendered.push(parseInt(sortOrder[j], 10));
+                if ($.inArray(sortOrder[j], regaIndex[en]) != -1) {
+                    domObj.append(renderMenuItem(sortOrder[j]));
+                    alreadyRendered.push(parseInt(sortOrder[j], 10));
+                }
             }
         }
 
@@ -464,8 +471,11 @@ $(document).ready(function () {
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
-                renderWidget(list, sortOrder[j]);
-                alreadyRendered.push(parseInt(sortOrder[j], 10));
+                //sortOrder[j] = parseInt(sortOrder[j], 10);
+                if ($.inArray(sortOrder[j], regaObj.Channels) != -1) {
+                    renderWidget(list, sortOrder[j]);
+                    alreadyRendered.push(parseInt(sortOrder[j], 10));
+                }
             }
         }
         for (var l in regaObj.Channels) {

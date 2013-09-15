@@ -63,6 +63,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.22
+  * Fehler beim Versuch nicht vorhandene Widget-Objekte zu rendern abgefangen.
+
 ### 0.9.21
   * Automatischer Reload nach reconnect
   * Fehler behoben - Darstellung von nicht mehr vorhandenen Menüs/Widgets unterbunden (wenn noch in sortOrder vorhanden)

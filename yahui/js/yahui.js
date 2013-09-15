@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.21",
+    version: "0.9.22",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -287,6 +287,11 @@ $(document).ready(function () {
     // Ein Element auf der Menüseite rendern
     function renderMenuItem(enId) {
         var enObj = (regaObjects[enId]);
+
+        if (!enObj || !enObj.Name) {
+            return "";
+        }
+
         var defimg = "images/default/page.png";
 
         // User Image vorhanden?

@@ -118,10 +118,10 @@ $(document).ready(function () {
                 ui.item.parent().find("li").each(function () {
                     var $this = $(this);
 
-                    var id = $(this).attr("data-hm-id");
+                    var id = parseInt($(this).attr("data-hm-id"), 10);
 
                     if (!id) {
-                        id = $(this).attr("data-ext-id");
+                        id = parseInt($(this).attr("data-ext-id"), 10);
                     }
 
                     sortOrder.push(id);

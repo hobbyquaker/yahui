@@ -257,14 +257,12 @@ $(document).ready(function () {
         var alreadyRendered = [];
         // Sortierung abarbeiten
         if (sortOrder) {
-            for (var i = 0; i < sortOrder.length; i++) {
-                sortOrder[i] = parseInt(sortOrder[i], 10);
-            }
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
+                sortOrder[j] = parseInt(sortOrder[j], 10);
                 if ($.inArray(sortOrder[j], regaIndex[en]) != -1) {
                     domObj.append(renderMenuItem(sortOrder[j]));
-                    alreadyRendered.push(parseInt(sortOrder[j], 10));
+                    alreadyRendered.push(sortOrder[j]);
                 }
             }
         }
@@ -471,10 +469,10 @@ $(document).ready(function () {
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
-                //sortOrder[j] = parseInt(sortOrder[j], 10);
+                sortOrder[j] = parseInt(sortOrder[j], 10);
                 if ($.inArray(sortOrder[j], regaObj.Channels) != -1) {
                     renderWidget(list, sortOrder[j]);
-                    alreadyRendered.push(parseInt(sortOrder[j], 10));
+                    alreadyRendered.push(sortOrder[j]);
                 }
             }
         }

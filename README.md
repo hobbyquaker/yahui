@@ -65,7 +65,7 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ### 0.9.21
   * Automatischer Reload nach reconnect
-  * Fehler behoben - Darstellung von nicht mehr vorhandenen Menüs/Widgets unterbunden (wenn in sortOrder vorhanden)
+  * Fehler behoben - Darstellung von nicht mehr vorhandenen Menüs/Widgets unterbunden (wenn noch in sortOrder vorhanden)
 
 ### 0.9.20
   * Fehler behoben im Fall dass keine Favoriten angelegt sind

@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.22",
+    version: "0.9.23",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -506,6 +506,13 @@ $(document).ready(function () {
             body.prepend(page);
             var list = $("ul#list_variables");
 
+            // Alarm-Variablen mitnehmen
+            if (regaIndex.ALARMDP) {
+                for (var j = 0; j < regaIndex.ALARMDP.length; j++) {
+                    regaIndex.VARDP.push(regaIndex.ALARMDP[j]);
+                }
+            }
+
             // Alphabetisch sortieren
             regaIndex.VARDP.sort(regaObjectAlphabetically);
 
@@ -897,6 +904,7 @@ $(document).ready(function () {
             }
             break;
         case "VARDP":
+        case "ALARMDP":
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
             if (!varEdit && regaObjects[id].DPInfo) {

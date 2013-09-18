@@ -63,6 +63,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 ## Changelog
 
+### 0.9.23
+  * Anzeige von Alarm-Variablen
+
 ### 0.9.22
   * Fehler beim Versuch nicht vorhandene Widget-Objekte zu rendern abgefangen.
 

@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.23",
+    version: "0.9.24",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -36,6 +36,7 @@ $(document).ready(function () {
     $("[data-role='header']").attr("data-theme", settings.swatches.header);
     $("[data-role='page']").attr("data-theme", settings.swatches.content);
     $("[data-role='footer']").attr("data-theme", settings.swatches.footer);
+
 
     // ggf Info-Button ausblenden
     if (settings.hideInfoButton) {
@@ -74,6 +75,10 @@ $(document).ready(function () {
 
     yahui.socket.on('disconnect', function () {
         $("#ccu-io-disconnect").popup("open");
+        $('html, body').css({
+            'overflow': 'hidden',
+            'height': '100%'
+        });
         //console.log((new Date()) + " socket.io disconnect");
     });
 
@@ -201,6 +206,10 @@ $(document).ready(function () {
 
             // "wir sind fertig".
 
+
+
+
+
             // Starten wir mit einer Page? Wenn ja schnell Rendern.
             if ( url.hash.search(/^#page_/) !== -1 ) {
                 var pageId = (url.hash.slice(6));
@@ -220,8 +229,16 @@ $(document).ready(function () {
                 renderVariables();
             }
 
+            // Farbe übernehmen
+            $(document).on('pagebeforeshow', url.hash,  function(){
+                var cssBackgroundColor = $("body").css("background-color");
+                $('<style type="text/css">.responsive-grid .ui-listview .ui-li-has-thumb .ui-li-heading, .responsive-grid .ui-listview .ui-li-has-thumb .ui-li-desc {background-color:'+cssBackgroundColor+'; opacity:0.7;}</style>').appendTo("head");
+            });
+
+
             // jqMobile initialisieren
             $.mobile.initializePage();
+
 
         });
     }
@@ -706,6 +723,40 @@ $(document).ready(function () {
                         });
                     }, 500);
                     break;
+                case "KEYMATIC":
+                    defimg = "images/default/keymatic.png";
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var openId = regaObjects[id].DPs.OPEN;
+                    var uncertainId = regaObjects[id].DPs.STATE_UNCERTAIN;
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' +
+
+                        '<select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="0">Zu</option>' +
+                        '<option value="1"'+((datapoints[stateId][0] != 0) ? ' selected' : '')+'>Auf</option>' +
+                        '</select>' +
+                        '<input type="button" data-hm-id="'+openId+'" id="open_'+elId+'" name="open_'+id+'" value="Öffnen" data-inline="true"/> ' +
+                        lowbat +
+                        '</div><div class="yahui-c">' +
+                        '<span class="yahui-since"><span data-hm-true="Zustand unbestimmt" data-hm-false="" data-hm-id="'+openId+'" class="hm-html">'+(datapoints[openId][0]?"Zustand unbestimmt":"")+'</span>' +
+                        '</div>' +
+                        '</li>';
+                        setTimeout(function () {
+                            $("#switch_"+elId).on( 'slidestop', function( event ) {
+                                //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
+                                yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                            });
+                            $("#open_"+elId).click(function (e) {
+                                //console.log("press short "+id);
+                                yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
+                            });
+
+
+
+                        }, 500);
+                    break;
                 case "MOTION_DETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][1]+"</span></span>";
                     defimg = "images/default/motion.png";
@@ -745,7 +796,7 @@ $(document).ready(function () {
                         regaObjects[el.DPs.SETPOINT].ValueUnit;
                     if (el.DPs.STATE) {
                         // CUxD Thermostat Wrapper
-                        content += '<br/><span class="yahui-since"><span data-hm-id="'+el.DPs.STATE+'" class="hm-html">'+datapoints[el.DPs.STATE][0]+'</span>';
+                        content += '<br/><span class="yahui-since"><span data-hm-true="An" data-hm-false="Aus" data-hm-id="'+el.DPs.STATE+'" class="hm-html">'+(datapoints[el.DPs.STATE][0] ? "An" : "Aus")+'</span>';
                     }
 
                     content += '</div></li>';
@@ -1041,6 +1092,9 @@ $(document).ready(function () {
                         if (val == false) { val = 0; }
                         $this.html(valueList[val]);
                     } else {
+                        if ($this.attr("data-hm-true")) {
+                            val = (val ? $this.attr("data-hm-true") : $this.attr("data-hm-false"));
+                        }
                         $this.html(val);
                     }
                     break;

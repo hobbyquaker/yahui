@@ -775,7 +775,7 @@ $(document).ready(function () {
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
                         regaObjects[el.DPs.TEMPERATURE].ValueUnit;
-                    if (el.DPs.TEMP_MIN_24H && el.DPs.TEMP_MAX_24H) {
+                    if (el.DPs.TEMP_MIN_24H && el.DPs.TEMP_MAX_24H && !settings.hideDatapoints.TEMP_MIN_24H) {
                         content += ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
                             regaObjects[el.DPs.TEMP_MIN_24H].ValueUnit +
                             ' max <span data-hm-id="'+el.DPs.TEMP_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MAX_24H][0]+'</span>' +
@@ -787,8 +787,18 @@ $(document).ready(function () {
                         content += 'Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
                             '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit;
                     }
-                    if (el.DPs.DEW_POINT) {
-                        content += ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
+                    if (el.DPs.ABS_HUMIDITY && !settings.hideDatapoints.ABS_HUMIDITY) {
+                        content += ', <span style="" data-hm-id="'+el.DPs.ABS_HUMIDITY+'" class="hm-html">'+datapoints[el.DPs.ABS_HUMIDITY][0]+'</span>' + regaObjects[el.DPs.ABS_HUMIDITY].ValueUnit ;
+                    }
+                    if (el.DPs.HUM_MIN_24H && !settings.hideDatapoints.HUM_MIN_24H) {
+                        content += ' (24h min <span style="" data-hm-id="'+el.DPs.HUM_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MIN_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MIN_24H].ValueUnit;
+                        content += ' max <span style="" data-hm-id="'+el.DPs.HUM_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MAX_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MAX_24H].ValueUnit + ')<br/>';
+                    }
+                    if (el.DPs.DEW_POINT && !settings.hideDatapoints.DEWPOINT) {
+                        if (!el.DPs.HUM_MIN_24H || settings.hideDatapoints.HUM_MIN_24H) {
+                            content += ', ';
+                        }
+                        content += 'Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
                             '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit;
                     }
                     content += '</p></div></li>';
@@ -896,9 +906,9 @@ $(document).ready(function () {
                         if (regaObjects[dpId].Name.match(/\.METER$/)) {
                             val = val.toFixed(3);
                         }
-                        if (regaObjects[dpId].Name.match(/\.LOWBAT$/)) {
-
-                        } else {
+                        var tmpArr = regaObjects[dpId].Name.split(".");
+                        var dpType = tmpArr[2];
+                        if (!settings.hideDatapoints[dpType]) {
                             content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
                         }
                     }

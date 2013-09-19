@@ -22,5 +22,17 @@ var settings = {
     },
 
     // Info-Button oben rechts ausblenden?
-    hideInfoButton: false
+    hideInfoButton: false,
+
+    // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
+    hideDatapoints: {
+        TEMP_MIN_24H: false,
+        ABS_HUMIDITY: false,
+        HUM_MIN_24H: true,
+        DEWPOINT: false,
+        MISS_24H: true,
+        COUNTER: true,
+        SUM: true,
+        LOWBAT: true
+    }
 };

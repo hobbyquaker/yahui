@@ -232,13 +232,14 @@ $(document).ready(function () {
             // Farbe übernehmen
             $(document).on('pagebeforeshow', url.hash,  function(){
                 var cssBackgroundColor = $("body").css("background-color");
-                $('<style type="text/css">.responsive-grid .ui-listview .ui-li-has-thumb .ui-li-heading, .responsive-grid .ui-listview .ui-li-has-thumb .ui-li-desc {background-color:'+cssBackgroundColor+'; opacity:0.7;}</style>').appendTo("head");
+                var cssNew = cssBackgroundColor.replace(/rgb[ ]*\([ ]*([0-9]+)[ ]*,[ ]*([0-9]+)[ ]*,[ ]*([0-9]+[ ]*)[ ]*\)/, function (all, r,g,b) {
+                    return "rgba("+r+","+g+","+b+",0.7)";
+                });
+                $('<style type="text/css">.responsive-grid .ui-listview .ui-li-has-thumb .ui-li-heading, .responsive-grid .ui-listview .ui-li-has-thumb .ui-li-desc {background-color:'+cssNew+';}</style>').appendTo("head");
             });
-
 
             // jqMobile initialisieren
             $.mobile.initializePage();
-
 
         });
     }

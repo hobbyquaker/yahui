@@ -66,6 +66,7 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 ### 0.9.24
   * Anzeige aller Datenpunkte des CUxD WEATHER Kanal 1
   * Möglichkeit bestimmte Datenpunkte auszublenden (settings.js)
+  * Workaround für Encoding-Problem bei ° Zeichen in Verbindung mit "RCU" (CCU2 Firmware auf RaspberryPi)
   * Keymatic Unterstützung
   * Neue Attribute data-hm-true und data-hm-false für Texte bei STATE-Anzeige (bei KEYMATIC und CUxD Thermostat-Wrapper-Device genutzt)
   * Wenn PopUp "Verbindung zu CCU.IO unterbrochen" erscheint Scrolling unterbunden

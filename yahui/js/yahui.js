@@ -765,6 +765,10 @@ $(document).ready(function () {
                 case "WEATHER":
                     defimg = "images/default/weather.png";
                     img = (img ? img : defimg);
+                    // Workaround für Encoding-Problem in Zusammenspiel mit der "RCU" (CCU2 Firmware auf RaspberryPi)
+                    if (regaObjects[el.DPs.TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.TEMPERATURE].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.TEMPERATURE].ValueUnit = "°C";
+                    }
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' + lowbat +
@@ -783,7 +787,6 @@ $(document).ready(function () {
                         content += 'Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
                             '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit;
                     }
-
                     if (el.DPs.DEW_POINT) {
                         content += ', Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
                             '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit;

@@ -730,33 +730,35 @@ $(document).ready(function () {
                     var stateId = regaObjects[id].DPs.STATE;
                     var openId = regaObjects[id].DPs.OPEN;
                     var uncertainId = regaObjects[id].DPs.STATE_UNCERTAIN;
-                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
 
-                        '<select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<table><tr><td><select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Zu</option>' +
                         '<option value="1"'+((datapoints[stateId][0] != 0) ? ' selected' : '')+'>Auf</option>' +
-                        '</select>' +
-                        '<input type="button" data-hm-id="'+openId+'" id="open_'+elId+'" name="open_'+id+'" value="Öffnen" data-inline="true"/> ' +
+                        '</select></td>' +
+                        '<td><input type="button" data-hm-id="'+openId+'" id="open_'+elId+'" name="open_'+id+'" value="Öffnen" data-inline="true"/></td></tr></table>' +
                         lowbat +
                         '</div><div class="yahui-c">' +
-                        '<span class="yahui-since"><span data-hm-true="Zustand unbestimmt" data-hm-false="" data-hm-id="'+openId+'" class="hm-html">'+(datapoints[openId][0]?"Zustand unbestimmt":"")+'</span>' +
+                        '<span class="yahui-since">' +
+                        '<span data-hm-true="Zustand unbestimmt" data-hm-false="" data-hm-id="'+openId+'" class="hm-html">'+(datapoints[openId][0]?"Zustand unbestimmt":"")+'</span></span>' +
                         '</div>' +
                         '</li>';
-                        setTimeout(function () {
-                            $("#switch_"+elId).on( 'slidestop', function( event ) {
-                                //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
-                                yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
-                            });
-                            $("#open_"+elId).click(function (e) {
-                                //console.log("press short "+id);
-                                yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
-                            });
+                    list.append(content);
+                    setTimeout(function () {
+                        $("#switch_"+elId).on( 'slidestop', function( event ) {
+                            //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("#open_"+elId).click(function (e) {
+                            //console.log("press short "+id);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
+                        });
 
 
 
-                        }, 500);
+                    }, 500);
                     break;
                 case "MOTION_DETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][1]+"</span></span>";

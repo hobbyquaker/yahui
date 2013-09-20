@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 0.9.24
+aktuelle Version: 0.9.25
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -62,6 +62,9 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
 
 
 ## Changelog
+
+### 0.9.25
+  * * Workaround für Encoding-Problem bei ° Zeichen in Verbindung mit "RCU" auch auf CLIMATECONTROL_REGULATOR SETPOINT angewendet
 
 ### 0.9.24
   * Anzeige aller Datenpunkte des CUxD WEATHER Kanal 1

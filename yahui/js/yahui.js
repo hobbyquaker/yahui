@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.24",
+    version: "0.9.25",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -787,6 +787,11 @@ $(document).ready(function () {
                     break;
                 case "CLIMATECONTROL_REGULATOR":
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
+                    if (regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.SETPOINT].ValueUnit = "°C";
+                    }
+
+
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' + lowbat +

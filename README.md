@@ -21,7 +21,7 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
 
 yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-installation voraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
-zu kopieren und die Datei settings-dist.js in settings.js umzubenennen.
+zu kopieren und die Datei settings-dist.js (zu finden im Unterordner "js") in settings.js umzubenennen.
 
 yahui ist sobald [CCU.IO](https://github.com/hobbyquaker/ccu.io) bereit ist unter http://ccu-io-host:ccu-io-port/yahui erreichbar.
 

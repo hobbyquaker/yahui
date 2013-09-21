@@ -53,10 +53,10 @@ vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customi
 http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 21 der Datei index.html muss dann
 die URL der jqueryMobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
 
-### Hinzufügen von Links zur Link-Seite
+### Hinzufügen von Erweiterungen
 
-Wenn man sich im Edit-Modus befindet kann über den Button "hinzufügen" oben links ein neuer Link angelegt werden. Zum
-bearbeiten oder löschen von Links einfach den Link anklicken.
+Wenn man sich im Edit-Modus befindet kann über den Button "hinzufügen" oben links eine neue Erweiterung angelegt werden.
+Zum bearbeiten oder löschen von Erweiterungen einfach im Edit-Modus die Erweiterung anklicken.
 
 ### Ausblenden bestimmter Datenpunkte
 

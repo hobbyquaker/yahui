@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 0.9.25
+aktuelle Version: 1.0.0
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -18,10 +18,9 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
 ## Installation
 
 
-
 yahui setzt eine funktionierende ccu.io-installation vorraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
-zu kopieren.
+zu kopieren und die Datei settings-dist.js in settings.js umzubenennen.
 
 ## Bedienung
 
@@ -52,19 +51,35 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
 vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
-http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 14 der index.html muss dann die URL
-der jquerymobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
+http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 21 der Datei index.html muss dann
+die URL der jqueryMobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
 
 ### Hinzufügen von Links zur Link-Seite
 
 Wenn man sich im Edit-Modus befindet kann über den Button "hinzufügen" oben links ein neuer Link angelegt werden. Zum
 bearbeiten oder löschen von Links einfach den Link anklicken.
 
+### Ausblenden bestimmter Datenpunkte
+
+In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeigt werden sollen.
+
+## ToDo/Roadmap
+
+  * Widget Winmatic
+  * Widget Wetterstation OC3
+  * Widget Homematic Wired 12/14
+  * Widget Kapazitiver Füllstandsmesser
+  * Service-Meldungen und Alarme anzeigen
+  * vergangene Zeit statt Zeitpunkt anzeigen?
 
 ## Changelog
 
+### 1.0
+  * WebApp Icon und "Add-to-Homescreen-Bubble" hinzugefügt
+  * Auslieferung nun mit settings-dist.js damit settings bei Updates nicht überschreiben werden.
+
 ### 0.9.25
-  * * Workaround für Encoding-Problem bei ° Zeichen in Verbindung mit "RCU" auch auf CLIMATECONTROL_REGULATOR SETPOINT angewendet
+  * Workaround für Encoding-Problem bei ° Zeichen in Verbindung mit "RCU" auch auf CLIMATECONTROL_REGULATOR SETPOINT angewendet
 
 ### 0.9.24
   * Anzeige aller Datenpunkte des CUxD WEATHER Kanal 1
@@ -167,12 +182,12 @@ bearbeiten oder löschen von Links einfach den Link anklicken.
   * Fehler behoben bei Variablentyp Werteliste
   * LOWBAT Meldung wird als leere-Batterie-Icon angezeigt
 
-## ToDo
 
-  * Fehlende Widgets ergänzen: ... ?
-  * Service-Meldungen und Alarme?
-  * vergangene Zeit statt Zeitpunkt anzeigen?
+## In yahui verwendete Software
 
+  * [jQuery](http://jquery.com/)
+  * [jQuery Mobile](http://jquerymobile.com/)
+  * [Add to Home Screen](http://cubiq.org/add-to-home-screen)
 
 ## Lizenz / Copyright
 

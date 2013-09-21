@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "0.9.25",
+    version: "1.0.0",
     prefix: "",
     images: [],
     sortOrder: {},

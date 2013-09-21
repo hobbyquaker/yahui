@@ -27,7 +27,7 @@ var settings = {
     // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
     hideDatapoints: {
         TEMP_MIN_24H: false,
-        ABS_HUMIDITY: false,
+        ABS_HUMIDITY: true,
         HUM_MIN_24H: true,
         DEWPOINT: false,
         MISS_24H: true,

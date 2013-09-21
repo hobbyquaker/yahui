@@ -23,6 +23,8 @@ var settings = {
 
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
+	// Taster ausblenden
+	hideFilterButton: true,      // Später das muss den Checkbix selbst ausblenden oder zeigen
 
     // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
     hideDatapoints: {

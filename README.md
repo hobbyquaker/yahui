@@ -18,7 +18,7 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
 ## Installation
 
 
-yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-installation vorraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
+yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-installation voraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
 zu kopieren und die Datei settings-dist.js in settings.js umzubenennen.
 
@@ -107,7 +107,7 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
   * Kanaltyp RAINDETECTOR_HEAT ergänzt
 
 ### 0.9.18
-  * indexOf() durch jQuery.inArray() ersetzt zweckes Internet Explorer 8 Kompatibilität
+  * indexOf() durch jQuery.inArray() ersetzt zwecks Internet Explorer 8 Kompatibilität
 
 ### 0.9.17
   * Bugfixes WEATHER und CLIMATE_CONTROL_REGULATOR

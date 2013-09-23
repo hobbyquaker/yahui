@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "1.0.0",
+    version: "1.0.1",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -624,9 +624,7 @@ $(document).ready(function () {
                     content += '</div><div class="yahui-c">' +
                         '<input id="'+elId+'" type="range" data-hm-factor="100" data-hm-id="'+levelId +
                         '" name="slider_'+elId+'" id="slider_'+elId+'" min="0" max="100" value="'+(datapoints[levelId][0]*100)+'"/></div></li>';
-
                     list.append(content);
-
                     setTimeout(function () {
                         $("#"+elId).on( 'slidestop', function( event ) {
                             //console.log("slide "+event.target.value / (event.target.dataset.hmFactor?event.target.dataset.hmFactor:1)+" "+event.target.dataset.hmId);
@@ -637,8 +635,6 @@ $(document).ready(function () {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                     }, 500);
-
-
                     break;
                 case "BLIND":
                     defimg = "images/default/blind.png";
@@ -697,12 +693,12 @@ $(document).ready(function () {
                         //console.log("press long "+id);
                         yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
                     });
-
-
                     break;
                 case "ALARMACTUATOR":
                 case "SWITCH":
                 case "RAINDETECTOR_HEAT":
+                case "DIGITAL_OUTPUT":
+                case "DIGITAL_ANALOG_OUTPUT":
                     defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
@@ -753,9 +749,6 @@ $(document).ready(function () {
                                 //console.log("press short "+id);
                                 yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
                             });
-
-
-
                         }, 500);
                     break;
                 case "MOTION_DETECTOR":
@@ -790,8 +783,6 @@ $(document).ready(function () {
                     if (regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.SETPOINT].ValueUnit = "°C";
                     }
-
-
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' + lowbat +
@@ -804,7 +795,6 @@ $(document).ready(function () {
                         // CUxD Thermostat Wrapper
                         content += '<br/><span class="yahui-since"><span data-hm-true="An" data-hm-false="Aus" data-hm-id="'+el.DPs.STATE+'" class="hm-html">'+(datapoints[el.DPs.STATE][0] ? "An" : "Aus")+'</span>';
                     }
-
                     content += '</div></li>';
                     list.append(content);
                     setTimeout(function () {
@@ -877,8 +867,9 @@ $(document).ready(function () {
                     break;
                 case "TILT_SENSOR":
                 case "SHUTTER_CONTACT":
+                case "DIGITAL_INPUT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/shutter-contact.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -892,7 +883,7 @@ $(document).ready(function () {
                     break;
                 case "RAINDETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/rain.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -906,7 +897,7 @@ $(document).ready(function () {
                     break;
                 case "ROTARY_HANDLE_SENSOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/rotary.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -920,7 +911,7 @@ $(document).ready(function () {
                     break;
                 case "WATERDETECTIONSENSOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/water.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -934,7 +925,7 @@ $(document).ready(function () {
                     break;
                 case "SENSOR_FOR_CARBON_DIOXIDE":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    defimg = "images/default/carbondioxide.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
                         '<div class="yahui-a">'+el.Name+'</div>' +

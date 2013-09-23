@@ -1,3 +1,7 @@
+body {
+    background-color: #0092d9;
+}
+
 /* Floats einschliessen! */
 li.yahui-widget {
     overflow: hidden;

@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.0.0
+aktuelle Version: 1.0.1
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -50,7 +50,7 @@ Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
 in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
 vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
-http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 21 der Datei index.html muss dann
+http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 25 der Datei index.html muss dann
 die URL der jqueryMobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
 
 ### Hinzufügen von Erweiterungen
@@ -66,14 +66,20 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
   * Widget Winmatic
   * Widget Wetterstation OC3
-  * Widget Homematic Wired 12/14
   * Widget Kapazitiver Füllstandsmesser
-  * Service-Meldungen und Alarme anzeigen
+  * Service-Meldungen und Alarme?
   * vergangene Zeit statt Zeitpunkt anzeigen?
+  * Click-Handler-Initialisierung: passender Event statt setTimeout?
+  * Zustandsabhängige Bilder/Icons
 
 ## Changelog
 
-### 1.0
+### 1.0.1
+  * Unterstützung für Kanaltypen DIGITAL_OUTPUT, DIGITAL_ANALOG_OUTPUT und DIGITAL_INPUT (Wired 12/14 Modul)
+  * Anpassung an iPhone 5 Bildformat
+  * iOS WebApp Splashscreen
+
+### 1.0.0
   * WebApp Icon und "Add-to-Homescreen-Bubble" hinzugefügt
   * Auslieferung nun mit settings-dist.js damit settings bei Updates nicht überschreiben werden.
 

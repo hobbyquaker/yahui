@@ -75,6 +75,9 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
 ## Changelog
 
+### 1.0.2
+  * Fehler behoben beim Laden von setting.js
+
 ### 1.0.1
   * Unterstützung für Kanaltypen DIGITAL_OUTPUT, DIGITAL_ANALOG_OUTPUT und DIGITAL_INPUT (Wired 12/14 Modul)
   * Anpassung an iPhone 5 Bildformat

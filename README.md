@@ -71,6 +71,7 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
   * vergangene Zeit statt Zeitpunkt anzeigen?
   * Click-Handler-Initialisierung: passender Event statt setTimeout?
   * Zustandsabhängige Bilder/Icons
+  * js/css kombiniert und minifiziert ausliefern
 
 ## Changelog
 

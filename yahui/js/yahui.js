@@ -1208,52 +1208,13 @@ $(document).ready(function () {
             //console.log("select change");
             var $this = $(this);
             $this.find("option").removeAttr("selected");
-
             if (val == true) { val = 1; }
             if (val == false) { val = 0; }
-
             $this.find("option[value='"+val+"']").prop("selected", true);
             if ($this.parent().parent().hasClass("ui-select")) {
                 $this.selectmenu("refresh");
             }
-
         });
-    }
-
-    if (google && google.bookmarkbubble) {
-        setTimeout(function() {
-            var bubble = new google.bookmarkbubble.Bubble();
-
-            var parameter = 'bmb=1';
-
-            bubble.hasHashParameter = function() {
-                return $.inArray(parameter, window.location.hash) != -1;
-            };
-
-            bubble.setHashParameter = function() {
-                if (!this.hasHashParameter()) {
-                    window.location.hash += parameter;
-                }
-            };
-
-            bubble.getViewportHeight = function() {
-                return window.innerHeight;
-            };
-
-            bubble.getViewportScrollY = function() {
-                return window.pageYOffset;
-            };
-
-            bubble.registerScrollHandler = function(handler) {
-                window.addEventListener('scroll', handler, false);
-            };
-
-            bubble.deregisterScrollHandler = function(handler) {
-                window.removeEventListener('scroll', handler, false);
-            };
-
-            bubble.showIfAllowed();
-        }, 1000);
     }
 
     function regaObjectAlphabetically(a,b) {

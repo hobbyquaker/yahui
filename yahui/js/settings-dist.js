@@ -24,6 +24,9 @@ var settings = {
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
 
+    // (VIRTUAL_)KEY grundsätzlich ausblenden
+    hideKeys: false,
+
     // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
     hideDatapoints: {
         TEMP_MIN_24H: false,

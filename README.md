@@ -75,6 +75,11 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
 ## Changelog
 
+### 1.0.5/1.0.6
+  * Unterstützung für den neuen Heizkörperthermostat (HM-CC-RT-DN)
+  * Anzeige der installierten CCU.IO-Version im Info-Dialog
+  * Bugfixes
+
 ### 1.0.4
   * Anzeige von Letzte-Änderung-Timestamp statt Aktualisierungs-Timestamp
 

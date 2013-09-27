@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "1.0.6",
+    version: "1.0.7",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -582,10 +582,7 @@ $(document).ready(function () {
         var img, defimg = "images/default/widget.png";
         if (yahui.images[id]) {
             img = "images/user/" + yahui.images[id];
-        } else {
-            img = defimg;
         }
-
         // Um was handelt es sich?
         switch (el.TypeName) {
         case "CHANNEL":
@@ -608,7 +605,8 @@ $(document).ready(function () {
             switch (el.HssType) {
 
                 case "DIMMER":
-                    defimg = "images/default/dimmer.png";
+                    //defimg = "images/default/dimmer.png";
+                    img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
@@ -641,7 +639,7 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "BLIND":
-                    defimg = "images/default/blind.png";
+                    //defimg = "images/default/blind.png";
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
@@ -678,7 +676,7 @@ $(document).ready(function () {
                 case "KEY":
                 case "VIRTUAL_KEY":
                     if (!settings.hideKeys) {
-                        defimg = "images/default/key.png";
+                        //defimg = "images/default/key.png";
                         img = (img ? img : defimg);
                         var shortId = regaObjects[id].DPs.PRESS_SHORT;
                         var longId = regaObjects[id].DPs.PRESS_LONG;
@@ -700,12 +698,13 @@ $(document).ready(function () {
                         });
                     }
                     break;
+                case "RAINDETECTOR_HEAT":
+                    defimg = "images/default/rain.png";
                 case "ALARMACTUATOR":
                 case "SWITCH":
-                case "RAINDETECTOR_HEAT":
                 case "DIGITAL_OUTPUT":
                 case "DIGITAL_ANALOG_OUTPUT":
-                    defimg = "images/default/switch.png";
+                    //defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
@@ -727,7 +726,7 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "KEYMATIC":
-                    defimg = "images/default/keymatic.png";
+                    //defimg = "images/default/keymatic.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
                     var openId = regaObjects[id].DPs.OPEN;
@@ -759,7 +758,7 @@ $(document).ready(function () {
                     break;
                 case "MOTION_DETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][3]+"</span></span>";
-                    defimg = "images/default/motion.png";
+                    //defimg = "images/default/motion.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -880,7 +879,7 @@ $(document).ready(function () {
                 case "WINDOW_SWITCH_RECEIVER":
                     break;
                 case "WEATHER":
-                    defimg = "images/default/weather.png";
+                    //defimg = "images/default/weather.png";
                     img = (img ? img : defimg);
                     // Workaround für Encoding-Problem in Zusammenspiel mit der "RCU" (CCU2 Firmware auf RaspberryPi)
                     if (regaObjects[el.DPs.TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.TEMPERATURE].ValueUnit.match(/C$/)) {
@@ -923,7 +922,7 @@ $(document).ready(function () {
                     break;
                 case "SMOKE_DETECTOR_TEAM":
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    defimg = "images/default/smoke.png";
+                    //defimg = "images/default/smoke.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -935,11 +934,11 @@ $(document).ready(function () {
                         '</h3></div></li>';
                     list.append(content);
                     break;
-                case "TILT_SENSOR":
                 case "SHUTTER_CONTACT":
+                    defimg = "images/default/shutter-contact.png";
+                case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    defimg = "images/default/shutter-contact.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -981,7 +980,7 @@ $(document).ready(function () {
                     break;
                 case "WATERDETECTIONSENSOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    defimg = "images/default/water.png";
+                    //defimg = "images/default/water.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -995,7 +994,7 @@ $(document).ready(function () {
                     break;
                 case "SENSOR_FOR_CARBON_DIOXIDE":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    defimg = "images/default/carbondioxide.png";
+                    //defimg = "images/default/carbondioxide.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +

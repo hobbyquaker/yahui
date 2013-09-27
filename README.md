@@ -75,6 +75,9 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
 ## Changelog
 
+### 1.0.7
+  * Default-Icons für Thermostat, Ventiltrieb, Regendetektor, Drehgriffkontakt und Tür/Fensterkontakt hinzugefügt
+
 ### 1.0.5/1.0.6
   * Unterstützung für den neuen Heizkörperthermostat (HM-CC-RT-DN)
   * Anzeige der installierten CCU.IO-Version im Info-Dialog

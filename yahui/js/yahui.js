@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "1.0.4",
+    version: "1.0.5",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -809,6 +809,63 @@ $(document).ready(function () {
                         });
                     }, 500);
                     break;
+                case "CLIMATECONTROL_RT_TRANSCEIVER":
+                    if (regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit = "°C";
+                    }
+                    if (regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit = "°C";
+                    }
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'">' +
+                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-b">' +
+                        '<span style="display:inline-block; padding-right: 16px;"><select id="select_'+elId+'" data-hm-id="'+id+'">';
+                    var controlMode = el.DPs.CONTROL_MODE;
+                    var valueList = regaObjects[controlMode].ValueList.split(";");
+                    for (var i = 0; i < valueList.length; i++) {
+                        if (datapoints[controlMode][0] == i) {
+                            selected = " selected";
+                        } else {
+                            selected = "";
+                        }
+                        content += '<option value="'+i+'"'+selected+'>'+valueList[i]+'</option>';
+                    }
+                    content += '</select></span>' +
+                        lowbat +
+                        '</div><div class="yahui-c">' +
+                        '<div style="display: inline-block; width: 70px;">' +
+                        '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" class="hm-val" data-hm-id="'+el.DPs.SET_TEMPERATURE+'" value="'+datapoints[el.DPs.SET_TEMPERATURE][0]+'"  />' +
+                        '</div> '+ regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit +
+                        '<span style="padding-left:16px;">Ist:<span data-hm-id="'+el.DPs.ACTUAL_TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.ACTUAL_TEMPERATURE][0]+'</span></span>' +
+                        regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit;
+                    content += '</div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("#input_"+id).change(function( event ) {
+                            var val = $("#input_"+id).val();
+                            yahui.socket.emit("setState", [regaObjects[el.DPs.MANU_MODE], val]);
+                            yahui.socket.emit("setState", [regaObjects[el.DPs.SET_TEMPERATURE], val]);
+                        });
+                        $("#select_"+elId).on( 'change', function( event ) {
+                            var val = parseInt($("#select_"+elId+" option:selected").val(), 10);
+                            var setTemperature = $("#input_"+id).val();
+                            switch (val) {
+                                case 0:
+                                    yahui.socket.emit("setState", [el.DPs.AUTO_MODE, true]);
+                                    break;
+                                case 1:
+                                    yahui.socket.emit("setState", [el.DPs.MANU_MODE, setTemperature]);
+                                    break;
+                                case 2:
+                                    yahui.socket.emit("setState", [el.DPs.PARTY_MODE, setTemperature]);
+                                    break;
+                                case 3:
+                                    yahui.socket.emit("setState", [el.DPs.BOOST_MODE, true]);
+                                    break;
+                            }
+                        });
+                    }, 500);
+                    break;
                 case "WINDOW_SWITCH_RECEIVER":
                     break;
                 case "WEATHER":
@@ -951,6 +1008,11 @@ $(document).ready(function () {
                     for (var dp in regaObjects[id].DPs) {
                         var dpId = regaObjects[id].DPs[dp];
                         var val = datapoints[dpId][0];
+
+                        if (regaObjects[dpId].ValueType === 16 && regaObjects[dpId].ValueList !== "") {
+                            var valList = regaObjects[dpId].ValueList.split(";");
+                            val = valList[val];
+                        }
 
                         // Meter-Datenpunkt auf 3-Nachkommastellen formatieren.
                         if (regaObjects[dpId].Name.match(/\.METER$/)) {

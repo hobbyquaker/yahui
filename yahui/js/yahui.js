@@ -14,7 +14,7 @@
 
 
 var yahui = {
-    version: "1.0.7",
+    version: "1.0.8",
     prefix: "",
     images: [],
     sortOrder: {},
@@ -216,7 +216,14 @@ $(document).ready(function () {
 
             // Starten wir mit einer Page? Wenn ja schnell Rendern.
             if ( url.hash.search(/^#page_/) !== -1 ) {
+
                 var pageId = (url.hash.slice(6));
+                if (pageId.match(/&/)) {
+                    var tmpArr = pageId.split("&");
+                    pageId = tmpArr[0];
+                    window.location.href = "/yahui/#page_"+pageId;
+                    url = $.mobile.path.parseUrl(location.href);
+                }
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId, true);
                 }
@@ -707,6 +714,7 @@ $(document).ready(function () {
                     //defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
+                    console.log(el.Name+" id="+id+" stateId="+stateId);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
@@ -935,7 +943,7 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "SHUTTER_CONTACT":
-                    defimg = "images/default/shutter-contact.png";
+                    //defimg = "images/default/shutter-contact.png";
                 case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
@@ -1150,6 +1158,7 @@ $(document).ready(function () {
     }
 
     function updateWidgets(id, val, lastupdate, ack, ts) {
+        //console.log("updateWidgets id="+id+" val="+val);
 
         $(".hm-html[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
@@ -1183,9 +1192,9 @@ $(document).ready(function () {
             var datapoint   = regaObjects[id];
             var state = $this.attr("data-hm-state");
 
-            if (state === "false") {
+            if (state === "false" || state === false) {
                 state = false;
-            } else if (state === "true") {
+            } else if (state === "true" || state === true) {
                 state = true;
             } else {
                 state = parseInt(state, 10);
@@ -1264,17 +1273,20 @@ $(document).ready(function () {
                     direction = datapoints[channel.DPs.WORKING][0];
                 }
             }
+            console.log("switch id="+id+" val="+val);
             //console.log(channel.Name+" working="+working);
-            if (!working) {
+            //if (!working) {
                 if (!val) {
                     $this.find("option[value='1']").removeAttr("selected");
+                    $this.find("option[value='0']").attr("selected", true);
                     $this.find("option[value='0']").prop("selected", true);
                 } else {
                     $this.find("option[value='0']").removeAttr("selected");
+                    $this.find("option[value='1']").attr("selected", true);
                     $this.find("option[value='1']").prop("selected", true);
                 }
                 $this.slider("refresh");
-            }
+            //}
 
         });
 

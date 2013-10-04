@@ -11,11 +11,8 @@
  *
  */
 
-
-
 var yahui = {
-    version: "1.0.8",
-    prefix: "",
+    version: "1.0.9",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -24,15 +21,16 @@ var yahui = {
     ready: false
 };
 
-
 $(document).ready(function () {
 
     var body = $("body");
 
     var url = $.mobile.path.parseUrl(location.href);
 
+    if (!settings.prefix) { settings.prefix = ""; }
+
     $(".yahui-version").html(yahui.version);
-    $(".yahui-prefix").html(yahui.prefix);
+    $(".yahui-prefix").html(settings.prefix);
 
     // Themes
     $("[data-role='header']").attr("data-theme", settings.swatches.header);
@@ -390,7 +388,7 @@ $(document).ready(function () {
             '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
             '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
             '<a href="#" id="refresh_'+pageId+'" data-role="button" data-inline="true" data-icon="refresh" data-iconpos="notext" class="yahui-info ui-btn-right"></a>' +
-            '<h1>' + text + '</h1>' +
+            '<h1>' + settings.prefix + text + '</h1>' +
             '</div><div style="margin:0;padding:0;min-height:90%" data-role="content">' +
             '<iframe style="position:absolute; top:0px; left:0px; width:100%; height:100%; height:calc(100% - 42px); padding-top:42px; border: none;" src="'+src+'" id="if_'+pageId+'"></iframe></div></div>';
         body.prepend(page);
@@ -487,7 +485,7 @@ $(document).ready(function () {
         var page = '<div id="page_'+pageId+'" data-role="page" data-theme="'+settings.swatches.content+'">' +
             '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
             '<a href="'+link+'" data-role="button" data-icon="arrow-l">'+name+'</a>' +
-            '<h1>' +yahui.prefix+regaObj.Name + '</h1>';
+            '<h1>' +settings.prefix+regaObj.Name + '</h1>';
         if (!settings.hideInfoButton) {
             page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
         }
@@ -1235,7 +1233,7 @@ $(document).ready(function () {
                     // Todo Update verhindern wenn Focus, allerdings muss dann Update erfolgen wenn Focus wieder weg ist.
                     //if (!$this.parent().hasClass("ui-focus")) {
                     $this.val(val);
-                //}
+                    //}
             }
         });
 
@@ -1252,14 +1250,16 @@ $(document).ready(function () {
                     direction = datapoints[channel.DPs.WORKING][0];
                 }
             }
-            // Eltern-Element aus Index suchen
+
+            // Eltern-Element aus Index suchen um ggf. WORKING-Datenpunkt zu finden
             var channel     = regaObjects[regaObjects[id].Parent];
             if (channel) {
                 if (channel.DPs.WORKING) {
                     working = datapoints[channel.DPs.WORKING][0];
                 }
             }
-            //console.log(channel.Name+" working="+working);
+
+            // Wenn WORKING=true Update des Sliders unterdrücken
             if (!working) {
                 var $this = $(this);
                 var pos = val;

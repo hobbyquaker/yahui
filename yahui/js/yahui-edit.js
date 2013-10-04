@@ -14,8 +14,7 @@
 
 $(document).ready(function () {
 
-
-
+    // Notwendige Scripts laden
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {
         $.getScript("/lib/js/jquery.ui.touch-punch.min.js").done(function(script, textStatus) {
             $.getScript("/lib/js/dropzone.js").done(function(script, textStatus) {
@@ -29,7 +28,6 @@ $(document).ready(function () {
 
     function initEditMode() {
         //console.log("initEditMode()");
-
 
         $("a.yahui-extension").click(function (e) {
 
@@ -54,57 +52,19 @@ $(document).ready(function () {
 
         });
 
-
-
         //console.log("change Links");
         $("a.yahui-extension").each(function () {
-
             var $this = $(this);
-
-
 
             $this.prop("href", "#edit_link");
             $this.prop("data-rel", "dialog");
             $this.removeAttr("target");
-
-
         });
-
-        /*
-         $(".ui-listview").sortable({
-         stop: function (e, ui) {
-         ui.item.parent().listview("refresh");
-         }
-         });
-         $("li.ui-li").dropzone({
-         url: "/upload/post?yahui",
-         clickable: true,
-         addedfile: function (file) {
-         //console.log(file);
-         // $("#popupUpload").popup("open");
-         },
-         dragover: function (e) {
-         //console.log(e);
-         var el = $(e.toElement);
-
-         $(e.toElement).closest(".ui-li").find("img").addClass("upload-start");
-
-         },
-         dragleave: function (e) {
-         //console.log("drag end");
-         $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
-         },
-         drop: function (e) {
-         //console.log("drag end");
-         $(e.toElement).closest(".ui-li").find("img").removeClass("upload-start");
-         }
-         });*/
     }
 
     $(document).on( "pagechange", function (e, data) {
-        //console.log("pagechange ");
-        //console.log(data.toPage[0].id);
 
+        // Sortierung initialisieren
         $(".ui-sortable").sortable("destroy");
         data.toPage.find(".ui-listview.yahui-sortable").sortable({
             start: function (e, ui) {
@@ -123,7 +83,6 @@ $(document).ready(function () {
                     if (!id) {
                         id = parseInt($(this).attr("data-ext-id"), 10);
                     }
-
                     sortOrder.push(id);
                 });
 
@@ -131,6 +90,8 @@ $(document).ready(function () {
                 yahui.socket.emit("writeFile", "yahui-sort.json", yahui.sortOrder);
             }
         });
+
+        // File-Uploads initialisieren
         $("li.ui-li").each(function() {
             var $this = $(this);
             var id = $this.attr("data-hm-id");
@@ -173,8 +134,6 @@ $(document).ready(function () {
         });
     });
 
-
-
     $("body").append('<div data-role="popup" data-dismissible="false" data-history="false" data-overlay-theme="a" id="popupUpload">' +
         '<h3>Upload vollständig</h3>' +
         '<p id="uploadProgress"> <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div></p>' +
@@ -214,7 +173,6 @@ $(document).ready(function () {
         yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
             window.location.reload();
         });
-
     });
 
     // Erweiterung löschen
@@ -229,7 +187,6 @@ $(document).ready(function () {
         yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
             window.location.reload();
         });
-
     });
 
     // Erweiterung hinzufügen
@@ -251,7 +208,6 @@ $(document).ready(function () {
         yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions, function () {
             window.location.reload();
         });
-
     });
 
     // gibt nächste freie ID für Extension zurück
@@ -269,4 +225,3 @@ $(document).ready(function () {
     }
 
 });
-

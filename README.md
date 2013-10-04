@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.0.8
+aktuelle Version: 1.0.9
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -75,20 +75,27 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
 ## Changelog
 
+### 1.0.9
+  * (Hobbyquaker) Seiten-Titel-Prefix in settings.js verlagert und an fehlenden Stellen ergänzt
+  * (Hobbyquaker) Bugfixes
+
 ### 1.0.8
-  * Default-Icons nun nach Gerätetyp
-  * Bugfixes
+  * (Hobbyquaker) Default-Icons nun nach Gerätetyp
+  * (Hobbyquaker) Bugfixes
 
 ### 1.0.7
   * (Hobbyquaker) Default-Icons für Thermostat, Ventiltrieb, Regendetektor, Drehgriffkontakt und Tür/Fensterkontakt hinzugefügt
 
-### 1.0.5/1.0.6
-  * Unterstützung für den neuen Heizkörperthermostat (HM-CC-RT-DN)
-  * Anzeige der installierten CCU.IO-Version im Info-Dialog
-  * Bugfixes
+### 1.0.6
+  * (Hobbyquaker) Unterstützung für den neuen Heizkörperthermostat (HM-CC-RT-DN)
+  * (Hobbyquaker) Anzeige der installierten CCU.IO-Version im Info-Dialog
+  * (Hobbyquaker) Bugfixes
+
+### 1.0.5
+  * (Hobbyquaker) Bugfixes
 
 ### 1.0.4
-  * Anzeige von Letzte-Änderung-Timestamp statt Aktualisierungs-Timestamp
+  * (Hobbyquaker) Anzeige von Letzte-Änderung-Timestamp statt Aktualisierungs-Timestamp
 
 ### 1.0.3
   * (Bluefox) neue Option in settings um (VIRTUAL_)KEY grundsätzlich auszublenden

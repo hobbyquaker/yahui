@@ -21,6 +21,9 @@ var settings = {
         footer: "a"
     },
 
+    // Prefix das allen Seiten-Titeln vorangestellt wird
+    prefix: "",
+
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
 

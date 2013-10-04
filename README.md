@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.0.6
+aktuelle Version: 1.0.8
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
 
@@ -75,8 +75,12 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
 
 ## Changelog
 
+### 1.0.8
+  * Default-Icons nun nach Gerätetyp
+  * Bugfixes
+
 ### 1.0.7
-  * Default-Icons für Thermostat, Ventiltrieb, Regendetektor, Drehgriffkontakt und Tür/Fensterkontakt hinzugefügt
+  * (Hobbyquaker) Default-Icons für Thermostat, Ventiltrieb, Regendetektor, Drehgriffkontakt und Tür/Fensterkontakt hinzugefügt
 
 ### 1.0.5/1.0.6
   * Unterstützung für den neuen Heizkörperthermostat (HM-CC-RT-DN)

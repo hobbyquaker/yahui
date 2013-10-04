@@ -17,9 +17,11 @@ var yahui = {
     version: "1.0.8",
     prefix: "",
     images: [],
+    defaultImages: [],
     sortOrder: {},
     socket: {},
-    extensions: {}
+    extensions: {},
+    ready: false
 };
 
 
@@ -61,11 +63,14 @@ $(document).ready(function () {
         //console.log(obj);
         // id = obj[0], value = obj[1], timestamp = obj[2], acknowledge = obj[3]
 
-        // Datenpunkt-Objekt aktualisieren
-        datapoints[obj[0]] = [obj[1], obj[2], obj[3], obj[4]];
+        if ($.isArray(obj)) {
+            // Datenpunkt-Objekt aktualisieren
+            datapoints[obj[0]] = [obj[1], obj[2], obj[3], obj[4]];
 
-        // UI Widgets aktualisieren
-        updateWidgets(obj[0], obj[1], obj[2], obj[3], obj[4]);
+            // UI Widgets aktualisieren
+            updateWidgets(obj[0], obj[1], obj[2], obj[3], obj[4]);
+        }
+
     });
 
     yahui.socket.on('connect', function () {
@@ -123,6 +128,16 @@ $(document).ready(function () {
         //console.log(yahui.images);
     });
 
+    // Abfragen welche Bild-Dateien im Ordner yahui/images/default/ vorhanden sind
+    yahui.socket.emit('readdir', "www/yahui/images/default", function(dirArr) {
+        for (var i = 0; i < dirArr.length; i++) {
+            //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
+            var id = dirArr[i].replace(/\..*$/, "");
+            yahui.defaultImages[id] = dirArr[i];
+        }
+        //console.log(yahui.defaultImages);
+    });
+
     // Extensions laden
     yahui.socket.emit('readFile', 'yahui-extensions.json', function (data) {
         if (data) {
@@ -141,15 +156,11 @@ $(document).ready(function () {
                 yahui.sortOrder = data;
             }
 
-
             // ---------- "Hier geht's los" ----------- //
             getDatapoints();
             renderLinks();
-
         });
-
     });
-
 
     // Sind wir im Edit-Mode?
     if (url.search == "?edit") {
@@ -209,10 +220,7 @@ $(document).ready(function () {
             renderMenu("ENUM_FUNCTIONS", "ul#listFunctions");
 
             // "wir sind fertig".
-
-
-
-
+            yahui.ready = true;
 
             // Starten wir mit einer Page? Wenn ja schnell Rendern.
             if ( url.hash.search(/^#page_/) !== -1 ) {
@@ -279,7 +287,6 @@ $(document).ready(function () {
                 sortOrder = yahui.sortOrder["listFavs"];
                 name = "Favoriten";
                 break;
-
         }
 
         // Wir merken uns welche Widgets bereits gerendert wurden
@@ -345,7 +352,6 @@ $(document).ready(function () {
             if ($.mobile.activePage) {
                 $("a.yahui-noedit.yahui-editswitch").attr("href", "./?edit#"+ $.mobile.activePage.attr('id'));
                 $("a.yahui-edit.yahui-editswitch ").attr("href", "./#"+ $.mobile.activePage.attr('id'));
-
             }
 
             // Kommt die Zeichenkette #page_ im Hash vor?
@@ -391,7 +397,6 @@ $(document).ready(function () {
         $("#refresh_"+pageId).click(function () {
            $("#if_"+pageId).attr('src', function ( i, val ) { return val; });
         });
-
     }
 
     // Link-Seite aufbauen
@@ -407,7 +412,6 @@ $(document).ready(function () {
                     alreadyRendered.push(yahui.sortOrder.listLinks[i]);
                 }
             }
-
         }
 
         // Noch nicht gerenderte (in Sortierung nicht vorhandene) rendern
@@ -416,7 +420,6 @@ $(document).ready(function () {
                 renderLink(id);
             }
         }
-
     }
 
     // Ein einzelnen Link rendern
@@ -575,7 +578,6 @@ $(document).ready(function () {
                 renderWidget(list, chId);
             }
         }
-
     }
 
     // erzeugt ein Bedien-/Anzeige-Element
@@ -598,21 +600,26 @@ $(document).ready(function () {
             } else if (regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
                 if (serviceChannel && serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
-                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig"/>';
+                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig" title="Batteriekapazität niedrig"/>';
                 }
             }
 
             if (regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
                 if (serviceChannel && serviceChannel.DPs.UNREACH && datapoints[serviceChannel.DPs.UNREACH][0]) {
-                    lowbat += '<img class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört"/>';
+                    lowbat += '<img class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
                 }
+            }
+
+            // Default-Image für Gerät vorhanden?
+            var deviceType = regaObjects[el.Parent].HssType;
+            if (yahui.defaultImages[deviceType]) {
+                defimg = "images/default/"+yahui.defaultImages[deviceType];
             }
 
             switch (el.HssType) {
 
                 case "DIMMER":
-                    //defimg = "images/default/dimmer.png";
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
@@ -646,7 +653,6 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "BLIND":
-                    //defimg = "images/default/blind.png";
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
@@ -683,7 +689,6 @@ $(document).ready(function () {
                 case "KEY":
                 case "VIRTUAL_KEY":
                     if (!settings.hideKeys) {
-                        //defimg = "images/default/key.png";
                         img = (img ? img : defimg);
                         var shortId = regaObjects[id].DPs.PRESS_SHORT;
                         var longId = regaObjects[id].DPs.PRESS_LONG;
@@ -706,15 +711,12 @@ $(document).ready(function () {
                     }
                     break;
                 case "RAINDETECTOR_HEAT":
-                    defimg = "images/default/rain.png";
                 case "ALARMACTUATOR":
                 case "SWITCH":
                 case "DIGITAL_OUTPUT":
                 case "DIGITAL_ANALOG_OUTPUT":
-                    //defimg = "images/default/switch.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
-                    console.log(el.Name+" id="+id+" stateId="+stateId);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
@@ -734,7 +736,6 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "KEYMATIC":
-                    //defimg = "images/default/keymatic.png";
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
                     var openId = regaObjects[id].DPs.OPEN;
@@ -766,7 +767,6 @@ $(document).ready(function () {
                     break;
                 case "MOTION_DETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][3]+"</span></span>";
-                    //defimg = "images/default/motion.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -780,7 +780,6 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "CLIMATECONTROL_VENT_DRIVE":
-                    defimg = "images/default/ventdrive.png";
                     img = (img ? img : defimg);
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
@@ -794,7 +793,6 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "CLIMATECONTROL_REGULATOR":
-                    defimg = "images/default/regulator.png";
                     img = (img ? img : defimg);
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
                     if (regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
@@ -825,7 +823,6 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "CLIMATECONTROL_RT_TRANSCEIVER":
-                    defimg = "images/default/climatecontrol.png";
                     img = (img ? img : defimg);
                     if (regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit = "°C";
@@ -887,7 +884,6 @@ $(document).ready(function () {
                 case "WINDOW_SWITCH_RECEIVER":
                     break;
                 case "WEATHER":
-                    //defimg = "images/default/weather.png";
                     img = (img ? img : defimg);
                     // Workaround für Encoding-Problem in Zusammenspiel mit der "RCU" (CCU2 Firmware auf RaspberryPi)
                     if (regaObjects[el.DPs.TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.TEMPERATURE].ValueUnit.match(/C$/)) {
@@ -930,7 +926,6 @@ $(document).ready(function () {
                     break;
                 case "SMOKE_DETECTOR_TEAM":
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
-                    //defimg = "images/default/smoke.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -943,7 +938,6 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "SHUTTER_CONTACT":
-                    //defimg = "images/default/shutter-contact.png";
                 case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
@@ -960,7 +954,6 @@ $(document).ready(function () {
                     break;
                 case "RAINDETECTOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    defimg = "images/default/rain.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -974,7 +967,6 @@ $(document).ready(function () {
                     break;
                 case "ROTARY_HANDLE_SENSOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    defimg = "images/default/rotary.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -988,7 +980,6 @@ $(document).ready(function () {
                     break;
                 case "WATERDETECTIONSENSOR":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    //defimg = "images/default/water.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -1002,7 +993,6 @@ $(document).ready(function () {
                     break;
                 case "SENSOR_FOR_CARBON_DIOXIDE":
                     since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
-                    //defimg = "images/default/carbondioxide.png";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -1016,7 +1006,6 @@ $(document).ready(function () {
                     break;
 
                 default:
-
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a">'+el.Name+'</div>' +
@@ -1024,22 +1013,35 @@ $(document).ready(function () {
                         lowbat +
                         '</div><div class="yahui-c"><table class="yahui-datapoints">';
                     for (var dp in regaObjects[id].DPs) {
+
                         var dpId = regaObjects[id].DPs[dp];
                         var val = datapoints[dpId][0];
+                        var unit = regaObjects[dpId].ValueUnit;
 
-                        if (regaObjects[dpId].ValueType === 16 && regaObjects[dpId].ValueList !== "") {
+                        if (regaObjects[dpId].ValueType === 16 && regaObjects[dpId].ValueList && regaObjects[dpId].ValueList.match(/;/)) {
                             var valList = regaObjects[dpId].ValueList.split(";");
                             val = valList[val];
                         }
 
                         // Meter-Datenpunkt auf 3-Nachkommastellen formatieren.
-                        if (regaObjects[dpId].Name.match(/\.METER$/)) {
+                        if (regaObjects[dpId].Name && regaObjects[dpId].Name.match(/\.METER$/)) {
                             val = val.toFixed(3);
                         }
-                        var tmpArr = regaObjects[dpId].Name.split(".");
-                        var dpType = tmpArr[2];
+
+                        if (regaObjects[dpId].ValueUnit && regaObjects[dpId].ValueUnit == "100%") {
+                            unit = "%";
+                            val = (val * 100).toFixed(1);
+                        }
+
+                        if (regaObjects[dpId].Name && regaObjects[dpId].Name.match(/\./)) {
+                            var tmpArr = regaObjects[dpId].Name.split(".");
+                            var dpType = tmpArr[2];
+                        } else {
+                            dpType = "UNKNOWN";
+                        }
+
                         if (!settings.hideDatapoints[dpType]) {
-                            content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+regaObjects[dpId].ValueUnit+"</td></tr>";
+                            content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+unit+"</td></tr>";
                         }
                     }
                     content += "</table></div></li>";
@@ -1061,20 +1063,20 @@ $(document).ready(function () {
                 switch (regaObjects[id].ValueType) {
                 case 2:
                 case 16:
-                    var valueList = regaObjects[id].ValueList.split(";")
                     var val = datapoints[id][0];
                     if (val === true) { val = 1; }
                     if (val === false) { val = 0; }
-                    content += "<span class='hm-html' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    if (regaObjects[id].ValueList && regaObjects[id].ValueList.match(/;/)) {
+                        var valueList = regaObjects[id].ValueList.split(";");
+                        content += "<span class='hm-html' data-hm-id='"+id+"'>"+valueList[val]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    } else {
+                        content += "<span class='hm-html' data-hm-id='"+id+"'>"+val+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
+                    }
                     break;
-
                 default:
                     content += "<span class='hm-html' data-hm-id='"+id+"'>"+datapoints[id][0]+"</span>"+regaObjects[id].ValueUnit+"</div></li>";
                 }
                 list.append(content);
-
-
-
             } else {
                 content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                     '<div class="yahui-a">'+el.Name+'</div>' +
@@ -1083,12 +1085,14 @@ $(document).ready(function () {
                     case 2: // Boolean
                     case 16: // Werteliste
                         var selected = "";
-                        if (regaObjects[id].ValueList && regaObjects[id].ValueList != "") {
-                            var valueList = regaObjects[id].ValueList.split(";")
-                        }
-                         var val = datapoints[id][0];
+                        var val = datapoints[id][0];
                         if (val == true) { val = 1; }
                         if (val == false) { val = 0; }
+                        if (regaObjects[id].ValueList && regaObjects[id].ValueList.match(/;/)) {
+                            var valueList = regaObjects[id].ValueList.split(";")
+                        } else {
+                            var valueList = ["ist falsch", "ist wahr"];
+                        }
 
                         content += '<select id="select_'+elId+'" data-hm-id="'+id+'">';
                         for (var i = 0; i < valueList.length; i++) {
@@ -1136,7 +1140,6 @@ $(document).ready(function () {
             }
             break;
         case "PROGRAM":
-
             img = (img ? img : defimg);
             content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                 '<div class="yahui-a">'+el.Name+'</div>' +
@@ -1153,12 +1156,23 @@ $(document).ready(function () {
             break;
         default:
         }
-
-
     }
 
     function updateWidgets(id, val, lastupdate, ack, ts) {
+        if (!yahui.ready) {
+            return false;
+        }
         //console.log("updateWidgets id="+id+" val="+val);
+
+        // Meter-Datenpunkt auf 3-Nachkommastellen formatieren.
+        if (regaObjects[id] && regaObjects[id].Name && regaObjects[id].Name.match(/\.METER$/)) {
+            val = val.toFixed(3);
+        }
+
+        // Werte mit Einheit "100%" umrechnen
+        if (regaObjects[id] && regaObjects[id].ValueUnit && regaObjects[id].ValueUnit == "100%") {
+            val = (val * 100).toFixed(1);
+        }
 
         $(".hm-html[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
@@ -1223,11 +1237,7 @@ $(document).ready(function () {
                     $this.val(val);
                 //}
             }
-
-
         });
-
-
 
         $("input[data-type='range'][data-hm-id='"+id+"']").each(function () {
             var working = false;
@@ -1259,6 +1269,7 @@ $(document).ready(function () {
                 $this.val(pos).slider('refresh');
             }
         });
+
         $("select[id^='switch'][data-role='slider'][data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var working = false;
@@ -1273,8 +1284,10 @@ $(document).ready(function () {
                     direction = datapoints[channel.DPs.WORKING][0];
                 }
             }
-            console.log("switch id="+id+" val="+val);
+            //console.log("switch id="+id+" val="+val);
             //console.log(channel.Name+" working="+working);
+
+            // Seltsames Verhalten des 2-Fach Wired-Schaltaktors. WORKING immer true wenn Wert true ist - daher ignorieren des WORKING Datenpunkts...
             //if (!working) {
                 if (!val) {
                     $this.find("option[value='1']").removeAttr("selected");

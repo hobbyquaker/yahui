@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.0.11",
+    version: "1.0.12",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -26,6 +26,13 @@ $(document).ready(function () {
     var body = $("body");
 
     var url = $.mobile.path.parseUrl(location.href);
+
+    if (url.hash.match(/&/)) {
+        var tmpArr = url.hash.split("&");
+        var hash = tmpArr[0];
+        window.location.href = "/yahui/"+hash;
+        url = $.mobile.path.parseUrl(location.href);
+    }
 
     if (!settings.prefix) { settings.prefix = ""; }
 
@@ -112,9 +119,6 @@ $(document).ready(function () {
     yahui.socket.on('error', function () {
         //console.log((new Date()) + " socket.io error");
     });
-
-
-
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
     yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
@@ -224,12 +228,6 @@ $(document).ready(function () {
             if ( url.hash.search(/^#page_/) !== -1 ) {
 
                 var pageId = (url.hash.slice(6));
-                if (pageId.match(/&/)) {
-                    var tmpArr = pageId.split("&");
-                    pageId = tmpArr[0];
-                    window.location.href = "/yahui/#page_"+pageId;
-                    url = $.mobile.path.parseUrl(location.href);
-                }
                 if (!$("div#page_"+pageId).html()) {
                     renderPage(pageId, true);
                 }

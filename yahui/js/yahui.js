@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.0.9",
+    version: "1.0.10",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -405,7 +405,7 @@ $(document).ready(function () {
         // Sortierung abarbeiten
         if (yahui.sortOrder && yahui.sortOrder.listLinks) {
             for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
-                if (yahui.extensions[yahui.sortOrder.listLinks[i]]) {
+                if (yahui.extensions[yahui.sortOrder.listLinks[i]] && ($.inArray(yahui.sortOrder.listLinks[i], alreadyRendered) == -1)) {
                     renderLink(yahui.sortOrder.listLinks[i]);
                     alreadyRendered.push(yahui.sortOrder.listLinks[i]);
                 }
@@ -505,7 +505,7 @@ $(document).ready(function () {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
-                if ($.inArray(sortOrder[j], regaObj.Channels) != -1) {
+                if (($.inArray(sortOrder[j], regaObj.Channels)) != -1 && ($.inArray(sortOrder[j], alreadyRendered) == -1)) {
                     renderWidget(list, sortOrder[j]);
                     alreadyRendered.push(sortOrder[j]);
                 }

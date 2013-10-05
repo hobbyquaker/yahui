@@ -2,9 +2,10 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.0.9
+aktuelle Version: 1.0.10
 
-yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU.
+yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU und
+ist für die Bedienung auf Tablets und Smartphones optimiert.
 
 yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um mit der CCU zu kommunizieren und kann sich dadurch folgende Vorteile zu Nutze machen:
   * Wesentlich schnellere Ladezeit, yahui startet quasi "instant" und zeigt sofort alle Werte an.
@@ -17,9 +18,15 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
 
 ## Dokumentation
 
+### Voraussetzungen
+
+* yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-Installation voraus.
+* yahui benötigt einen modernen Browser (Chrome/Chromium/Iron, Firefox und Safari).
+
+
 ### Installation
 
-yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-installation voraus. Um yahui zu installieren genügt es dann das gesamte Verzeichnis
+Um yahui zu installieren genügt es das gesamte Verzeichnis
 yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
 zu kopieren und die Datei settings-dist.js (zu finden im Unterordner "js") in settings.js umzubenennen.
 
@@ -62,6 +69,10 @@ Zum bearbeiten oder löschen von Erweiterungen einfach im Edit-Modus die Erweite
 
 In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeigt werden sollen.
 
+### Voranstellen eines "Prefix" vor den Seitentitel
+
+In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden Seitentitel gesetzt wird.
+
 ## ToDo/Roadmap
 
   * Widget Winmatic
@@ -74,6 +85,9 @@ In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeig
   * js/css kombiniert und minifiziert ausliefern
 
 ## Changelog
+
+### 1.0.10
+  * (Hobbyquaker) Bugfix: u.U. wurden Erweiterungen mehrfach angezeigt
 
 ### 1.0.9
   * (Hobbyquaker) Seiten-Titel-Prefix in settings.js verlagert und an fehlenden Stellen ergänzt

@@ -86,6 +86,10 @@ In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden
 
 ## Changelog
 
+### 1.0.11
+  * (Hobbyquaker) Bugfix: u.U. wurden Erweiterungen doppelt angezeigt
+  * (Hobbyquaker) Bugfix: Slider sind nur noch auf 0/1 gesprungen seit ValueUnit 100% verarbeitet wurde
+
 ### 1.0.10
   * (Hobbyquaker) Bugfix: u.U. wurden Erweiterungen mehrfach angezeigt
 

@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.0.10",
+    version: "1.0.11",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -294,7 +294,7 @@ $(document).ready(function () {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
-                if ($.inArray(sortOrder[j], regaIndex[en]) != -1) {
+                if (regaIndex[en].indexOf(sortOrder[j]) != -1) {
                     domObj.append(renderMenuItem(sortOrder[j]));
                     alreadyRendered.push(sortOrder[j]);
                 }
@@ -304,7 +304,7 @@ $(document).ready(function () {
         // noch nicht gerenderte Widgets (nicht in Sortierung vorhanden) rendern
         for (var i = 0; i < regaIndex[en].length; i++) {
             //console.log("... "+regaIndex[en][i]);
-            if ($.inArray(regaIndex[en][i], alreadyRendered) == -1) {
+            if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
                 //console.log("..! "+regaIndex[en][i]);
                 domObj.append(renderMenuItem(regaIndex[en][i]));
             }
@@ -405,7 +405,7 @@ $(document).ready(function () {
         // Sortierung abarbeiten
         if (yahui.sortOrder && yahui.sortOrder.listLinks) {
             for (var i = 0; i < yahui.sortOrder.listLinks.length; i++) {
-                if (yahui.extensions[yahui.sortOrder.listLinks[i]] && ($.inArray(yahui.sortOrder.listLinks[i], alreadyRendered) == -1)) {
+                if (yahui.extensions[yahui.sortOrder.listLinks[i]] && (alreadyRendered.indexOf(yahui.sortOrder.listLinks[i]) == -1)) {
                     renderLink(yahui.sortOrder.listLinks[i]);
                     alreadyRendered.push(yahui.sortOrder.listLinks[i]);
                 }
@@ -414,7 +414,7 @@ $(document).ready(function () {
 
         // Noch nicht gerenderte (in Sortierung nicht vorhandene) rendern
         for (var id in yahui.extensions) {
-            if ($.inArray(id, alreadyRendered) === -1) {
+            if (alreadyRendered.indexOf(id) == -1) {
                 renderLink(id);
             }
         }
@@ -505,7 +505,7 @@ $(document).ready(function () {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
-                if (($.inArray(sortOrder[j], regaObj.Channels)) != -1 && ($.inArray(sortOrder[j], alreadyRendered) == -1)) {
+                if ((regaObj.Channels.indexOf(sortOrder[j])) != -1 && (alreadyRendered.indexOf(sortOrder[j]) == -1)) {
                     renderWidget(list, sortOrder[j]);
                     alreadyRendered.push(sortOrder[j]);
                 }
@@ -513,7 +513,7 @@ $(document).ready(function () {
         }
         for (var l in regaObj.Channels) {
             var chId = parseInt(regaObj.Channels[l],10);
-            if ($.inArray(chId, alreadyRendered) === -1) {
+            if (alreadyRendered.indexOf(chId) == -1) {
                 renderWidget(list, chId);
             }
         }
@@ -1263,9 +1263,9 @@ $(document).ready(function () {
             if (!working) {
                 var $this = $(this);
                 var pos = val;
-                if ($this.data("hm-factor")) {
-                    pos = pos * $this.data("hm-factor");
-                }
+                //if ($this.data("hm-factor")) {
+                //    pos = pos * $this.data("hm-factor");
+                //}
                 $this.val(pos).slider('refresh');
             }
         });
@@ -1288,8 +1288,8 @@ $(document).ready(function () {
             //console.log(channel.Name+" working="+working);
 
             // Seltsames Verhalten des 2-Fach Wired-Schaltaktors. WORKING immer true wenn Wert true ist - daher ignorieren des WORKING Datenpunkts...
-            //if (!working) {
-                if (!val) {
+            if (!working) {
+                if (!val || val == 0) {
                     $this.find("option[value='1']").removeAttr("selected");
                     $this.find("option[value='0']").attr("selected", true);
                     $this.find("option[value='0']").prop("selected", true);
@@ -1299,7 +1299,7 @@ $(document).ready(function () {
                     $this.find("option[value='1']").prop("selected", true);
                 }
                 $this.slider("refresh");
-            //}
+            }
 
         });
 

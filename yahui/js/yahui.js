@@ -400,7 +400,7 @@ $(document).ready(function () {
     // Link-Seite aufbauen
     function renderLinks() {
 
-        var alreadyRendered = [];
+        var alreadyRendered = new Array();
 
         // Sortierung abarbeiten
         if (yahui.sortOrder && yahui.sortOrder.listLinks) {
@@ -500,7 +500,7 @@ $(document).ready(function () {
         var list = $("ul#list_"+pageId);
 
         var sortOrder = yahui.sortOrder["list_"+pageId];
-        var alreadyRendered = [];
+        var alreadyRendered = new Array();
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {

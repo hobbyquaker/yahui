@@ -398,7 +398,7 @@ $(document).ready(function () {
     // Link-Seite aufbauen
     function renderLinks() {
 
-        var alreadyRendered = new Array();
+        var alreadyRendered = [];
 
         // Sortierung abarbeiten
         if (yahui.sortOrder && yahui.sortOrder.listLinks) {
@@ -412,7 +412,7 @@ $(document).ready(function () {
 
         // Noch nicht gerenderte (in Sortierung nicht vorhandene) rendern
         for (var id in yahui.extensions) {
-            if (alreadyRendered.indexOf(id) == -1) {
+            if (alreadyRendered.indexOf(parseInt(id,10)) == -1) {
                 renderLink(id);
             }
         }
@@ -498,7 +498,7 @@ $(document).ready(function () {
         var list = $("ul#list_"+pageId);
 
         var sortOrder = yahui.sortOrder["list_"+pageId];
-        var alreadyRendered = new Array();
+        var alreadyRendered = [];
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {

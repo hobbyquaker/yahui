@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.0.12",
+    version: "1.0.13",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -820,6 +820,7 @@ $(document).ready(function () {
                     break;
                 case "CLIMATECONTROL_RT_TRANSCEIVER":
                     img = (img ? img : defimg);
+                    var controlMode = el.DPs.CONTROL_MODE;
                     if (regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit = "°C";
                     }
@@ -830,7 +831,6 @@ $(document).ready(function () {
                         '<div class="yahui-a">'+el.Name+'</div>' +
                         '<div class="yahui-b">' +
                         '<span style="display:inline-block; padding-right: 16px;"><select id="select_'+elId+'" data-hm-id="'+controlMode+'">';
-                    var controlMode = el.DPs.CONTROL_MODE;
                     var valueList = regaObjects[controlMode].ValueList.split(";");
                     for (var i = 0; i < valueList.length; i++) {
                         if (datapoints[controlMode][0] == i) {
@@ -854,8 +854,12 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $("#input_"+id).change(function( event ) {
                             var val = $("#input_"+id).val();
-                            yahui.socket.emit("setState", [regaObjects[el.DPs.MANU_MODE], val]);
-                            yahui.socket.emit("setState", [regaObjects[el.DPs.SET_TEMPERATURE], val]);
+                            var mode = parseInt($("#select_"+elId+" option:selected").val(), 10);
+                            if (mode == 1) {
+                                yahui.socket.emit("setState", [el.DPs.MANU_MODE, val]);
+                            } else {
+                                yahui.socket.emit("setState", [el.DPs.SET_TEMPERATURE, val]);
+                            }
                         });
                         $("#select_"+elId).on( 'change', function( event ) {
                             var val = parseInt($("#select_"+elId+" option:selected").val(), 10);

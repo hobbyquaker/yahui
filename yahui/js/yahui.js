@@ -1180,9 +1180,10 @@ $(document).ready(function () {
         $(".hm-html[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var datapoint   = regaObjects[id];
-            switch (datapoint.ValueType) {
-                case 2:
-                case 16:
+            switch (datapoint.ValueType + "-" + datapoint.ValueSubType) {
+                case "2-2":
+                case "2-6":
+                case "16-29":
                     if (regaObjects[id].ValueList && regaObjects[id].ValueList != "") {
                         var valueList = regaObjects[id].ValueList.split(";")
                         if (val == true) { val = 1; }
@@ -1226,9 +1227,10 @@ $(document).ready(function () {
         $(".hm-val[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);
             var datapoint   = regaObjects[id];
-            switch (datapoint.ValueType) {
-                case 2:
-                case 16:
+            switch (datapoint.ValueType + "-" + datapoint.ValueSubType) {
+                case "2-2":
+                case "2-6":
+                case "16-29":
                     var valueList = regaObjects[id].ValueList.split(";")
                     if (val == true) { val = 1; }
                     if (val == false) { val = 0; }

@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.0.13",
+    version: "1.0.14",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -1081,9 +1081,11 @@ $(document).ready(function () {
                 content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                     '<div class="yahui-a">'+el.Name+'</div>' +
                     '<div class="yahui-bc">';
-                switch (regaObjects[id].ValueType) {
-                    case 2: // Boolean
-                    case 16: // Werteliste
+                switch (regaObjects[id].ValueType + "-" + regaObjects[id].ValueSubType) {
+                    case "2-2": // Boolean
+                    case "2-6": // Alarm
+                    case "16-29": // Werteliste
+
                         var selected = "";
                         var val = datapoints[id][0];
                         if (val == true) { val = 1; }
@@ -1115,12 +1117,13 @@ $(document).ready(function () {
                         }, 500);
                         break;
 
-                    case 4: // Zahlenwert
+                    case "4-0": // Zahlenwert
+                    case "16-0":
+                    case "20-11": // Zeichenkette
                         var unit = regaObjects[id].ValueUnit;
-                    case 20: // Zeichenkette
                         if (!unit) { unit = ""; }
                         var val = datapoints[id][0];
-                        content += '<input type="text" id="input_'+id+'" class="hm-val" data-hm-id="'+id+'" value="'+String(datapoints[id][0]).replace(/"/g, "&quot;")+'"  />'+unit;
+                        content += '<table style="width:100%"><tr><td style="width:100%"><input type="text" id="input_'+id+'" class="hm-val" data-hm-id="'+id+'" value="'+String(datapoints[id][0]).replace(/"/g, "&quot;")+'"  /></td><td>'+unit+'</td></tr></table>';
                         list.append(content);
                         setTimeout(function () {
                             $("#input_"+id).change(function( event ) {

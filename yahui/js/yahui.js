@@ -336,7 +336,7 @@ $(document).ready(function () {
         return "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
             "<img src='"+img+"'>" +
             "<h2>"+enObj.Name+ "</h2>"+
-            "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
+            (enObj.EnumInfo?"<p>"+enObj.EnumInfo+"</p>":"") +
             "</a></li>";
     }
 

@@ -118,7 +118,7 @@ $(document).ready(function () {
             if (!$this.hasClass("dz-clickable")) {
 
                 $this.dropzone({
-                    url: "../upload?path=./www" + url.pathname + "images/user/&id=" + id,
+                    url: "/upload?path=./www" + url.pathname + "images/user/&id=" + id,
                     acceptedFiles: "image/*",
                     uploadMultiple: false,
                     previewsContainer: "#uploadPreview",

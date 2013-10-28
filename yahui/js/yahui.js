@@ -159,9 +159,15 @@ $(document).ready(function () {
                 yahui.sortOrder = data;
             }
 
-            // ---------- "Hier geht's los" ----------- //
-            getDatapoints();
-            renderLinks();
+            yahui.socket.emit('readFile', 'yahui-channelnamealiases.json', function(datachannelnamealiases) {
+                if (datachannelnamealiases) {
+                    yahui.channelNameAliases = datachannelnamealiases;
+                }
+
+                // ---------- "Hier geht's los" ----------- //
+                getDatapoints();
+                renderLinks();
+            });
         });
     });
 
@@ -505,7 +511,7 @@ $(document).ready(function () {
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
                 if ((regaObj.Channels.indexOf(sortOrder[j])) != -1 && (alreadyRendered.indexOf(sortOrder[j]) == -1)) {
-                    renderWidget(list, sortOrder[j]);
+                    renderWidget(list, sortOrder[j], false, pageId);
                     alreadyRendered.push(sortOrder[j]);
                 }
             }
@@ -513,7 +519,7 @@ $(document).ready(function () {
         for (var l in regaObj.Channels) {
             var chId = parseInt(regaObj.Channels[l],10);
             if (alreadyRendered.indexOf(chId) == -1) {
-                renderWidget(list, chId);
+                renderWidget(list, chId, false, pageId);
             }
         }
     }

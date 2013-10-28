@@ -13,6 +13,23 @@
 
 
 $(document).ready(function () {
+    //console.log("reload");
+
+    //eigenes input-Feld zu editable hinzufügen
+    //wir brauchen es hier, da initEditMode zu spät aufgerufen wird (beim reload einer Seite wird zuerst onPageChange aufgerufen und da wird yahui_edit schon angesprochen
+    $.editable.addInputType('yahui_input', {
+        element : function(settings, original) {
+            var input = $('<input type="text" class="input_inline"/>');
+            if (settings.width  != 'none') { input.width(settings.width);  }
+            if (settings.height != 'none') { input.height(settings.height); }
+            if (settings.datahmid != 'none') { input.attr('data-hm-id', settings.datahmid); }
+            input.attr('autocomplete','off');
+            $(this).append(input);
+            return(input);
+        }
+    });
+
+    var url = $.mobile.path.parseUrl(location.href);
 
     // Notwendige Scripts laden
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {
@@ -63,6 +80,8 @@ $(document).ready(function () {
     }
 
     $(document).on( "pagechange", function (e, data) {
+        //url aktualisieren, auch wenn die seite nicht insgesamt neu geladen sondern nur geändert wird.
+        url = $.mobile.path.parseUrl(location.href);
 
         // Sortierung initialisieren
         $(".ui-sortable").sortable("destroy");
@@ -101,7 +120,7 @@ $(document).ready(function () {
             if (!$this.hasClass("dz-clickable")) {
 
                 $this.dropzone({
-                    url: "../upload?path=./www/yahui/images/user/&id=" + id,
+                    url: "/upload?path=./www" + url.pathname + "images/user/&id=" + id,
                     acceptedFiles: "image/*",
                     uploadMultiple: false,
                     previewsContainer: "#uploadPreview",
@@ -131,6 +150,23 @@ $(document).ready(function () {
                 });
             }
 
+        });
+
+        //Kanalnamen editierbar machen
+        $(".yahui-a").each( function() {
+            $(this).editable(function(value, settings) {
+                yahui.channelNameAliases[url.hash + "_" + settings.datahmid] = value;
+                yahui.socket.emit("writeFile", "yahui-channelnamealiases.json", yahui.channelNameAliases);
+                return(value);
+            }, {
+                type    : 'yahui_input',
+                submit  : 'OK',
+                height  : '36px',
+                width   : ($(this).width() - 50) + "px",
+                tooltip : 'Klicken, um Namen zu ändern...',
+                datahmid: $(this).attr('data-hm-id')/*,
+                 onblur  : 'ignore' //für debug sinnvoll, dann kann man mit dem inspector draufgehen */
+            });
         });
     });
 

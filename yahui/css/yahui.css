@@ -294,4 +294,6 @@ input.ui-slider-input {
     transition: none !important;
 }
 
-
+.input_inline {
+    font-size: 18px;
+}

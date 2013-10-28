@@ -18,6 +18,7 @@ var yahui = {
     sortOrder: {},
     socket: {},
     extensions: {},
+    channelNameAliases: {},
     ready: false
 };
 
@@ -121,7 +122,7 @@ $(document).ready(function () {
     });
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/user/ vorhanden sind
-    yahui.socket.emit('readdir', "www/yahui/images/user", function(dirArr) {
+    yahui.socket.emit('readdir', "www" + url.pathname + "images/user", function(dirArr) {
         for (var i = 0; i < dirArr.length; i++) {
             //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
             var id = dirArr[i].replace(/\..*$/, "");
@@ -131,7 +132,7 @@ $(document).ready(function () {
     });
 
     // Abfragen welche Bild-Dateien im Ordner yahui/images/default/ vorhanden sind
-    yahui.socket.emit('readdir', "www/yahui/images/default", function(dirArr) {
+    yahui.socket.emit('readdir', "www" + url.pathname + "images/default", function(dirArr) {
         for (var i = 0; i < dirArr.length; i++) {
             //var id = parseInt(dirArr[i].replace(/\..*$/, ""), 10);
             var id = dirArr[i].replace(/\..*$/, "");
@@ -158,9 +159,15 @@ $(document).ready(function () {
                 yahui.sortOrder = data;
             }
 
-            // ---------- "Hier geht's los" ----------- //
-            getDatapoints();
-            renderLinks();
+            yahui.socket.emit('readFile', 'yahui-channelnamealiases.json', function(datachannelnamealiases) {
+                if (datachannelnamealiases) {
+                    yahui.channelNameAliases = datachannelnamealiases;
+                }
+
+                // ---------- "Hier geht's los" ----------- //
+                getDatapoints();
+                renderLinks();
+            });
         });
     });
 
@@ -504,7 +511,7 @@ $(document).ready(function () {
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
                 if ((regaObj.Channels.indexOf(sortOrder[j])) != -1 && (alreadyRendered.indexOf(sortOrder[j]) == -1)) {
-                    renderWidget(list, sortOrder[j]);
+                    renderWidget(list, sortOrder[j], false, pageId);
                     alreadyRendered.push(sortOrder[j]);
                 }
             }
@@ -512,7 +519,7 @@ $(document).ready(function () {
         for (var l in regaObj.Channels) {
             var chId = parseInt(regaObj.Channels[l],10);
             if (alreadyRendered.indexOf(chId) == -1) {
-                renderWidget(list, chId);
+                renderWidget(list, chId, false, pageId);
             }
         }
     }
@@ -546,7 +553,7 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.VARDP.length; l++) {
                 var chId = regaIndex.VARDP[l];
-                renderWidget(list, chId, true);
+                renderWidget(list, chId, true, '#variables');
             }
         }
     }
@@ -571,14 +578,26 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
                 var chId = regaIndex.PROGRAM[l];
-                renderWidget(list, chId);
+                renderWidget(list, chId, false, '#programs');
             }
         }
     }
 
     // erzeugt ein Bedien-/Anzeige-Element
-    function renderWidget(list, id, varEdit) {
+    function renderWidget(list, id, varEdit, pageId) {
         var el = regaObjects[id];
+        var alias;
+        if (pageId)
+        {
+            if (pageId == '#variables')
+                alias = yahui.channelNameAliases["#variables_" + id];
+            else if (pageId == '#programs')
+                alias = yahui.channelNameAliases["#programs" + id];
+            else
+                alias = yahui.channelNameAliases["#page_" + pageId + "_" + id];
+        }
+        if (!alias)
+            alias = el.Name;
         var since = "";
         var lowbat = "";
         var unreach = "";
@@ -621,7 +640,7 @@ $(document).ready(function () {
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
                         '<select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Aus</option>' +
@@ -654,7 +673,7 @@ $(document).ready(function () {
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b"><select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
                         '<option value="0">Zu</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>Auf</option>' +
@@ -689,7 +708,7 @@ $(document).ready(function () {
                         var shortId = regaObjects[id].DPs.PRESS_SHORT;
                         var longId = regaObjects[id].DPs.PRESS_LONG;
                         content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                            '<div class="yahui-a">'+el.Name+'</div>' +
+                            '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b">' +
                             '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="kurz" data-inline="true"/> ' +
                             '<input type="button" data-hm-id="'+longId+'" id="press_long_'+elId+'" name="press_long_'+id+'" value="lang" data-inline="true"/>' +
@@ -714,7 +733,7 @@ $(document).ready(function () {
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
  
                         '<select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
@@ -737,7 +756,7 @@ $(document).ready(function () {
                     var openId = regaObjects[id].DPs.OPEN;
                     var uncertainId = regaObjects[id].DPs.STATE_UNCERTAIN;
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt=""/>' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
 
                         '<table><tr><td><select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
@@ -762,10 +781,11 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "MOTION_DETECTOR":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>"+datapoints[el.DPs.MOTION][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="'+(datapoints[el.DPs.MOTION][0]?'display:none':'')+'" data-hm-id="'+el.DPs.MOTION+'" data-hm-state="false" style="">keine Bewegung</span>' +
@@ -779,7 +799,7 @@ $(document).ready(function () {
                     img = (img ? img : defimg);
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="" data-hm-id="'+el.DPs.VALVE_STATE+'" class="hm-html">'+datapoints[el.DPs.VALVE_STATE][0]+'</span>' +
@@ -795,7 +815,7 @@ $(document).ready(function () {
                         regaObjects[el.DPs.SETPOINT].ValueUnit = "°C";
                     }
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c">' +
                         '<div style="display: inline-block; width: 70px;">' +
@@ -828,7 +848,7 @@ $(document).ready(function () {
                         regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit = "°C";
                     }
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
                         '<span style="display:inline-block; padding-right: 16px;"><select id="select_'+elId+'" data-hm-id="'+controlMode+'">';
                     var valueList = regaObjects[controlMode].ValueList.split(";");
@@ -890,7 +910,7 @@ $(document).ready(function () {
                         regaObjects[el.DPs.TEMPERATURE].ValueUnit = "°C";
                     }
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
@@ -928,7 +948,7 @@ $(document).ready(function () {
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">kein Rauch erkannt</span>' +
@@ -940,10 +960,11 @@ $(document).ready(function () {
                 case "SHUTTER_CONTACT":
                 case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">geschlossen</span>' +
@@ -953,10 +974,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "RAINDETECTOR":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">Trockenheit</span>' +
@@ -966,10 +988,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "ROTARY_HANDLE_SENSOR":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">geschlossen</span>' +
@@ -979,10 +1002,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "WATERDETECTIONSENSOR":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">Trocken</span>' +
@@ -992,10 +1016,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "SENSOR_FOR_CARBON_DIOXIDE":
-                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][3]+"</span></span>";
+                    var d = new Date(datapoints[el.DPs.STATE][3]);
+                    since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + d.toLocaleString() + "</span></span>";
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c"><h3>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">CO2-Konz. normal</span>' +
@@ -1008,7 +1033,7 @@ $(document).ready(function () {
                 default:
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a">'+el.Name+'</div>' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
                         lowbat +
                         '</div><div class="yahui-c"><table class="yahui-datapoints">';
@@ -1052,13 +1077,13 @@ $(document).ready(function () {
         case "ALARMDP":
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
-            if (!varEdit && regaObjects[id].DPInfo) {
+            if ((!varEdit || varEdit && !settings.editReadOnlyVariablesInVariablelist)  && regaObjects[id].DPInfo) {
                 readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*[rR][^\)]*\)/) ? true : false );
             }
             img = (img ? img : defimg);
             if (readOnly) {
                 content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                    '<div class="yahui-a">'+el.Name+'</div>' +
+                    '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                     '<div class="yahui-bc">';
                 switch (regaObjects[id].ValueType) {
                 case 2:
@@ -1079,7 +1104,7 @@ $(document).ready(function () {
                 list.append(content);
             } else {
                 content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                    '<div class="yahui-a">'+el.Name+'</div>' +
+                    '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                     '<div class="yahui-bc">';
                 switch (regaObjects[id].ValueType + "-" + regaObjects[id].ValueSubType) {
                     case "2-2": // Boolean
@@ -1145,7 +1170,7 @@ $(document).ready(function () {
         case "PROGRAM":
             img = (img ? img : defimg);
             content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                '<div class="yahui-a">'+el.Name+'</div>' +
+                '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                 '<div class="yahui-bc">' +
                 '<a href="#" class="yahui-program" data-hm-id="'+id+'" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +
                 "</div></li>";

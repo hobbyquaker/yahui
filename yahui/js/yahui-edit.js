@@ -14,7 +14,7 @@
 $(document).ready(function () {
     //console.log("reload");
 
-    url = $.mobile.path.parseUrl(location.href);
+    var url = $.mobile.path.parseUrl(location.href);
 
     // Notwendige Scripts laden
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {

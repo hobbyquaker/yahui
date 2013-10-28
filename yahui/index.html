@@ -43,7 +43,6 @@
         <script src="js/settings.js"></script>
         <script src="js/yahui.js"></script>
         <script src="js/add2home.js"></script>
-        <script src="js/jquery.jeditable.mini.js"></script>
     </head>
 
     <body style="height:100%" >
@@ -158,8 +157,8 @@
         <div id="add_link" data-role="page" data-history="false" data-theme="b">
             <div data-role="header" data-theme="b"><h1>Erweiterung hinzufügen</h1></div>
             <div data-role="content" data-theme="b">
-                <label for="link_url">Titel</label><input type="text" name="link_text" id="link_text"/>
-                <label for="link_url">Unteritel</label><input type="text" name="link_subtext" id="link_subtext"/>
+                <label for="link_text">Titel</label><input type="text" name="link_text" id="link_text"/>
+                <label for="link_subtext">Untertitel</label><input type="text" name="link_subtext" id="link_subtext"/>
                 <label for="link_url">URL</label><input type="text" name="link_url" id="link_url"/>
                 <label for="link_iframe">Typ</label>
                 <select name="link_iframe" id="link_iframe">
@@ -174,8 +173,8 @@
             <div data-role="header" data-theme="b"><h1>Erweiterung editieren</h1></div>
             <div data-role="content" data-theme="b">
                 <input type="hidden" id="edit_link_id"/>
-                <label for="link_url">Titel</label><input type="text" name="link_text" id="edit_link_text"/>
-                <label for="link_url">Unteritel</label><input type="text" name="link_subtext" id="edit_link_subtext"/>
+                <label for="link_text">Titel</label><input type="text" name="link_text" id="edit_link_text"/>
+                <label for="link_subtext">Untertitel</label><input type="text" name="link_subtext" id="edit_link_subtext"/>
                 <label for="link_url">URL</label><input type="text" name="link_url" id="edit_link_url"/>
                 <label for="link_iframe">Typ</label>
                 <select name="link_iframe" id="edit_link_iframe">
@@ -185,6 +184,24 @@
                 <p>&nbsp;</p>
                 <a href="#" data-role="button" data-icon="check" id="link_edit">speichern</a>
                 <a href="#" data-role="button" data-icon="delete" id="link_del">löschen</a>
+            </div>
+        </div>
+        <div id="edit_channel" data-role="dialog" data-history="false" data-theme="b">
+            <div data-role="header" data-theme="b"><h1>Kanal editieren</h1></div>
+            <div data-role="content" data-theme="b">
+                <input type="hidden" id="edit_channel_id"/>
+                <input type="hidden" id="edit_channel_page_id"/>
+                <label>Kanalname</label><span class="hm-html" id="edit_channel_name"></span>
+                <label for="channel_alias">Alias</label><input type="text" name="channel_alias" id="edit_channel_alias"/>
+                <!--<label for="channel_iframe">Typ</label>
+                <select name="channel_iframe" id="edit_channel_iframe">
+                    <option value="true">in yahui integriert anzeigen</option>
+                    <option value="false">in neuem Browser-Fenster öffnen</option>
+                </select>-->
+                <p>&nbsp;</p>
+                <a href="#" data-role="button" data-icon="check" id="channel_edit">speichern</a>
+                <a href="#" data-role="button" data-icon="back" id="channel_cancel">abbrechen</a>
+                <a href="#" data-role="button" data-icon="delete" id="channel_delete">zurücksetzen</a>
             </div>
         </div>
         <div data-role="popup" data-overlay-theme="a" id="ccu-io-disconnect">

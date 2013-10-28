@@ -20,6 +20,7 @@ var yahui = {
     socket: {},
     extensions: {},
     channelNameAliases: {},
+    regaObjects: {},
     ready: false
 };
 
@@ -32,7 +33,7 @@ $(document).ready(function () {
     if (url.hash.match(/&/)) {
         var tmpArr = url.hash.split("&");
         var hash = tmpArr[0];
-        window.location.href = "/yahui/"+hash;
+        window.location.href = url.pathname + hash;
         url = $.mobile.path.parseUrl(location.href);
     }
 
@@ -213,6 +214,7 @@ $(document).ready(function () {
     function getObjects() {
         yahui.socket.emit('getObjects', function(obj) {
             regaObjects = obj;
+            yahui.regaObjects = regaObjects;
             // Weiter gehts mit dem Laden des Index
             getIndex();
         });

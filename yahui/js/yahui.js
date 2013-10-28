@@ -12,7 +12,8 @@
  */
 
 var yahui = {
-    version: "1.0.14",
+    version: "1.1.0",
+    requiredCcuIoVersion: "0.9.63",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -61,6 +62,9 @@ $(document).ready(function () {
     yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
 
     yahui.socket.emit('getVersion', function(version) {
+        if (version < yahui.requiredCcuIoVersion) {
+            alert("Warning: requires CCU.IO version "+yahui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
+        }
         $("#ccuioversion").html(version);
     });
 
@@ -553,7 +557,9 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.VARDP.length; l++) {
                 var chId = regaIndex.VARDP[l];
-                renderWidget(list, chId, true, '#variables');
+                if (chId != 40 && chId != 41) {
+                    renderWidget(list, chId, true, '#variables');
+                }
             }
         }
     }
@@ -610,19 +616,36 @@ $(document).ready(function () {
         // Um was handelt es sich?
         switch (el.TypeName) {
         case "CHANNEL":
-            if (el.DPs.LOWBAT && datapoints[el.DPs.LOWBAT].Value) {
-                lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png"/>';
-            } else if (regaObjects[el.Parent].Channels[0]) {
-                var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-                if (serviceChannel && serviceChannel.DPs.LOWBAT && datapoints[serviceChannel.DPs.LOWBAT][0]) {
-                    lowbat = '<img class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig" title="Batteriekapazität niedrig"/>';
-                }
+            if (el.DPs && el.DPs.LOWBAT && datapoints[el.DPs.LOWBAT].Value) {
+                lowbat = '<img data-hm-servicemsg="'+el.DPs.LOWBAT+'" class="yahui-lowbat" src="images/default/lowbat.png" alt="Batteriekapazität niedrig" title="Batteriekapazität niedrig"/>';
             }
 
-            if (regaObjects[el.Parent].Channels[0]) {
+            if (regaObjects[el.Parent].Channels && regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-                if (serviceChannel && serviceChannel.DPs.UNREACH && datapoints[serviceChannel.DPs.UNREACH][0]) {
-                    lowbat += '<img class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+
+                if (serviceChannel && serviceChannel.ALDPs) {
+                    var unreach = false;
+                    for (var alarmDp in serviceChannel.ALDPs) {
+                        if (datapoints[serviceChannel.ALDPs[alarmDp]]) {
+                            if (datapoints[serviceChannel.ALDPs[alarmDp]][0] == 1) {
+                                var msgVisible = "";
+                            } else {
+                                var msgVisible = "display:none";
+                            }
+
+                            console.log(alarmDp);
+                            switch (alarmDp) {
+                                case "LOWBAT":
+                                    lowbat += '<img style="'+msgVisible+'" data-hm-servicemsg="'+serviceChannel.ALDPs[alarmDp]+'" class="yahui-lowbat" src="images/default/lowbat.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                                    break;
+                                case "UNREACH":
+                                    lowbat += '<img style="'+msgVisible+'" data-hm-servicemsg="'+serviceChannel.ALDPs[alarmDp]+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                                    break;
+                                default:
+                                    lowbat += '<img style="'+msgVisible+'" data-hm-servicemsg="'+serviceChannel.ALDPs[alarmDp]+'" class="yahui-lowbat" src="images/default/warning.png" alt="'+alarmDp+'" title="'+alarmDp+'"/>';
+                            }
+                        }
+                    }
                 }
             }
 
@@ -905,45 +928,95 @@ $(document).ready(function () {
                     break;
                 case "WEATHER":
                     img = (img ? img : defimg);
+
                     // Workaround für Encoding-Problem in Zusammenspiel mit der "RCU" (CCU2 Firmware auf RaspberryPi)
                     if (regaObjects[el.DPs.TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.TEMPERATURE].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.TEMPERATURE].ValueUnit = "°C";
                     }
-                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
-                        '<div class="yahui-b">' + lowbat +
-                        '</div><div class="yahui-c"><h3>' +
-                        '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
-                        regaObjects[el.DPs.TEMPERATURE].ValueUnit;
-                    if (el.DPs.TEMP_MIN_24H && el.DPs.TEMP_MAX_24H && !settings.hideDatapoints.TEMP_MIN_24H) {
-                        content += ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
-                            regaObjects[el.DPs.TEMP_MIN_24H].ValueUnit +
-                            ' max <span data-hm-id="'+el.DPs.TEMP_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MAX_24H][0]+'</span>' +
-                            regaObjects[el.DPs.TEMP_MAX_24H].ValueUnit +
-                            ')</span>';
-                    }
-                    content += '</h3><p>';
-                    if (el.DPs.HUMIDITY) {
-                        content += 'Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
-                            '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit;
-                    }
-                    if (el.DPs.ABS_HUMIDITY && !settings.hideDatapoints.ABS_HUMIDITY) {
-                        content += ', <span style="" data-hm-id="'+el.DPs.ABS_HUMIDITY+'" class="hm-html">'+datapoints[el.DPs.ABS_HUMIDITY][0]+'</span>' + regaObjects[el.DPs.ABS_HUMIDITY].ValueUnit ;
-                    }
-                    if (el.DPs.HUM_MIN_24H && !settings.hideDatapoints.HUM_MIN_24H) {
-                        content += ' (24h min <span style="" data-hm-id="'+el.DPs.HUM_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MIN_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MIN_24H].ValueUnit;
-                        content += ' max <span style="" data-hm-id="'+el.DPs.HUM_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MAX_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MAX_24H].ValueUnit + ')<br/>';
-                    }
-                    if (el.DPs.DEW_POINT && !settings.hideDatapoints.DEWPOINT) {
-                        if (!el.DPs.HUM_MIN_24H || settings.hideDatapoints.HUM_MIN_24H) {
-                            content += ', ';
+
+                    if (regaObjects[el.Parent].HssType == "HM-WDS100-C6-O") {
+
+                        // OC3
+
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                            '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                            '<div class="yahui-b" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
+                            lowbat +
+                            '</div><div class="yahui-c"><table class="yahui-datapoints">';
+                        for (var dp in regaObjects[id].DPs) {
+
+                            var dpId = regaObjects[id].DPs[dp];
+                            var val = datapoints[dpId][0];
+                            var unit = regaObjects[dpId].ValueUnit;
+
+                            if (regaObjects[dpId].ValueType === 16 && regaObjects[dpId].ValueList && regaObjects[dpId].ValueList.match(/;/)) {
+                                var valList = regaObjects[dpId].ValueList.split(";");
+                                val = valList[val];
+                            }
+
+                            // Meter-Datenpunkt auf 3-Nachkommastellen formatieren.
+                            if (regaObjects[dpId].Name && regaObjects[dpId].Name.match(/\.METER$/)) {
+                                val = val.toFixed(3);
+                            }
+
+                            if (regaObjects[dpId].ValueUnit && regaObjects[dpId].ValueUnit == "100%") {
+                                unit = "%";
+                                val = (val * 100).toFixed(1);
+                            }
+
+                            if (regaObjects[dpId].Name && regaObjects[dpId].Name.match(/\./)) {
+                                var tmpArr = regaObjects[dpId].Name.split(".");
+                                var dpType = tmpArr[2];
+                            } else {
+                                dpType = "UNKNOWN";
+                            }
+
+                            if (!settings.hideDatapoints[dpType]) {
+                                content += "<tr><td>"+dp+"</td><td><span class='hm-html' data-hm-id='"+dpId+"'>"+val+"</span>"+unit+"</td></tr>";
+                            }
                         }
-                        content += 'Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
-                            '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit;
+                        content += "</table></div></li>";
+
+                    } else {
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                            '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                            '<div class="yahui-b">' + lowbat +
+                            '</div><div class="yahui-c"><h3>' +
+                            '<span style="" data-hm-id="'+el.DPs.TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.TEMPERATURE][0]+'</span>' +
+                            regaObjects[el.DPs.TEMPERATURE].ValueUnit;
+                        if (el.DPs.TEMP_MIN_24H && el.DPs.TEMP_MAX_24H && !settings.hideDatapoints.TEMP_MIN_24H) {
+                            content += ' <span class="yahui-since">(24h min <span data-hm-id="'+el.DPs.TEMP_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MIN_24H][0]+'</span>' +
+                                regaObjects[el.DPs.TEMP_MIN_24H].ValueUnit +
+                                ' max <span data-hm-id="'+el.DPs.TEMP_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.TEMP_MAX_24H][0]+'</span>' +
+                                regaObjects[el.DPs.TEMP_MAX_24H].ValueUnit +
+                                ')</span>';
+                        }
+                        content += '</h3><p>';
+                        if (el.DPs.HUMIDITY) {
+                            content += 'Luftfeuchte: <span style="" data-hm-id="'+el.DPs.HUMIDITY+'" class="hm-html">' + datapoints[el.DPs.HUMIDITY][0] +
+                                '</span>' + regaObjects[el.DPs.HUMIDITY].ValueUnit;
+                        }
+                        if (el.DPs.ABS_HUMIDITY && !settings.hideDatapoints.ABS_HUMIDITY) {
+                            content += ', <span style="" data-hm-id="'+el.DPs.ABS_HUMIDITY+'" class="hm-html">'+datapoints[el.DPs.ABS_HUMIDITY][0]+'</span>' + regaObjects[el.DPs.ABS_HUMIDITY].ValueUnit ;
+                        }
+                        if (el.DPs.HUM_MIN_24H && !settings.hideDatapoints.HUM_MIN_24H) {
+                            content += ' (24h min <span style="" data-hm-id="'+el.DPs.HUM_MIN_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MIN_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MIN_24H].ValueUnit;
+                            content += ' max <span style="" data-hm-id="'+el.DPs.HUM_MAX_24H+'" class="hm-html">'+datapoints[el.DPs.HUM_MAX_24H][0]+'</span>' + regaObjects[el.DPs.HUM_MAX_24H].ValueUnit + ')<br/>';
+                        }
+                        if (el.DPs.DEW_POINT && !settings.hideDatapoints.DEWPOINT) {
+                            if (!el.DPs.HUM_MIN_24H || settings.hideDatapoints.HUM_MIN_24H) {
+                                content += ', ';
+                            }
+                            content += 'Taupunkt: <span style="" data-hm-id="'+el.DPs.DEW_POINT+'" class="hm-html">' + datapoints[el.DPs.DEW_POINT][0] +
+                                '</span>'+regaObjects[el.DPs.DEW_POINT].ValueUnit;
+                        }
+                        content += '</p></div></li>';
+
                     }
-                    content += '</p></div></li>';
+
                     list.append(content);
                     break;
+                case "SMOKE_DETECTOR":
                 case "SMOKE_DETECTOR_TEAM":
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     img = (img ? img : defimg);
@@ -1201,6 +1274,14 @@ $(document).ready(function () {
         if (regaObjects[id] && regaObjects[id].ValueUnit && regaObjects[id].ValueUnit == "100%") {
             val = (val * 100).toFixed(1);
         }
+
+        $("img[data-hm-servicemsg='"+id+"']").each(function () {
+            if (val == 1 || val === true || val === "true") {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
 
         $(".hm-html[data-hm-id='"+id+"']").each(function () {
             var $this = $(this);

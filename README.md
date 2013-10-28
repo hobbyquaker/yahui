@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.0.14
+aktuelle Version: 1.1.0
 
 yahui ist eine weitere jQuery Mobile basierte alternative Weboberfläche (ähnlich WebMatic) für die HomeMatic CCU und
 ist für die Bedienung auf Tablets und Smartphones optimiert.
@@ -53,12 +53,20 @@ yahui/images/user/ kopiert werden.
 
 Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
 
-### Ändern der Farben
+### Umbenennen von Elementen
+
+Im Edit-Modus einfach auf einen Namen klicken.
+
+### Ändern der Farben und des Layouts
 
 in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
 vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
 http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 25 der Datei index.html muss dann
 die URL der jqueryMobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
+
+Eigene Style-Angaben zum Anpassen des Layouts können in der Datei yahui/css/user.css vorgenommen werden. In der Datei
+user-dist.css ist ein passendes Grundgerüst angelegt, diese einfach umbenennen und die Kommentarzeichen in index.html
+Zeile 32 entfernen.
 
 ### Hinzufügen von Erweiterungen
 
@@ -75,16 +83,29 @@ In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden
 
 ## ToDo/Roadmap
 
+  * Service-Meldungen (Anzeige je Raum/Gewerk)
+  * Anzeige aktive Alarme?
+  * Liste aller Service-Meldungen mit Möglichkeit zum bestätigen unter Erweiterungen?
+  * umbenennen von PRESS_SHORT und PRESS_LONG Buttons, wahlweises ausblenden von PRESS_LONG
+  * vergangene Zeit statt Zeitpunkt anzeigen? Über settings.js konfigurierbar?
   * Widget Winmatic
-  * Widget Wetterstation OC3
   * Widget Kapazitiver Füllstandsmesser
-  * Service-Meldungen und Alarme?
-  * vergangene Zeit statt Zeitpunkt anzeigen?
   * Click-Handler-Initialisierung: passender Event statt setTimeout?
   * Zustandsabhängige Bilder/Icons
   * js/css kombiniert und minifiziert ausliefern
 
 ## Changelog
+
+### 1.1.0
+  * (Anli) Änderbarkeit von Variablen in Variablenliste wenn (r) in Beschreibung einstellbar
+  * (Anli) Ausgabe des Datumsformat angepasst, so dass das Datum in der auf dem Gerät eingestellten Format ausgegeben wird (toLocaleString()) statt in yyyy-MM-dd HH:mm:ss
+  * (Anli) yahui.js und yahui-edit.js angepasst, so dass es möglich ist, yahui auch in einem Unterordner unter www oder mit einem anderen Namen als yahui zu betreiben
+  * (Anli) Aliase für Kanal-, Variablen und Programm-Namen können im Edit-Modus vergeben werden
+  * (Hobbyquaker) user.css hinzugefügt
+  * (Hobbyquaker) Fallunterscheidung bei Kanal-Typ WEATHER für OC3
+  * (Hobbyquaker) Kanaltyp SMOKE_DETECTOR hinzugefügt
+  * (Hobbyquaker) Prüfung der CCU.IO Version und gegebenenfalls Warning
+  * (Hobbyquaker) Anzeige von Service-Meldungen gefixt (setzt CCU.IO >= 0.9.63 voraus)
 
 ### 1.0.14
   * (Hobbyquaker) Style-Korrektur: bei Darstellung von Einheiten Zeilenumbruch verhindert

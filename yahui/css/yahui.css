@@ -245,15 +245,20 @@ input.ui-slider-input {
 
     }
     .yahui-c {
-        width: 50%;
+        width: 45%;
         margin-top:5px;
         min-height:54px;
 
     }
+    .yahui-d {
+        width: 50px;
+        display: inline;
+        float: right;
+        margin-top:5px;
+    }
     .yahui-bc {
         width: 70%;
         min-height:54px;
-
     }
 
     .responsive-grid .ui-content {
@@ -296,4 +301,12 @@ input.ui-slider-input {
 
 .input_inline {
     font-size: 18px;
+}
+
+#edit_channel_name {
+    width: 100%;
+    display: block;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-weight: bold;
 }

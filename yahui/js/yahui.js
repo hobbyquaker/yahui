@@ -19,6 +19,7 @@ var yahui = {
     socket: {},
     extensions: {},
     channelNameAliases: {},
+    regaObjects: {},
     ready: false
 };
 
@@ -209,6 +210,7 @@ $(document).ready(function () {
     function getObjects() {
         yahui.socket.emit('getObjects', function(obj) {
             regaObjects = obj;
+            yahui.regaObjects = regaObjects;
             // Weiter gehts mit dem Laden des Index
             getIndex();
         });

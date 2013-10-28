@@ -77,6 +77,26 @@ $(document).ready(function () {
             $this.prop("data-rel", "dialog");
             $this.removeAttr("target");
         });
+
+        //Edit-Button zu Widget hinzufügen
+        $("li.yahui-widget").each( function() {
+            $(this).append('<div class="yahui-d"><a href="#edit_channel" class="channel_edit" data-rel="dialog" data-role="button" data-icon="gear" data-iconpos="notext" data-inline="true" id="edit_channel_' + $(this).attr('data-hm-id') + '">Kanal editieren</a></div>');
+            $(".channel_edit").button();
+        });
+
+        $(".channel_edit").click(function(e) {
+            var id = $(this).attr("id").slice(13);
+            var url = $.mobile.path.parseUrl(location.href);
+            var el = yahui.regaObjects[id];
+            var alias = yahui.channelNameAliases[url.hash + "_" + id];
+            if (!alias)
+                alias = el.Name;
+
+            $("#edit_channel_id").val(id);
+            $("#edit_channel_page_id").val(url.hash);
+            $("#edit_channel_name").text(el.Name);
+            $("#edit_channel_alias").val(alias);
+        });
     }
 
     $(document).on( "pagechange", function (e, data) {
@@ -260,4 +280,9 @@ $(document).ready(function () {
         return id;
     }
 
+    // Kanalbearbeitung abbrechen
+    $("#channel_cancel").click(function () {
+        $("#edit_channel").dialog("close");
+        window.location.reload();
+    });
 });

@@ -10,26 +10,14 @@
  *      Kommerzielle Nutzung nicht gestattet!
  *
  */
-
+var yahui_edit = {
+    reload_needed: false
+}
 
 $(document).ready(function () {
     //console.log("reload");
 
-    //eigenes input-Feld zu editable hinzufügen
-    //wir brauchen es hier, da initEditMode zu spät aufgerufen wird (beim reload einer Seite wird zuerst onPageChange aufgerufen und da wird yahui_edit schon angesprochen
-    $.editable.addInputType('yahui_input', {
-        element : function(settings, original) {
-            var input = $('<input type="text" class="input_inline"/>');
-            if (settings.width  != 'none') { input.width(settings.width);  }
-            if (settings.height != 'none') { input.height(settings.height); }
-            if (settings.datahmid != 'none') { input.attr('data-hm-id', settings.datahmid); }
-            input.attr('autocomplete','off');
-            $(this).append(input);
-            return(input);
-        }
-    });
-
-    var url = $.mobile.path.parseUrl(location.href);
+    url = $.mobile.path.parseUrl(location.href);
 
     // Notwendige Scripts laden
     $.getScript("/lib/js/jquery-ui-1.10.3.dragdropsort.min.js").done(function(script, textStatus) {
@@ -39,9 +27,6 @@ $(document).ready(function () {
             });
         });
     });
-
-
-
 
     function initEditMode() {
         //console.log("initEditMode()");
@@ -171,23 +156,6 @@ $(document).ready(function () {
             }
 
         });
-
-        //Kanalnamen editierbar machen
-        $(".yahui-a").each( function() {
-            $(this).editable(function(value, settings) {
-                yahui.channelNameAliases[url.hash + "_" + settings.datahmid] = value;
-                yahui.socket.emit("writeFile", "yahui-channelnamealiases.json", yahui.channelNameAliases);
-                return(value);
-            }, {
-                type    : 'yahui_input',
-                submit  : 'OK',
-                height  : '36px',
-                width   : ($(this).width() - 50) + "px",
-                tooltip : 'Klicken, um Namen zu ändern...',
-                datahmid: $(this).attr('data-hm-id')/*,
-                 onblur  : 'ignore' //für debug sinnvoll, dann kann man mit dem inspector draufgehen */
-            });
-        });
     });
 
     $("body").append('<div data-role="popup" data-dismissible="false" data-history="false" data-overlay-theme="a" id="popupUpload">' +
@@ -283,6 +251,27 @@ $(document).ready(function () {
     // Kanalbearbeitung abbrechen
     $("#channel_cancel").click(function () {
         $("#edit_channel").dialog("close");
-        window.location.reload();
+
+        if (url.hash.match(/&/)) {
+            var tmpArr = url.hash.split("&");
+            var hash = tmpArr[0];
+            window.location.href = url.pathname + "?edit" + hash;
+            url = $.mobile.path.parseUrl(location.href);
+        }
+        else
+            window.location.href = url.pathname + "?edit" + url.hash;
+    });
+
+    // Kanalbearbeitung speichern
+    $("#channel_edit").click(function () {
+
+        yahui.channelNameAliases[$("#edit_channel_page_id").val() + "_" + $("#edit_channel_id").val()] = $("#edit_channel_alias").val();
+
+        $("#edit_channel").dialog("close");
+        $.mobile.loading("show");
+
+        yahui.socket.emit("writeFile", "yahui-channelnamealiases.json", yahui.channelNameAliases, function() {
+            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "'").text($("#edit_channel_alias").val());
+        });
     });
 });

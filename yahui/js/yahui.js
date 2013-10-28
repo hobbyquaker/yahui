@@ -33,7 +33,7 @@ $(document).ready(function () {
     if (url.hash.match(/&/)) {
         var tmpArr = url.hash.split("&");
         var hash = tmpArr[0];
-        window.location.href = "/yahui/"+hash;
+        window.location.href = url.pathname + hash;
         url = $.mobile.path.parseUrl(location.href);
     }
 

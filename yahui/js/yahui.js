@@ -553,7 +553,7 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.VARDP.length; l++) {
                 var chId = regaIndex.VARDP[l];
-                renderWidget(list, chId, false, '#variables');
+                renderWidget(list, chId, true, '#variables');
             }
         }
     }
@@ -1071,7 +1071,7 @@ $(document).ready(function () {
         case "ALARMDP":
             // WebMatic ReadOnly-Flag -> (r) in Variablen-Beschreibung
             var readOnly;
-            if (!varEdit && regaObjects[id].DPInfo) {
+            if ((!varEdit || varEdit && !settings.editReadOnlyVariablesInVariablelist)  && regaObjects[id].DPInfo) {
                 readOnly = (regaObjects[id].DPInfo.match(/\([^\)]*[rR][^\)]*\)/) ? true : false );
             }
             img = (img ? img : defimg);

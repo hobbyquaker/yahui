@@ -80,6 +80,8 @@ $(document).ready(function () {
     }
 
     $(document).on( "pagechange", function (e, data) {
+        //url aktualisieren, auch wenn die seite nicht insgesamt neu geladen sondern nur geändert wird.
+        url = $.mobile.path.parseUrl(location.href);
 
         // Sortierung initialisieren
         $(".ui-sortable").sortable("destroy");

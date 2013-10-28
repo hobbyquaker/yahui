@@ -553,7 +553,7 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.VARDP.length; l++) {
                 var chId = regaIndex.VARDP[l];
-                renderWidget(list, chId, true);
+                renderWidget(list, chId, false, '#variables');
             }
         }
     }
@@ -578,7 +578,7 @@ $(document).ready(function () {
 
             for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
                 var chId = regaIndex.PROGRAM[l];
-                renderWidget(list, chId);
+                renderWidget(list, chId, false, '#programs');
             }
         }
     }
@@ -588,7 +588,14 @@ $(document).ready(function () {
         var el = regaObjects[id];
         var alias;
         if (pageId)
-            alias = yahui.channelNameAliases["#page_" + pageId + "_" + id];
+        {
+            if (pageId == '#variables')
+                alias = yahui.channelNameAliases["#variables_" + id];
+            else if (pageId == '#programs')
+                alias = yahui.channelNameAliases["#programs" + id];
+            else
+                alias = yahui.channelNameAliases["#page_" + pageId + "_" + id];
+        }
         if (!alias)
             alias = el.Name;
         var since = "";

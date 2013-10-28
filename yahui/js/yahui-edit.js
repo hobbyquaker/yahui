@@ -10,9 +10,6 @@
  *      Kommerzielle Nutzung nicht gestattet!
  *
  */
-var yahui_edit = {
-    reload_needed: false
-}
 
 $(document).ready(function () {
     //console.log("reload");

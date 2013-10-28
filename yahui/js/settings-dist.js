@@ -30,6 +30,9 @@ var settings = {
     // (VIRTUAL_)KEY grundsätzlich ausblenden
     hideKeys: false,
 
+    //Variablen auch in der Variablenansicht nicht editierbar, wenn (r) in der Beschreibung enthalten ist
+    editReadOnlyVariablesInVariablelist: true,
+
     // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
     hideDatapoints: {
         TEMP_MIN_24H: false,

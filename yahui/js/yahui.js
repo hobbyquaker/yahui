@@ -1324,7 +1324,10 @@ $(document).ready(function () {
 
         $(".hm-html-timestamp[data-hm-id='"+id+"']").each(function () {
             // TODO Datum formatieren!
-            $(this).html(ts);
+            if (ts) {
+                $(this).html(formatDate(ts));
+            }
+
         });
 
         $("[data-hm-state][data-hm-id='"+id+"']").each(function () {

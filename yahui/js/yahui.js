@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.1",
+    version: "1.1.2",
     requiredCcuIoVersion: "0.9.63",
     images: [],
     defaultImages: [],
@@ -593,6 +593,7 @@ $(document).ready(function () {
 
     // erzeugt ein Bedien-/Anzeige-Element
     function renderWidget(list, id, varEdit, pageId) {
+        //console.log("renderWidget("+list+","+id+","+varEdit+","+pageId+")");
         var el = regaObjects[id];
         var alias;
         if (pageId)
@@ -635,7 +636,6 @@ $(document).ready(function () {
                                 var msgVisible = "display:none";
                             }
 
-                            console.log(alarmDp);
                             switch (alarmDp) {
                                 case "LOWBAT":
                                     lowbat += '<img style="'+msgVisible+'" data-hm-servicemsg="'+serviceChannel.ALDPs[alarmDp]+'" class="yahui-lowbat" src="images/default/lowbat.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
@@ -660,8 +660,7 @@ $(document).ready(function () {
             // Datum formatieren
             var dateSince;
             if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
-                dateSince = new Date(datapoints[el.DPs.STATE][3]);
-                dateSince = dateSince.toLocaleString();
+                dateSince = formatDate(datapoints[el.DPs.STATE][3]);
             }
 
 
@@ -1324,6 +1323,7 @@ $(document).ready(function () {
         });
 
         $(".hm-html-timestamp[data-hm-id='"+id+"']").each(function () {
+            // TODO Datum formatieren!
             $(this).html(ts);
         });
 
@@ -1453,6 +1453,55 @@ $(document).ready(function () {
             return 1;
         }
         return 0;
+    }
+
+    function formatDate(ts) {
+        var now = new Date();
+        var dateSinceObj = new Date(ts);
+        var str;
+        switch (settings.dateSinceType) {
+            case false:
+                // Nichts
+                break;
+            case "period":
+                // Zeitraum
+                // TODO Müsste eigentlich sekündlich aktualisiert werden damit es Sinne ergibt...
+
+                var seconds = Math.floor((now.getTime() - dateSinceObj.getTime()) / 1000);
+                var minutes = Math.floor(seconds / 60);
+                seconds = seconds - (minutes * 60);
+                var hours = Math.floor(minutes / 60);
+                minutes = minutes - (hours * 60);
+                var days = Math.floor(hours / 24);
+                hours = hours - (days * 24);
+                str = "";
+                if (days > 0) {
+                    str += days + " Tag";
+                    if (days != 1) { str += "e"; }
+                    str += ", ";
+                }
+                if (hours > 0) {
+                    str += hours + " Stunde";
+                    if (hours != 1) { str += "n"; }
+                    str += ", ";
+                }
+                if (minutes > 0) {
+                    str += minutes + " Minute";
+                    if (minutes != 1) { str += "n"; }
+                    str += ", ";
+                }
+                str += seconds + " Sekunde";
+                if (seconds != 1) { str += "n"; }
+
+                break;
+            default:
+                // Zeitpunkt
+                str = dateSinceObj.getDate()+"."+(dateSinceObj.getMonth()+1)+"."+dateSinceObj.getFullYear();
+                str += " " + dateSinceObj.getHours() + ":" + ("0"+dateSinceObj.getMinutes()).slice(-2) + ":" + ("0"+dateSinceObj.getSeconds()).slice(-2);
+                break;
+
+        }
+        return str;
     }
 
 });

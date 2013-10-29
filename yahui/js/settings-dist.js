@@ -24,6 +24,9 @@ var settings = {
     // Prefix das allen Seiten-Titeln vorangestellt wird
     prefix: "",
 
+    // Zeitpunkt oder Zeitraum anzeigen? Mögliche Werte: false (gar nichts anzeingen), "moment" (zeitpunkt), "period" (zeitraum)
+    dateSinceType: "period",
+
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
 

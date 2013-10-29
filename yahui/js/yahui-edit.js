@@ -60,25 +60,7 @@ $(document).ready(function () {
             $this.removeAttr("target");
         });
 
-        //Edit-Button zu Widget hinzufügen
-        $("li.yahui-widget").each( function() {
-            $(this).append('<div class="yahui-d"><a href="#edit_channel" class="channel_edit" data-rel="dialog" data-role="button" data-icon="gear" data-iconpos="notext" data-inline="true" id="edit_channel_' + $(this).attr('data-hm-id') + '">Kanal editieren</a></div>');
-            $(".channel_edit").button();
-        });
 
-        $(".channel_edit").click(function(e) {
-            var id = $(this).attr("id").slice(13);
-            var url = $.mobile.path.parseUrl(location.href);
-            var el = yahui.regaObjects[id];
-            var alias = yahui.channelNameAliases[url.hash + "_" + id];
-            if (!alias)
-                alias = el.Name;
-
-            $("#edit_channel_id").val(id);
-            $("#edit_channel_page_id").val(url.hash);
-            $("#edit_channel_name").text(el.Name);
-            $("#edit_channel_alias").val(alias);
-        });
     }
 
     $(document).on( "pagechange", function (e, data) {
@@ -153,6 +135,37 @@ $(document).ready(function () {
             }
 
         });
+
+        //Edit-Button zu Widget hinzufügen
+        var addedEditButtons = 0;
+        $("li.yahui-widget").each( function() {
+            if ($(this).find("div.yahui-d").length > 0) {
+                // Edit Button bereits vorhanden
+                return;
+            }
+            addedEditButtons += 1;
+            $(this).append('<div class="yahui-d"><a href="#edit_channel" class="channel_edit" data-rel="dialog" data-role="button" data-icon="gear" data-iconpos="notext" data-inline="true" id="edit_channel_' + $(this).attr('data-hm-id') + '">Kanal editieren</a></div>');
+            $(".channel_edit").button();
+        });
+
+        // Wurden Buttons hinzugefügt? Wenn ja Click-Handler definieren
+        if (addedEditButtons > 0) {
+            $(".channel_edit").click(function(e) {
+                var id = $(this).attr("id").slice(13);
+                var url = $.mobile.path.parseUrl(location.href);
+                var el = yahui.regaObjects[id];
+                var alias = yahui.channelNameAliases[url.hash + "_" + id];
+                if (!alias) {
+                    alias = el.Name;
+                }
+
+                $("#edit_channel_id").val(id);
+                $("#edit_channel_page_id").val(url.hash);
+                $("#edit_channel_name").text(el.Name);
+                $("#edit_channel_alias").val(alias);
+            });
+        }
+
     });
 
     $("body").append('<div data-role="popup" data-dismissible="false" data-history="false" data-overlay-theme="a" id="popupUpload">' +

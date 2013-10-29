@@ -251,13 +251,13 @@ input.ui-slider-input {
 
     }
     .yahui-d {
-        width: 50px;
+        width: 5%;
         display: inline;
         float: right;
         margin-top:5px;
     }
     .yahui-bc {
-        width: 70%;
+        width: 65%;
         min-height:54px;
     }
 

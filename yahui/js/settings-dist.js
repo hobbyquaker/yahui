@@ -25,7 +25,10 @@ var settings = {
     prefix: "",
 
     // Zeitpunkt oder Zeitraum anzeigen? Mögliche Werte: false (gar nichts anzeingen), "moment" (zeitpunkt), "period" (zeitraum)
-    dateSinceType: "period",
+    dateSinceType: "moment",
+
+    // Service-Meldungen bei Favoriten/Räumen/Gewerken anzeigen?
+    showServiceMsgs: true,
 
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,

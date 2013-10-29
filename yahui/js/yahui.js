@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.2",
+    version: "1.1.3",
     requiredCcuIoVersion: "0.9.63",
     images: [],
     defaultImages: [],
@@ -75,6 +75,14 @@ $(document).ready(function () {
         // id = obj[0], value = obj[1], timestamp = obj[2], acknowledge = obj[3]
 
         if ($.isArray(obj)) {
+
+            // Hat sich die Anzahl der Service-Meldungen geändert?
+            if (settings.showServiceMsgs && obj[0] == 41 && obj[1] != datapoints[41][0]) {
+                setTimeout(function () {
+                    updateServiceMsgs();
+                }, 15000);
+            }
+
             // Datenpunkt-Objekt aktualisieren
             datapoints[obj[0]] = [obj[1], obj[2], obj[3], obj[4]];
 
@@ -314,6 +322,10 @@ $(document).ready(function () {
 
         // noch nicht gerenderte Widgets (nicht in Sortierung vorhanden) rendern
         for (var i = 0; i < regaIndex[en].length; i++) {
+
+
+
+
             //console.log("... "+regaIndex[en][i]);
             if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
                 //console.log("..! "+regaIndex[en][i]);
@@ -331,10 +343,17 @@ $(document).ready(function () {
 
     // Ein Element auf der Menüseite rendern
     function renderMenuItem(enId) {
+
         var enObj = (regaObjects[enId]);
 
         if (!enObj || !enObj.Name) {
             return "";
+        }
+
+        if (settings.showServiceMsgs) {
+            var serviceMsgCount = getServiceMsgCount(enId);
+        } else {
+            var serviceMsgCount = 0;
         }
 
         var defimg = "images/default/page.png";
@@ -350,7 +369,7 @@ $(document).ready(function () {
             "<img src='"+img+"'>" +
             "<h2>"+enObj.Name+ "</h2>"+
             "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
-            "</a></li>";
+            "</a><div data-hm-service-msg='"+enId+"' style='"+(serviceMsgCount==0?"display:none":"")+"' class='service-message'>"+(serviceMsgCount == 0?"":serviceMsgCount)+"</div></li>";
     }
 
     // Pages bei Bedarf rendern
@@ -657,11 +676,7 @@ $(document).ready(function () {
                 defimg = "images/default/"+yahui.defaultImages[deviceType];
             }
 
-            // Datum formatieren
-            var dateSince;
-            if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
-                dateSince = formatDate(datapoints[el.DPs.STATE][3]);
-            }
+
 
 
             switch (el.HssType) {
@@ -813,6 +828,11 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "MOTION_DETECTOR":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.MOTION] && datapoints[el.DPs.MOTION][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.MOTION][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>" + dateSince + "</span></span>";
                     }
@@ -1043,6 +1063,11 @@ $(document).ready(function () {
                 case "SHUTTER_CONTACT":
                 case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
@@ -1058,6 +1083,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "RAINDETECTOR":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
@@ -1073,6 +1103,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "ROTARY_HANDLE_SENSOR":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
@@ -1088,6 +1123,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "WATERDETECTIONSENSOR":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
@@ -1103,6 +1143,11 @@ $(document).ready(function () {
                     list.append(content);
                     break;
                 case "SENSOR_FOR_CARBON_DIOXIDE":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
                     if (dateSince) {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
@@ -1457,8 +1502,10 @@ $(document).ready(function () {
     }
 
     function formatDate(ts) {
-        var now = new Date();
-        var dateSinceObj = new Date(ts);
+        var dateSinceObj = new Date(ts.replace(/ /,"T")+"Z");
+        var tzOffset = dateSinceObj.getTimezoneOffset();
+        dateSinceObj = new Date(dateSinceObj.getTime() + (tzOffset * 60000));
+        var now = new Date((new Date().getTime() + 1000));
         var str;
         switch (settings.dateSinceType) {
             case false:
@@ -1479,30 +1526,90 @@ $(document).ready(function () {
                 if (days > 0) {
                     str += days + " Tag";
                     if (days != 1) { str += "e"; }
-                    str += ", ";
-                }
-                if (hours > 0) {
+                } else if (hours > 0) {
                     str += hours + " Stunde";
                     if (hours != 1) { str += "n"; }
-                    str += ", ";
-                }
-                if (minutes > 0) {
+                } else if (minutes > 0) {
                     str += minutes + " Minute";
                     if (minutes != 1) { str += "n"; }
-                    str += ", ";
+                } else {
+                    str += seconds + " Sekunde";
+                    if (seconds != 1) { str += "n"; }
                 }
-                str += seconds + " Sekunde";
-                if (seconds != 1) { str += "n"; }
+
 
                 break;
             default:
                 // Zeitpunkt
-                str = dateSinceObj.getDate()+"."+(dateSinceObj.getMonth()+1)+"."+dateSinceObj.getFullYear();
-                str += " " + dateSinceObj.getHours() + ":" + ("0"+dateSinceObj.getMinutes()).slice(-2) + ":" + ("0"+dateSinceObj.getSeconds()).slice(-2);
+
+                // TODO "Gestern"
+                if (now.getDate() == dateSinceObj.getDate()) {
+                    // Heute
+                    str = dateSinceObj.getHours() + ":" + ("0"+dateSinceObj.getMinutes()).slice(-2) + ":" + ("0"+dateSinceObj.getSeconds()).slice(-2);
+                } else  {
+                    str = dateSinceObj.getDate()+"."+(dateSinceObj.getMonth()+1)+"."+dateSinceObj.getFullYear();
+                    str += " " + dateSinceObj.getHours() + ":" + ("0"+dateSinceObj.getMinutes()).slice(-2) + ":" + ("0"+dateSinceObj.getSeconds()).slice(-2);
+                }
                 break;
 
         }
         return str;
+    }
+
+    function getServiceMsgCount(enId) {
+        // Service-Meldungen suchen
+        var chIdArr = regaObjects[enId].Channels;
+        var devIdArr = [];
+        for (var k = 0; k < chIdArr.length; k++) {
+            var devId = regaObjects[chIdArr[k]].Parent;
+            if (devIdArr.indexOf(devId) == -1) {
+                devIdArr.push(devId);
+            }
+        }
+        var serviceMsgCount = 0;
+        for (var k = 0; k < devIdArr.length; k++) {
+            if (regaObjects[devIdArr[k]] && regaObjects[devIdArr[k]].Channels) {
+                var ch0Id = regaObjects[devIdArr[k]].Channels[0];
+                if (regaObjects[ch0Id].ALDPs) {
+                    for (var al in regaObjects[ch0Id].ALDPs) {
+                        if (datapoints[regaObjects[ch0Id].ALDPs[al]][0] == 1) {
+                            serviceMsgCount += 1;
+
+                        }
+                    }
+
+                }
+            }
+        }
+        return serviceMsgCount;
+    }
+
+    function updateServiceMsgs() {
+        // Favorites
+        if (regaIndex.FAVORITE) {
+            for (var i = 0; i < regaIndex.FAVORITE.length; i++) {
+                updateServiceMsgsItem(regaIndex.FAVORITE[i]);
+            }
+        }
+
+        // Räume
+        for (var i = 0; i < regaIndex.ENUM_ROOMS.length; i++) {
+            updateServiceMsgsItem(regaIndex.ENUM_ROOMS[i]);
+        }
+
+        // Gewerke
+        for (var i = 0; i < regaIndex.ENUM_FUNCTIONS.length; i++) {
+            updateServiceMsgsItem(regaIndex.ENUM_FUNCTIONS[i]);
+        }
+    }
+
+    function updateServiceMsgsItem(en) {
+        var count = getServiceMsgCount(en);
+        if (count == 0) {
+            $("div[data-hm-service-msg='"+en+"']").hide().html("");
+        } else {
+            $("div[data-hm-service-msg='"+en+"']").show().html(count);
+        }
     }
 
 });

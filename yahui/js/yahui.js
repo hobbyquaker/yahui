@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.3",
+    version: "1.1.4",
     requiredCcuIoVersion: "0.9.63",
     images: [],
     defaultImages: [],
@@ -1050,15 +1050,20 @@ $(document).ready(function () {
                 case "SMOKE_DETECTOR_TEAM":
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>"+datapoints[el.DPs.STATE][1]+"</span></span>";
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
-                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
-                        '<div class="yahui-b">' + lowbat +
-                        '</div><div class="yahui-c"><h3>' +
-                        '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">kein Rauch erkannt</span>' +
-                        '<span style="color: #c00; '+(datapoints[el.DPs.STATE][0]?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">Alarm</span>' +
-                        //since +
-                        '</h3></div></li>';
-                    list.append(content);
+                    var smokeState;
+                    if (el.DPs && el.DPs.STATE && datapoints[el.DPs.STATE]) {
+                        smokeState = datapoints[el.DPs.STATE][0];
+                        content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                            '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                            '<div class="yahui-b">' + lowbat +
+                            '</div><div class="yahui-c"><h3>' +
+                            '<span style="color: #080; '+(smokeState?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">kein Rauch erkannt</span>' +
+                            '<span style="color: #c00; '+(smokeState?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">Alarm</span>' +
+                            //since +
+                            '</h3></div></li>';
+                        list.append(content);
+                    }
+
                     break;
                 case "SHUTTER_CONTACT":
                 case "TILT_SENSOR":

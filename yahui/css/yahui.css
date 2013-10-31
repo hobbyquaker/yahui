@@ -255,6 +255,7 @@ input.ui-slider-input {
         display: inline;
         float: right;
         margin-top:5px;
+        text-align: center;
     }
     .yahui-bc {
         width: 65%;

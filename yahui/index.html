@@ -187,21 +187,44 @@
             </div>
         </div>
         <div id="edit_channel" data-role="dialog" data-history="false" data-theme="b">
-            <div data-role="header" data-theme="b"><h1>Kanal editieren</h1></div>
+            <div data-role="header" data-theme="b"><h1>Element editieren</h1></div>
             <div data-role="content" data-theme="b">
                 <input type="hidden" id="edit_channel_id"/>
                 <input type="hidden" id="edit_channel_page_id"/>
-                <label>Kanalname</label><span class="hm-html" id="edit_channel_name"></span>
-                <label for="channel_alias">Alias</label><input type="text" name="channel_alias" id="edit_channel_alias"/>
-                <!--<label for="channel_iframe">Typ</label>
-                <select name="channel_iframe" id="edit_channel_iframe">
-                    <option value="true">in yahui integriert anzeigen</option>
-                    <option value="false">in neuem Browser-Fenster öffnen</option>
-                </select>-->
+                <table>
+                    <tr>
+                        <td><span id="edit_channel_name"></span></td>
+                        <td>(<span id="edit_channel_type"></span>)</td>
+                    </tr>
+                </table>
+
+                <input type="text" name="edit_channel_alias" id="edit_channel_alias"/>
+
+                <div data-edit-area="KEY" class="edit-area" style="display:none">
+                    <p>&nbsp;</p>
+                    <select id="hide_press_long">
+                        <option value="false">Button langer Tastendruck anzeigen</option>
+                        <option value="true">Button langer Tastendruck ausblenden</option>
+                    </select>
+                    <label for="text_press_short">Beschriftung Button kurzer Tastendruck</label><input type="text" name="text_press_short" id="text_press_short"/>
+                    <label for="text_press_long">Beschriftung Button langer Tastendruck</label><input type="text" name="text_press_long" id="text_press_long"/>
+                </div>
+
                 <p>&nbsp;</p>
-                <a href="#" data-role="button" data-icon="check" id="channel_edit">speichern</a>
-                <a href="#" data-role="button" data-icon="back" id="channel_cancel">abbrechen</a>
-                <a href="#" data-role="button" data-icon="delete" id="channel_delete">zurücksetzen</a>
+
+                <div class="ui-grid-b">
+                    <div class="ui-block-a"><a href="#" data-role="button" data-icon="check" id="channel_edit">speichern</a></div>
+                    <div class="ui-block-b"><a href="#" data-role="button" data-icon="back" id="channel_reset">rücksetzen</a></div>
+                    <div class="ui-block-c"><a href="#" data-role="button" data-icon="delete" id="channel_cancel">abbrechen</a></div>
+                </div>
+
+                <hr/>
+
+                <div class="ui-grid-a">
+                    <div class="ui-block-a"> <a href="#" data-role="button" data-icon="arrow-u" id="img_upload">Bild hochladen</a></div>
+                    <div class="ui-block-b"> <a href="#" data-role="button" data-icon="delete" id="img_delete">Bild löschen</a></div>
+                </div>
+
             </div>
         </div>
         <div data-role="popup" data-overlay-theme="a" id="ccu-io-disconnect">

@@ -39,6 +39,10 @@ var settings = {
     //Variablen auch in der Variablenansicht nicht editierbar, wenn (r) in der Beschreibung enthalten ist
     editReadOnlyVariablesInVariablelist: true,
 
+    // Default Beschriftung für kurzen und langen Tastendruck
+    defaultPressShort: "kurz",
+    defaultPressLong: "lang",
+
     // Bestimmte Datenpunkte von CUxD Geräten ausblenden (_MIN_ betrifft auch _MAX_)
     hideDatapoints: {
         TEMP_MIN_24H: false,

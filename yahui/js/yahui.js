@@ -12,14 +12,14 @@
  */
 
 var yahui = {
-    version: "1.1.4",
-    requiredCcuIoVersion: "0.9.63",
+    version: "1.1.5",
+    requiredCcuIoVersion: "0.9.66",
     images: [],
     defaultImages: [],
     sortOrder: {},
     socket: {},
     extensions: {},
-    channelNameAliases: {},
+    elementOptions: {},
     regaObjects: {},
     ready: false
 };
@@ -37,7 +37,10 @@ $(document).ready(function () {
         url = $.mobile.path.parseUrl(location.href);
     }
 
-    if (!settings.prefix) { settings.prefix = ""; }
+    settings.prefix = settings.prefix || "";
+    settings.defaultPressShort = settings.defaultPressShort || "kurz";
+    settings.defaultPressLong = settings.defaultPressLong || "lang";
+
 
     $(".yahui-version").html(yahui.version);
     $(".yahui-prefix").html(settings.prefix);
@@ -57,7 +60,7 @@ $(document).ready(function () {
 
     // Diese 3 Objekte beinhalten die CCU Daten.
     // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
-    var regaObjects, datapoints, regaIndex;
+    var regaObjects, datapoints = {}, regaIndex;
 
     // Verbindung zu CCU.IO herstellen.
     yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
@@ -172,9 +175,9 @@ $(document).ready(function () {
                 yahui.sortOrder = data;
             }
 
-            yahui.socket.emit('readFile', 'yahui-channelnamealiases.json', function(datachannelnamealiases) {
-                if (datachannelnamealiases) {
-                    yahui.channelNameAliases = datachannelnamealiases;
+            yahui.socket.emit('readFile', 'yahui-elementOptions.json', function(data) {
+                if (data) {
+                    yahui.elementOptions = data;
                 }
 
                 // ---------- "Hier geht's los" ----------- //
@@ -185,6 +188,7 @@ $(document).ready(function () {
     });
 
     // Sind wir im Edit-Mode?
+    //console.log("url.search="+url.search);
     if (url.search == "?edit") {
         // JA!
         $(".yahui-edit").show();
@@ -200,6 +204,7 @@ $(document).ready(function () {
                 //console.log("edit mode");
             })
             .fail(function(jqxhr, settings, exception) {
+                console.log("failed loading yahui-edit.js");
             });
 
     } else {
@@ -609,23 +614,27 @@ $(document).ready(function () {
             }
         }
     }
-
     // erzeugt ein Bedien-/Anzeige-Element
     function renderWidget(list, id, varEdit, pageId) {
+
         //console.log("renderWidget("+list+","+id+","+varEdit+","+pageId+")");
         var el = regaObjects[id];
-        var alias;
-        if (pageId)
-        {
-            if (pageId == '#variables')
-                alias = yahui.channelNameAliases["#variables_" + id];
-            else if (pageId == '#programs')
-                alias = yahui.channelNameAliases["#programs" + id];
-            else
-                alias = yahui.channelNameAliases["#page_" + pageId + "_" + id];
+        var alias = el.Name;
+        if (pageId) {
+            var optionKey;
+            if (pageId == '#variables') {
+                optionKey = "#variables_" + id;
+            } else if (pageId == '#programs') {
+                optionKey = "#programs" + id;
+            } else {
+                optionKey = "#page_" + pageId + "_" + id;
+            }
+            if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].alias) {
+                alias = yahui.elementOptions["#page_" + pageId + "_" + id].alias;
+            }
+
         }
-        if (!alias)
-            alias = el.Name;
+
         var since = "";
         var lowbat = "";
         var unreach = "";
@@ -750,6 +759,14 @@ $(document).ready(function () {
                     break;
                 case "KEY":
                 case "VIRTUAL_KEY":
+                    var textPressShort = settings.defaultPressShort;
+                    var textPressLong = settings.defaultPressLong;
+                    if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].textPressShort) {
+                        textPressShort = yahui.elementOptions["#page_" + pageId + "_" + id].textPressShort;
+                    }
+                    if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].textPressLong) {
+                        textPressLong = yahui.elementOptions["#page_" + pageId + "_" + id].textPressLong;
+                    }
                     if (!settings.hideKeys) {
                         img = (img ? img : defimg);
                         var shortId = regaObjects[id].DPs.PRESS_SHORT;
@@ -757,11 +774,16 @@ $(document).ready(function () {
                         content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                             '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b">' +
-                            '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="kurz" data-inline="true"/> ' +
-                            '<input type="button" data-hm-id="'+longId+'" id="press_long_'+elId+'" name="press_long_'+id+'" value="lang" data-inline="true"/>' +
+                            '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="'+textPressShort+'" data-inline="true"/> ' +
+                            '<input type="button" data-hm-id="'+longId+'" id="press_long_'+elId+'" name="press_long_'+id+'" value="'+textPressLong+'" data-inline="true"/>' +
                             lowbat +
                             '</div></li>';
                         list.append(content);
+                        $("#press_long_"+elId).on('buttoncreate', function () {
+                            if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].hidePressLong) {
+                                $("#press_long_"+elId).parent().hide();
+                            }
+                        });
                         $("#press_short_"+elId).click(function (e) {
                             //console.log("press short "+id);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);

@@ -107,6 +107,9 @@ $(document).ready(function () {
                     url: "/upload?path=./www" + url.pathname + "images/user/&id=" + id,
                     acceptedFiles: "image/*",
                     uploadMultiple: false,
+                    previewTemplate: '<div class="dz-preview dz-file-preview"><div class="dz-details"><div class="dz-filename"><span data-dz-name></span></div><br/>' +
+                        '<div class="dz-size" data-dz-size></div><br/><img data-dz-thumbnail /></div><div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>' +
+                        '<div class="dz-error-message"><span data-dz-errormessage></span></div></div>',
                     previewsContainer: "#uploadPreview",
                     clickable: true,
                     dragover: function (e) {
@@ -121,15 +124,19 @@ $(document).ready(function () {
                         //console.log(e, ui);
                         var closest = $(e.toElement).closest("li.ui-li");
                         closest.removeClass("upload-start");
-                        $("#uploadProgress").html("");
+                        //$("#uploadProgress").html("");
                         //$("#uploadPreview").html("");
-                        $("#popupUpload").popup("open");
+                        //$("#popupUpload").popup("open");
                         /*setTimeout(function() {
                          closest.find("img").attr("src", "images/default/dummy.png");
                          setTimeout(function () {
                          closest.find("img").attr("src", "images/user/"+);
                          }, 50);
                          }, 1200);*/
+                    },
+                    complete: function (e, ui) {
+                        $("#uploadProgress").html("");
+                        $("#popupUpload").popup("open");
                     }
                 });
             }
@@ -137,6 +144,7 @@ $(document).ready(function () {
         });
 
         //Edit-Button zu Widget hinzufügen
+        //console.log("add Edit Buttons");
         var addedEditButtons = 0;
         $("li.yahui-widget").each( function() {
             if ($(this).find("div.yahui-d").length > 0) {
@@ -154,15 +162,70 @@ $(document).ready(function () {
                 var id = $(this).attr("id").slice(13);
                 var url = $.mobile.path.parseUrl(location.href);
                 var el = yahui.regaObjects[id];
-                var alias = yahui.channelNameAliases[url.hash + "_" + id];
-                if (!alias) {
-                    alias = el.Name;
+
+
+                // Typ-spezifischen Bereich des Edit-Fensters einbleden
+                var chType = yahui.regaObjects[id].HssType;
+                if (chType == "VIRTUAL_KEY") { chType = "KEY"; }
+                $(".edit-area[data-edit-area!='"+chType+"']").hide();
+                $(".edit-area[data-edit-area='"+chType+"']").show();
+
+                if (chType == "KEY" || chType == "VIRTUAL_KEY") {
+                    var textPressShort = settings.defaultPressShort;
+                    var textPressLong = settings.defaultPressLong;
+                    var hidePressLong = false;
+                    if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].textPressShort) {
+                        textPressShort = yahui.elementOptions[url.hash + "_" + id].textPressShort;
+                    }
+                    if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].textPressLong) {
+                        textPressLong = yahui.elementOptions[url.hash + "_" + id].textPressLong;
+                    }
+                    if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].hidePressLong) {
+                        $("select#hide_press_long option:selected").removeAttr("selected");
+                        if (yahui.elementOptions[url.hash + "_" + id].hidePressLong && yahui.elementOptions[url.hash + "_" + id].hidePressLong === true) {
+                            $("select#hide_press_long option[value='true']").attr("selected", true);
+                        }
+
+                    } else {
+                        $("select#hide_press_long option[value='false']").attr("selected", true);
+                    }
+                    if ($('select#hide_press_long').parent().parent().hasClass("ui-select")) {
+                        $('select#hide_press_long').selectmenu('refresh');
+                    }
+                    $("input#text_press_short").val(textPressShort);
+                    $("input#text_press_long").val(textPressLong);
+
                 }
+
+
+                 var alias = el.Name;
+                if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].alias) {
+                    alias = yahui.elementOptions[url.hash + "_" + id].alias;
+                }
+
 
                 $("#edit_channel_id").val(id);
                 $("#edit_channel_page_id").val(url.hash);
+
+                var typeName;
+                switch (el.TypeName) {
+                    case "VARDP":
+                        typeName = "Variable";
+                        break;
+                    case "PROGRAM":
+                        typeName = "Programm";
+                        break;
+                    case "CHANNEL":
+                        typeName = "Kanal";
+                        break;
+                }
+
+                $("#edit_channel_type").text(typeName);
                 $("#edit_channel_name").text(el.Name);
                 $("#edit_channel_alias").val(alias);
+
+
+
             });
         }
 
@@ -250,7 +313,6 @@ $(document).ready(function () {
         for (var id in yahui.extensions) {
             ids.push(parseInt(id,10));
         }
-        //console.log(ids);
         id = 0;
         while (ids.indexOf(id) !== -1) {
             id += 1;
@@ -258,29 +320,109 @@ $(document).ready(function () {
         return id;
     }
 
-    // Kanalbearbeitung abbrechen
+    // Bearbeitung abbrechen
     $("#channel_cancel").click(function () {
         $("#edit_channel").dialog("close");
-
-        if (url.hash.match(/&/)) {
-            var tmpArr = url.hash.split("&");
-            var hash = tmpArr[0];
-            window.location.href = url.pathname + "?edit" + hash;
-            url = $.mobile.path.parseUrl(location.href);
-        }
-        else
-            window.location.href = url.pathname + "?edit" + url.hash;
     });
 
-    // Kanalbearbeitung speichern
-    $("#channel_edit").click(function () {
+    // Bild hochladen
+    $("#img_upload").click(function () {
+        var pageId = $("#edit_channel_page_id").val();
+        var elemId =  $("#edit_channel_id").val();
+        $("#edit_channel").dialog("close");
+        $("div"+pageId).find("li[data-hm-id='"+elemId+"']").trigger("click");
+    });
 
-        yahui.channelNameAliases[$("#edit_channel_page_id").val() + "_" + $("#edit_channel_id").val()] = $("#edit_channel_alias").val();
+    // Bild löschen
+    $("#img_delete").click(function () {
+        var pageId = $("#edit_channel_page_id").val();
+        var elemId =  $("#edit_channel_id").val();
+        var defimg = "images/user/dummy.png";
+        console.log(elemId);
+        if (!yahui.images[elemId]) {
+            alert("kein Bild vorhanden!");
+        } else {
+
+            // Default-Image für Gerät vorhanden?
+            if (yahui.regaObjects[elemId] && yahui.regaObjects[elemId].Parent) {
+                var deviceType = yahui.regaObjects[yahui.regaObjects[elemId].Parent].HssType;
+                if (yahui.defaultImages[deviceType]) {
+                    defimg = "images/default/"+yahui.defaultImages[deviceType];
+                }
+            }
+
+
+            $("img[src='images/user/"+yahui.images[elemId]+"']").attr("src", defimg);
+            yahui.socket.emit('delRawFile', "./www/yahui/images/user/"+yahui.images[elemId], function () {
+
+            });
+            $("#edit_channel").dialog("close");
+        }
+    });
+
+
+    // Bearbeitung zurücksetzen
+    $("#channel_reset").click(function () {
+        var pageId = $("#edit_channel_page_id").val();
+        var elemId =  $("#edit_channel_id").val();
+        var elemKey = pageId + "_" + elemId;
+
+        $("#edit_channel_alias").val($("#edit_channel_name").text());
+        $("select#hide_press_long option:selected").removeAttr("selected");
+        $("select#hide_press_long").selectmenu("refresh");
+        delete yahui.elementOptions[elemKey];
+
+        if (yahui.regaObjects[elemId].HssType == "KEY" || yahui.regaObjects[elemId].HssType == "VIRTUAL_KEY") {
+            $("input#text_press_short").val(settings.defaultPressShort);
+            $("input#text_press_long").val(settings.defaultPressLong);
+
+            $("input#press_short_list_"+pageId.slice(6)+"_"+elemId).val(settings.defaultPressShort);
+            $("input#press_short_list_"+pageId.slice(6)+"_"+elemId).parent().find('span.ui-btn-text').text(settings.defaultPressShort);
+            $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).val(settings.defaultPressLong);
+            $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().find('span.ui-btn-text').text(settings.defaultPressLong);
+            $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().show();
+        }
+        $("#edit_channel").dialog("close");
+        $.mobile.loading("show");
+
+        yahui.socket.emit("writeFile", "yahui-elementOptions.json", yahui.elementOptions, function() {
+            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "'").text($("#edit_channel_alias").val());
+        });
+    });
+
+    // Bearbeitung speichern
+    $("#channel_edit").click(function () {
+        var pageId = $("#edit_channel_page_id").val();
+        var elemId =  $("#edit_channel_id").val();
+        var elemKey = pageId + "_" + elemId;
+        if (!yahui.elementOptions[elemKey]) {
+            yahui.elementOptions[elemKey] = {};
+        }
+
+        if (yahui.regaObjects[elemId].HssType == "KEY" || yahui.regaObjects[elemId].HssType == "VIRTUAL_KEY") {
+            yahui.elementOptions[elemKey].hidePressLong = ($("select#hide_press_long option:selected").val()==="true"?true:false);
+            yahui.elementOptions[elemKey].textPressShort = $("input#text_press_short").val();
+            yahui.elementOptions[elemKey].textPressLong = $("input#text_press_long").val();
+
+            $("input#press_short_list_"+pageId.slice(6)+"_"+elemId).val($("input#text_press_short").val());
+            $("input#press_short_list_"+pageId.slice(6)+"_"+elemId).parent().find('span.ui-btn-text').text($("input#text_press_short").val())
+            $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).val($("input#text_press_long").val());
+            $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().find('span.ui-btn-text').text($("input#text_press_long").val())
+
+            if (yahui.elementOptions[elemKey].hidePressLong === true) {
+                $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().hide();
+            } else {
+                $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().show();
+            }
+
+        }
+
+        yahui.elementOptions[elemKey].alias = $("#edit_channel_alias").val();
 
         $("#edit_channel").dialog("close");
         $.mobile.loading("show");
 
-        yahui.socket.emit("writeFile", "yahui-channelnamealiases.json", yahui.channelNameAliases, function() {
+        yahui.socket.emit("writeFile", "yahui-elementOptions.json", yahui.elementOptions, function() {
             $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "'").text($("#edit_channel_alias").val());
         });
     });

@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.6",
+    version: "1.1.7",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -689,6 +689,38 @@ $(document).ready(function () {
 
 
             switch (el.HssType) {
+                case "HUE_DIMMABLE_PLUG-IN_UNIT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '</select> ' + lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        '<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/>' +
+                        '</div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                        });
+                    }, 500);
+                    break;
                 case "HUE_COLOR_LIGHT":
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;

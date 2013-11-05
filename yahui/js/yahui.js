@@ -12,8 +12,8 @@
  */
 
 var yahui = {
-    version: "1.1.5",
-    requiredCcuIoVersion: "0.9.66",
+    version: "1.1.6",
+    requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -689,7 +689,100 @@ $(document).ready(function () {
 
 
             switch (el.HssType) {
+                case "HUE_COLOR_LIGHT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var hueId = regaObjects[id].DPs.HUE;
+                    var satId = regaObjects[id].DPs.SAT;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '</select> ' + lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        'Helligkeit<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
+                        'Sättigung<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
+                        '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
+                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
+                        '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                        });
+                    }, 500);
+                    break;
+                case "HUE_EXTENDED_COLOR_LIGHT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var ctId = regaObjects[id].DPs.CT;
+                    var hueId = regaObjects[id].DPs.HUE;
+                    var satId = regaObjects[id].DPs.SAT;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var colormodeId = regaObjects[id].DPs.COLORMODE;
 
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '</select> ' +
+                        '<select class="hue-switch" id="switch_'+elId+'_COLORMODE" data-hm-id="'+colormodeId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="ct">Weiss</option>' +
+                        '<option value="hs"'+((datapoints[colormodeId][0] == "hs") ?' selected':'')+'>Farbe</option>' +
+                        '</select>'+lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        'Helligkeit<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
+                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "" : "display:none")+'" id="'+elId+'_CT"><div style="background-position: 2px 26px !important; background: url(images/default/ct.png) no-repeat; background-size:100%; background-height:26px; ">Farbtemperatur'+
+                        '<input id="slider_'+elId+'_CT" type="range" data-hm-factor="1" data-hm-id="'+ctId +
+                        '" name="slider_'+elId+'_CT"  min="153" max="500" value="'+(datapoints[ctId][0])+'"/></div><br/></div>' +
+                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "display:none" : "")+'" id="'+elId+'_HS">Sättigung'+
+                        '<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
+                        '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
+                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
+                        '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></div></li>';
+
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                            if (event.target.value == "ct") {
+                                $("#"+elId+"_CT").show();
+                                $("#"+elId+"_HS").hide();
+                            } else if (event.target.value == "hs") {
+                                $("#"+elId+"_CT").hide();
+                                $("#"+elId+"_HS").show();
+                            }
+                        });
+                    }, 500);
+                    break;
                 case "DIMMER":
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
@@ -702,6 +795,7 @@ $(document).ready(function () {
                         '<option value="0">Aus</option>' +
                         '<option value="1"'+((datapoints[levelId][0] != 0) ?' selected':'')+'>An</option>' +
                         '</select>'+lowbat;
+
                     if (directionId) {
                         content += '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="1" class="ui-icon ui-icon-arrow-u ui-icon-shadow yahui-direction">&nbsp;</span>' +
                             '<span style="display:none;" data-hm-id="'+directionId+'" data-hm-state="2" class="ui-icon ui-icon-arrow-d ui-icon-shadow yahui-direction">&nbsp;</span>';
@@ -1361,6 +1455,21 @@ $(document).ready(function () {
         if (regaObjects[id] && regaObjects[id].ValueUnit && regaObjects[id].ValueUnit == "100%") {
             val = (val * 100).toFixed(1);
         }
+
+        $(".hue-switch[data-hm-id='"+id+"']").each(function () {
+            $this = $(this);
+            $this.find("option").removeAttr("selected");
+            $this.find("option[value='"+val+"']").attr("selected", true);
+            $this.slider("refresh");
+
+            if (val == "ct") {
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").show();
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").hide();
+            } else if (val == "hs") {
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").hide();
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").show();
+            }
+        });
 
         $("img[data-hm-servicemsg='"+id+"']").each(function () {
             if (val == 1 || val === true || val === "true") {

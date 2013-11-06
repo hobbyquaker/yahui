@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.7",
+    version: "1.1.8",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -703,7 +703,7 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
-                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="false">Aus</option>' +
                         '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
                         '</select> ' + lowbat;
@@ -716,8 +716,8 @@ $(document).ready(function () {
                         $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
-                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
-                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), (event.target.value == "true" ? true : false)]);
                         });
                     }, 500);
                     break;
@@ -737,7 +737,7 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
-                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="false">Aus</option>' +
                         '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
                         '</select> ' + lowbat;
@@ -754,8 +754,8 @@ $(document).ready(function () {
                         $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
-                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
-                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), (event.target.value == "true" ? true : false)]);
                         });
                     }, 500);
                     break;
@@ -777,11 +777,11 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
-                        '<select class="hue-switch" id="switch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="false">Aus</option>' +
                         '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
                         '</select> ' +
-                        '<select class="hue-switch" id="switch_'+elId+'_COLORMODE" data-hm-id="'+colormodeId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_COLORMODE" data-hm-id="'+colormodeId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="ct">Weiss</option>' +
                         '<option value="hs"'+((datapoints[colormodeId][0] == "hs") ?' selected':'')+'>Farbe</option>' +
                         '</select>'+lowbat;
@@ -803,7 +803,7 @@ $(document).ready(function () {
                         $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
-                        $("[id^='switch_"+elId+"_']").on( 'slidestop', function( event ) {
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
                             if (event.target.value == "ct") {
                                 $("#"+elId+"_CT").show();
@@ -1019,7 +1019,7 @@ $(document).ready(function () {
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' + lowbat +
                         '</div><div class="yahui-c">' +
-                        '<div style="display: inline-block; width: 70px;">' +
+                        '<div style="display: inline-block; width: 70px; vertical-align: middle;">' +
                         '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" class="hm-val" data-hm-id="'+el.DPs.SETPOINT+'" value="'+datapoints[el.DPs.SETPOINT][0]+'"  />' +
                         '</div> '+
                         regaObjects[el.DPs.SETPOINT].ValueUnit;
@@ -1489,8 +1489,15 @@ $(document).ready(function () {
         }
 
         $(".hue-switch[data-hm-id='"+id+"']").each(function () {
+            console.log("hue switch "+JSON.stringify(val));
+
+            if (val === false) { val = "false"; }
+            if (val === true) { val = "true"; }
+
+            console.log("hue switch "+JSON.stringify(val));
+
             $this = $(this);
-            $this.find("option").removeAttr("selected");
+            $this.find("option[value!='"+val+"'").removeAttr("selected");
             $this.find("option[value='"+val+"']").attr("selected", true);
             $this.slider("refresh");
 
@@ -1617,6 +1624,7 @@ $(document).ready(function () {
             var $this = $(this);
             var working = false;
             var direction = 0;
+
             // Eltern-Element aus Index suchen
             var channel     = regaObjects[regaObjects[id].Parent];
             if (channel) {
@@ -1647,6 +1655,7 @@ $(document).ready(function () {
         });
 
         $("select[id^=select][data-hm-id='"+id+"']").each(function() {
+
             //console.log("select change");
             var $this = $(this);
             $this.find("option").removeAttr("selected");

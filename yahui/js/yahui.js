@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.8",
+    version: "1.1.9",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -705,7 +705,7 @@ $(document).ready(function () {
                         '<div class="yahui-b">' +
                         '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="false">Aus</option>' +
-                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] !== "false" && datapoints[stateId][0] !== false) ?' selected':'')+'>An</option>' +
                         '</select> ' + lowbat;
                     content += '</div><div class="yahui-c">' +
                         '<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +

@@ -98,6 +98,8 @@ In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden
 
 ### 1.1.9
 
+ * (Anli) Kanäle können ausgeblendet werden
+ * (Hobbyquaker) Menüpunkte können ausgeblendet werden
  * (Hobbyquaker) Hue: Bugfix: initialer Zustand des Scahlters für Zwischensteck-Dimmer
 
 ### 1.1.8

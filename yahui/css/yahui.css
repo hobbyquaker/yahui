@@ -277,6 +277,11 @@ input.ui-slider-input {
         height: 230px;
         margin: 10px 1%;
     }
+
+    .div_vertical {
+        font-size: 16px;
+        padding-top:15px;
+    }
 }
 
 .responsive-grid .ui-listview .ui-btn.upload-start {
@@ -323,4 +328,13 @@ input.ui-slider-input {
     height:16px;
     background-color: yellow;
     box-shadow: 2px 1px 2px #500;
+}
+
+.edit_invisible {
+    opacity: 0.35;
+    display: block;
+}
+
+.invisible {
+    display: none !important;
 }

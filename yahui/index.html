@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de" xmlns="http://www.w3.org/1999/html">
+<html lang="de" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -56,12 +56,12 @@
                 </ul>
             </div>
             <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-                <div data-role="navbar" data-grid="c">
+                <div class="yahui-navbar" data-role="navbar" data-grid="c">
                     <ul>
-                        <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="star">Favoriten</a></li>
-                        <li><a href="#rooms" data-icon="home">Räume</a></li>
-                        <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
-                        <li><a href="#links" data-icon="plus">Erweiterungen</a></li>
+                        <li class="yahui-nav-favs"><a href="#" class="ui-btn-active ui-state-persist" data-icon="star">Favoriten</a></li>
+                        <li class="yahui-nav-rooms"><a href="#rooms" data-icon="home">Räume</a></li>
+                        <li class="yahui-nav-funcs"><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                        <li class="yahui-nav-links"><a href="#links" data-icon="plus">Erweiterungen</a></li>
                     </ul>
                 </div>
             </div>
@@ -76,12 +76,12 @@
                 </ul>
             </div>
             <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-                <div data-role="navbar" data-grid="c">
+                <div class="yahui-navbar" data-role="navbar" data-grid="c">
                     <ul>
-                        <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                        <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="home">R&auml;ume</a></li>
-                        <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
-                        <li><a href="#links" data-icon="plus">Erweiterungen</a></li>
+                        <li class="yahui-nav-favs"><a href="#favs" data-icon="star">Favoriten</a></li>
+                        <li class="yahui-nav-rooms"><a href="#" class="ui-btn-active ui-state-persist" data-icon="home">Räume</a></li>
+                        <li class="yahui-nav-funcs"><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                        <li class="yahui-nav-links"><a href="#links" data-icon="plus">Erweiterungen</a></li>
                     </ul>
                 </div>
             </div>
@@ -98,12 +98,12 @@
                 </div>
             </div>
             <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-                <div data-role="navbar" data-grid="c">
+                <div class="yahui-navbar" data-role="navbar" data-grid="c">
                     <ul>
-                        <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                        <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
-                        <li><a href="#" class="ui-btn-active ui-state-persist" data-icon="grid">Gewerke</a></li>
-                        <li><a href="#links" data-icon="plus">Erweiterungen</a></li>
+                        <li class="yahui-nav-favs"><a href="#favs" data-icon="star">Favoriten</a></li>
+                        <li class="yahui-nav-rooms"><a href="#rooms" data-icon="home">Räume</a></li>
+                        <li class="yahui-nav-funcs"><a href="#" class="ui-btn-active ui-state-persist" data-icon="grid">Gewerke</a></li>
+                        <li class="yahui-nav-links"><a href="#links" data-icon="plus">Erweiterungen</a></li>
                     </ul>
                 </div>
             </div>
@@ -118,12 +118,12 @@
                 <ul id="listLinks" data-role="listview" data-inset="true" class="yahui-sortable"></ul>
             </div>
             <div data-position="fixed"  data-tap-toggle="false" data-role="footer" data-id="f1">
-                <div data-role="navbar" data-grid="c">
+                <div class="yahui-navbar" data-role="navbar" data-grid="c">
                     <ul>
-                        <li><a href="#favs" data-icon="star">Favoriten</a></li>
-                        <li><a href="#rooms" data-icon="home">R&auml;ume</a></li>
-                        <li><a href="#funcs" data-icon="grid">Gewerke</a></li>
-                        <li><a href="#"  class="ui-btn-active ui-state-persist" data-icon="plus">Erweiterungen</a></li>
+                        <li class="yahui-nav-favs"><a href="#favs" data-icon="star">Favoriten</a></li>
+                        <li class="yahui-nav-rooms"><a href="#rooms" data-icon="home">Räume</a></li>
+                        <li class="yahui-nav-funcs"><a href="#funcs" data-icon="grid">Gewerke</a></li>
+                        <li class="yahui-nav-links"><a href="#"  class="ui-btn-active ui-state-persist" data-icon="plus">Erweiterungen</a></li>
                     </ul>
                 </div>
             </div>
@@ -199,6 +199,15 @@
                 </table>
 
                 <input type="text" name="edit_channel_alias" id="edit_channel_alias"/>
+                <div class="ui-grid-b">
+                    <div class="ui-block-a div_vertical">Kanal anzeigen</div>
+                    <div class="ui-block-b">
+                        <select id="edit_channel_visible" data-role="slider">
+                            <option value="0">nein</option>
+                            <option value="1">ja</option>
+                        </select>
+                     </div>
+                </div>
 
                 <div data-edit-area="KEY" class="edit-area" style="display:none">
                     <p>&nbsp;</p>

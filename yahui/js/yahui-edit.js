@@ -28,6 +28,8 @@ $(document).ready(function () {
     function initEditMode() {
         //console.log("initEditMode()");
 
+        $(".invisible").addClass('edit_invisible').removeClass('invisible');
+
         $("a.yahui-extension").click(function (e) {
 
             var id = $(this).attr("id").slice(4);
@@ -59,8 +61,6 @@ $(document).ready(function () {
             $this.prop("data-rel", "dialog");
             $this.removeAttr("target");
         });
-
-
     }
 
     $(document).on( "pagechange", function (e, data) {
@@ -163,8 +163,7 @@ $(document).ready(function () {
                 var url = $.mobile.path.parseUrl(location.href);
                 var el = yahui.regaObjects[id];
 
-
-                // Typ-spezifischen Bereich des Edit-Fensters einbleden
+                // Typ-spezifischen Bereich des Edit-Fensters einblenden
                 var chType = yahui.regaObjects[id].HssType;
                 if (chType == "VIRTUAL_KEY") { chType = "KEY"; }
                 $(".edit-area[data-edit-area!='"+chType+"']").hide();
@@ -194,15 +193,12 @@ $(document).ready(function () {
                     }
                     $("input#text_press_short").val(textPressShort);
                     $("input#text_press_long").val(textPressLong);
-
                 }
 
-
-                 var alias = el.Name;
+                var alias = el.Name;
                 if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].alias) {
                     alias = yahui.elementOptions[url.hash + "_" + id].alias;
                 }
-
 
                 $("#edit_channel_id").val(id);
                 $("#edit_channel_page_id").val(url.hash);
@@ -224,11 +220,16 @@ $(document).ready(function () {
                 $("#edit_channel_name").text(el.Name);
                 $("#edit_channel_alias").val(alias);
 
+                var visible = "1";
+                if (yahui.elementOptions[url.hash + "_" + id] && yahui.elementOptions[url.hash + "_" + id].visible) {
+                    visible = yahui.elementOptions[url.hash + "_" + id].visible;
+                }
+                //console.log(visible);
 
-
+                $("#edit_channel_visible").val(visible);
+                $("#edit_channel_visible").slider("refresh");
             });
         }
-
     });
 
     $("body").append('<div data-role="popup" data-dismissible="false" data-history="false" data-overlay-theme="a" id="popupUpload">' +
@@ -351,7 +352,6 @@ $(document).ready(function () {
                 }
             }
 
-
             $("img[src='images/user/"+yahui.images[elemId]+"']").attr("src", defimg);
             yahui.socket.emit('delRawFile', "./www/yahui/images/user/"+yahui.images[elemId], function () {
 
@@ -370,7 +370,12 @@ $(document).ready(function () {
         $("#edit_channel_alias").val($("#edit_channel_name").text());
         $("select#hide_press_long option:selected").removeAttr("selected");
         $("select#hide_press_long").selectmenu("refresh");
+
         delete yahui.elementOptions[elemKey];
+
+        //ausgeblendet zurücksetzen
+        $("li.yahui-widget[data-hm-id='" + elemId + "']").removeClass("edit_invisible");
+        $("li.yahui-widget[data-hm-id='" + elemId + "']").removeClass("invisible");
 
         if (yahui.regaObjects[elemId].HssType == "KEY" || yahui.regaObjects[elemId].HssType == "VIRTUAL_KEY") {
             $("input#text_press_short").val(settings.defaultPressShort);
@@ -386,7 +391,7 @@ $(document).ready(function () {
         $.mobile.loading("show");
 
         yahui.socket.emit("writeFile", "yahui-elementOptions.json", yahui.elementOptions, function() {
-            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "'").text($("#edit_channel_alias").val());
+            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "']").text($("#edit_channel_alias").val());
         });
     });
 
@@ -414,16 +419,22 @@ $(document).ready(function () {
             } else {
                 $("input#press_long_list_"+pageId.slice(6)+"_"+elemId).parent().show();
             }
-
         }
 
         yahui.elementOptions[elemKey].alias = $("#edit_channel_alias").val();
+        yahui.elementOptions[elemKey].visible = $("#edit_channel_visible").val();
+
+        if (yahui.elementOptions[elemKey].visible === "0") {
+            $("li.yahui-widget[data-hm-id='" + elemId + "']").addClass("edit_invisible");
+        } else {
+            $("li.yahui-widget[data-hm-id='" + elemId + "']").removeClass("edit_invisible");
+        }
 
         $("#edit_channel").dialog("close");
         $.mobile.loading("show");
 
         yahui.socket.emit("writeFile", "yahui-elementOptions.json", yahui.elementOptions, function() {
-            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "'").text($("#edit_channel_alias").val());
+            $("div.yahui-a[data-hm-id='" + $("#edit_channel_id").val() + "']").text($("#edit_channel_alias").val());
         });
     });
 });

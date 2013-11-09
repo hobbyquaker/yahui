@@ -793,6 +793,7 @@ $(document).ready(function () {
             }
 
             switch (el.HssType) {
+                case "HUE_DIMMABLE_LIGHT":
                 case "HUE_DIMMABLE_PLUG-IN_UNIT":
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;

@@ -98,7 +98,8 @@ In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden
 ### 1.2.0
 * (Anli) zusammenklappbare Raum-/Gewerkliste auf linker Seite
 * (Anli) Anpassung Darstellung Servicemeldungen
-* (Hobbyquaker) Style Korekturen Hue Slider
+* (Hobbyquaker) Hue: Style Korekturen Hintergrund Slider
+* (Hobbyquaker) Hue: HUE_DIMMABLE_LIGHT
 
 ### 1.1.9
 

@@ -424,10 +424,11 @@ $(document).ready(function () {
         yahui.elementOptions[elemKey].alias = $("#edit_channel_alias").val();
         yahui.elementOptions[elemKey].visible = $("#edit_channel_visible").val();
 
-        if (yahui.elementOptions[elemKey].visible === "0")
+        if (yahui.elementOptions[elemKey].visible === "0") {
             $("li.yahui-widget[data-hm-id='" + elemId + "']").addClass("edit_invisible");
-        else
+        } else {
             $("li.yahui-widget[data-hm-id='" + elemId + "']").removeClass("edit_invisible");
+        }
 
         $("#edit_channel").dialog("close");
         $.mobile.loading("show");

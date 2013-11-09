@@ -12,8 +12,8 @@
  */
 
 var yahui = {
-    version: "1.1.5",
-    requiredCcuIoVersion: "0.9.66",
+    version: "1.1.9",
+    requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -29,11 +29,57 @@ $(document).ready(function () {
 
     var body = $("body");
 
+    var startPage = "";
+    var menuCount = 4;
+    if (settings.hideFavorites) {
+        $(".yahui-nav-favs").remove();
+        startPage = "#rooms";
+        menuCount -= 1;
+    }
+    if (settings.hideRooms) {
+        $(".yahui-nav-rooms").remove();
+        if (startPage == "#rooms") {
+            startPage = "#funcs";
+        }
+        menuCount -= 1;
+    }
+    if (settings.hideFunctions) {
+        $(".yahui-nav-funcs").remove();
+        if (startPage == "#funcs") {
+            startPage = "#links";
+        }
+        menuCount -= 1;
+    }
+    if (settings.hideExtensions) {
+        $(".yahui-nav-links").remove();
+        menuCount -= 1;
+    }
+    switch (menuCount) {
+        case 3:
+            $(".yahui-navbar").attr("data-grid", "b");
+            break;
+        case 2:
+            $(".yahui-navbar").attr("data-grid", "a");
+            break;
+        case 1:
+            $(".yahui-navbar").parent().remove();
+            break;
+        case 0:
+            $(".yahui-navbar").parent().remove();
+            break;
+    }
+
     var url = $.mobile.path.parseUrl(location.href);
+
+    var re = new RegExp('\/yahui\/$');
+    if (url.pathname.match(re) && url.hash == "" && startPage != "") {
+        window.location.href = url.pathname + startPage;
+    }
 
     if (url.hash.match(/&/)) {
         var tmpArr = url.hash.split("&");
         var hash = tmpArr[0];
+
         window.location.href = url.pathname + hash;
         url = $.mobile.path.parseUrl(location.href);
     }
@@ -287,7 +333,7 @@ $(document).ready(function () {
     }
 
     // Menü-Seiten (Favoriten, Räume und Gewerke) aufbauen
-    function renderMenu(en, selector) {
+    function renderMenu(en, selector, linkclass) {
         //console.log("renderMenu "+en);
         var domObj = $(selector);
         var sortOrder = [];
@@ -320,7 +366,7 @@ $(document).ready(function () {
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
                 if (regaIndex[en].indexOf(sortOrder[j]) != -1) {
-                    domObj.append(renderMenuItem(sortOrder[j]));
+                    domObj.append(renderMenuItem(sortOrder[j], linkclass));
                     alreadyRendered.push(sortOrder[j]);
                 }
             }
@@ -331,20 +377,24 @@ $(document).ready(function () {
             //console.log("... "+regaIndex[en][i]);
             if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
                 //console.log("..! "+regaIndex[en][i]);
-                domObj.append(renderMenuItem(regaIndex[en][i]));
+                domObj.append(renderMenuItem(regaIndex[en][i], linkclass));
             }
         }
 
         // jqMobile listview bereits initialisiert? Wenn ja refresh - wenn nein jetzt erledigen.
         if (domObj.hasClass('ui-listview')) {
-            domObj.listview('refresh');
+            try {
+                domObj.listview('refresh');
+            }
+            catch (err) {}
+
         } else {
             domObj.trigger("create");
         }
     }
 
     // Ein Element auf der Menüseite rendern
-    function renderMenuItem(enId) {
+    function renderMenuItem(enId, linkclass) {
 
         var enObj = (regaObjects[enId]);
 
@@ -367,11 +417,11 @@ $(document).ready(function () {
             img = defimg;
         }
 
-        return "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
+        return "<li data-hm-id='"+enId+"'><div data-hm-service-msg='"+enId+"' style='" + (serviceMsgCount==0 ? "display:none" : "") + "' class='service-message'><div class='service-message-count'>" + (serviceMsgCount == 0 ? "" : serviceMsgCount) + "</div></div><a href='#page_"+enId+"'" + (linkclass && linkclass != "" ? " class='" + linkclass + "'" : "") + ">" +
             "<img src='"+img+"'>" +
             "<h2>"+enObj.Name+ "</h2>"+
             "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
-            "</a><div data-hm-service-msg='"+enId+"' style='"+(serviceMsgCount==0?"display:none":"")+"' class='service-message'>"+(serviceMsgCount == 0?"":serviceMsgCount)+"</div></li>";
+            "</a></li>";
     }
 
     // Pages bei Bedarf rendern
@@ -497,42 +547,76 @@ $(document).ready(function () {
         var regaObj = (regaObjects[pageId]);
         var name, link;
         switch (regaObj.TypeName) {
-        case "FAVORITE":
-            name = "Favoriten";
-            link = "#favs";
-            break;
-        case "ENUM_ROOMS":
-            name = "Räume";
-            link = "#rooms";
-            break;
-        case "ENUM_FUNCTIONS":
-            name = "Gewerke";
-            link = "#funcs";
-            break;
-        default:
-            name = "Zurück";
-            link = "#";
+            case "FAVORITE":
+                name = "Favoriten";
+                link = "#favs";
+                break;
+            case "ENUM_ROOMS":
+                name = "Räume";
+                link = "#rooms";
+                break;
+            case "ENUM_FUNCTIONS":
+                name = "Gewerke";
+                link = "#funcs";
+                break;
+            default:
+                name = "Zurück";
+                link = "#";
         }
 
-        var page = '<div id="page_'+pageId+'" data-role="page" data-theme="'+settings.swatches.content+'">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
-            '<a href="'+link+'" data-role="button" data-icon="arrow-l">'+name+'</a>' +
-            '<h1>' +settings.prefix+regaObj.Name + '</h1>';
+        var page = '<div id="page_' + pageId + '" data-role="page" data-theme="' + settings.swatches.content + '">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="' + settings.swatches.header + '">' +
+            '<a href="' + link + '" data-role="button" data-icon="arrow-l">'+name+'</a>' +
+            '<h1>' +settings.prefix + regaObj.Name + '</h1>';
         if (!settings.hideInfoButton) {
             page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
         }
-        page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_'+pageId+'" class="yahui-page yahui-sortable"></ul></div></div>';
+        page += '</div><div data-role="content"><div class="leftcolumn_collapsed" style="display: none;"><ul data-role="listview" id="ul_list_left_collapsed_' + pageId + '" data-inset="true" class="ul_list_left_collapsed yahui-page-left"></ul></div><div class="leftcolumn"><ul data-role="listview" id="ul_list_left_' + pageId + '" data-inset="true" class="yahui-page-left"></ul></div><div class="rightcolumn">' +
+            '<ul data-role="listview" id="list_' + pageId + '" data-inset="true" class="yahui-page yahui-sortable"></ul></div></div></div>';
         if (prepend) {
             body.prepend(page);
         } else {
             body.append(page);
         }
 
+        if (regaObj.TypeName == "ENUM_ROOMS" || regaObj.TypeName == "ENUM_FUNCTIONS") {
+            //falls die sortierung in der zwischenzeit geändert wurde, liste neu laden
+
+            var name = "";
+            var myid = "";
+            if (regaObj.TypeName == "ENUM_ROOMS") {
+                name = "Räume";
+                myid = "rooms";
+            }
+            else if (regaObj.TypeName == "ENUM_FUNCTIONS") {
+                name = "Gewerke";
+                myid = "functions";
+            }
+
+            $("ul#ul_list_left_" + pageId).empty();
+            $("ul#ul_list_left_" + pageId).append('<li id="heading_' + myid + '_' + pageId + '" data-role="list-divider" role="heading">' + name + '</li>');
+            $("ul#ul_list_left_collapsed_" + pageId).empty();
+            $("ul#ul_list_left_collapsed_" + pageId).append('<li id="heading_collapsed_' + myid + '_' + pageId + '" data-role="list-divider" role="heading">' + name + '</li>');
+            AnimateRotate("ul#ul_list_left_collapsed_" + pageId, 90);
+            $('#heading_' + myid + '_' + pageId).on("click", function() {
+                $("div.leftcolumn").toggle("slide");
+                $("div.leftcolumn_collapsed").toggle("slide");
+                $("div.rightcolumn").animate({marginLeft: "25px"});
+            });
+            $('#heading_collapsed_' + myid + '_' + pageId).on("click", function() {
+                $("div.leftcolumn").toggle("slide");
+                $("div.leftcolumn_collapsed").toggle("slide");
+                $("div.rightcolumn").animate({marginLeft: "295px"});
+            });
+            renderMenu(regaObj.TypeName, "ul#ul_list_left_" + pageId, "nopadding");
+        }
+
         var list = $("ul#list_"+pageId);
 
         var sortOrder = yahui.sortOrder["list_"+pageId];
         var alreadyRendered = [];
+
+        //console.log("renderPage - renderWidgets");
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
@@ -549,6 +633,16 @@ $(document).ready(function () {
                 renderWidget(list, chId, false, pageId);
             }
         }
+    }
+
+    function AnimateRotate(elem, d){
+        $({deg: 0}).animate({deg: d}, {
+            step: function(now, fx){
+                $(elem).css({
+                    transform: "rotate(" + now + "deg)"
+                });
+            }
+        });
     }
 
     // Variablen-Erweiterung rendern
@@ -618,7 +712,8 @@ $(document).ready(function () {
         var el = regaObjects[id];
         var alias = el.Name;
         var visible = true;
-        
+        var visibleClass = "visible";
+
         if (pageId) {
             var optionKey;
             if (pageId == '#variables') {
@@ -634,9 +729,16 @@ $(document).ready(function () {
             }
 
             if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].visible) {
-                visible = yahui.elementOptions["#page_" + pageId + "_" + id].visible === "1";
-                //console.log(yahui.inEditMode + ", " + optionKey + ", " + visible);
+
+
+                if (yahui.inEditMode && yahui.elementOptions["#page_" + pageId + "_" + id].visible !== "1") {
+                    // ausgrauen
+                    visibleClass = "edit_invisible";
+                } else if (yahui.elementOptions["#page_" + pageId + "_" + id].visible !== "1") {
+                    // verstecken
+                    visibleClass = "invisible";
             }
+        }
         }
 
         var since = "";
@@ -657,7 +759,6 @@ $(document).ready(function () {
 
             if (regaObjects[el.Parent].Channels && regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-
                 if (serviceChannel && serviceChannel.ALDPs) {
                     var unreach = false;
                     for (var alarmDp in serviceChannel.ALDPs) {
@@ -690,12 +791,137 @@ $(document).ready(function () {
             }
 
             switch (el.HssType) {
+                case "HUE_DIMMABLE_PLUG-IN_UNIT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] !== "false" && datapoints[stateId][0] !== false) ?' selected':'')+'>An</option>' +
+                        '</select> ' + lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        '<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/>' +
+                        '</div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), (event.target.value == "true" ? true : false)]);
+                        });
+                    }, 500);
+                    break;
+                case "HUE_COLOR_LIGHT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var hueId = regaObjects[id].DPs.HUE;
+                    var satId = regaObjects[id].DPs.SAT;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '</select> ' + lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        'Helligkeit<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
+                        'Sättigung<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
+                        '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
+                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
+                        '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), (event.target.value == "true" ? true : false)]);
+                        });
+                    }, 500);
+                    break;
+                case "HUE_EXTENDED_COLOR_LIGHT":
+                    img = (img ? img : defimg);
+                    var stateId = regaObjects[id].DPs.STATE;
+                    var levelId = regaObjects[id].DPs.LEVEL;
+                    var ctId = regaObjects[id].DPs.CT;
+                    var hueId = regaObjects[id].DPs.HUE;
+                    var satId = regaObjects[id].DPs.SAT;
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var colormodeId = regaObjects[id].DPs.COLORMODE;
+
+                    if (datapoints[unreachId][0]) {
+                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
+                    } else {
+                        lowbat = "";
+                    }
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b">' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="false">Aus</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '</select> ' +
+                        '<select class="hue-switch" id="hueswitch_'+elId+'_COLORMODE" data-hm-id="'+colormodeId+'" name="switch_'+elId+'" data-role="slider">' +
+                        '<option value="ct">Weiss</option>' +
+                        '<option value="hs"'+((datapoints[colormodeId][0] == "hs") ?' selected':'')+'>Farbe</option>' +
+                        '</select>'+lowbat;
+                    content += '</div><div class="yahui-c">' +
+                        'Helligkeit<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
+                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "" : "display:none")+'" id="'+elId+'_CT"><div style="background-position: 2px 26px !important; background: url(images/default/ct.png) no-repeat; background-size:100%; background-height:26px; ">Farbtemperatur'+
+                        '<input id="slider_'+elId+'_CT" type="range" data-hm-factor="1" data-hm-id="'+ctId +
+                        '" name="slider_'+elId+'_CT"  min="153" max="500" value="'+(datapoints[ctId][0])+'"/></div><br/></div>' +
+                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "display:none" : "")+'" id="'+elId+'_HS">Sättigung'+
+                        '<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
+                        '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
+                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
+                        '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></div></li>';
+
+                    list.append(content);
+                    setTimeout(function () {
+                        $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
+                        });
+                        $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), event.target.value]);
+                            if (event.target.value == "ct") {
+                                $("#"+elId+"_CT").show();
+                                $("#"+elId+"_HS").hide();
+                            } else if (event.target.value == "hs") {
+                                $("#"+elId+"_CT").hide();
+                                $("#"+elId+"_HS").show();
+                            }
+                        });
+                    }, 500);
+                    break;
                 case "DIMMER":
                     img = (img ? img : defimg);
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' +
                         '<select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_'+elId+'" data-role="slider">' +
@@ -728,7 +954,7 @@ $(document).ready(function () {
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var workingId = regaObjects[id].DPs.WORKING;
                     var directionId = regaObjects[id].DPs.DIRECTION;
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '"><select id="switch_'+elId+'" data-hm-id="'+levelId+'" name="switch_state" data-role="slider">' +
                         '<option value="0">Zu</option>' +
@@ -771,7 +997,7 @@ $(document).ready(function () {
                         img = (img ? img : defimg);
                         var shortId = regaObjects[id].DPs.PRESS_SHORT;
                         var longId = regaObjects[id].DPs.PRESS_LONG;
-                        content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                             '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b" data-hm-id="' + id + '">' +
                             '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="'+textPressShort+'" data-inline="true"/> ' +
@@ -801,7 +1027,7 @@ $(document).ready(function () {
                 case "DIGITAL_ANALOG_OUTPUT":
                     img = (img ? img : defimg);
                     var stateId = regaObjects[id].DPs.STATE;
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' +
  
@@ -824,7 +1050,7 @@ $(document).ready(function () {
                     var stateId = regaObjects[id].DPs.STATE;
                     var openId = regaObjects[id].DPs.OPEN;
                     var uncertainId = regaObjects[id].DPs.STATE_UNCERTAIN;
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' +
 
@@ -859,7 +1085,7 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.MOTION+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -873,7 +1099,7 @@ $(document).ready(function () {
                 case "CLIMATECONTROL_VENT_DRIVE":
                     img = (img ? img : defimg);
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -889,7 +1115,7 @@ $(document).ready(function () {
                     if (regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.SETPOINT].ValueUnit = "°C";
                     }
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '">' +
@@ -922,7 +1148,7 @@ $(document).ready(function () {
                     if (regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit = "°C";
                     }
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' +
                         '<span style="display:inline-block; padding-right: 16px;"><select id="select_'+elId+'" data-hm-id="'+controlMode+'">';
@@ -990,7 +1216,7 @@ $(document).ready(function () {
 
                         // OC3
 
-                        content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                             '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b" data-hm-id="' + id + '" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
                             lowbat +
@@ -1030,7 +1256,7 @@ $(document).ready(function () {
                         content += "</table></div></li>";
 
                     } else {
-                        content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                             '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                             '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1075,7 +1301,7 @@ $(document).ready(function () {
                     var smokeState;
                     if (el.DPs && el.DPs.STATE && datapoints[el.DPs.STATE]) {
                         smokeState = datapoints[el.DPs.STATE][0];
-                        content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                             '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                             '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                             '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1099,7 +1325,7 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1119,7 +1345,7 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1139,7 +1365,7 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1159,11 +1385,11 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
-                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">Trocken</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">trocken</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">Feuchtigkeit erkannt</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">Wasserstand erkannt</span>' +
                         since + '</h3></div></li>';
@@ -1179,7 +1405,7 @@ $(document).ready(function () {
                         since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
                     }
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
@@ -1192,7 +1418,7 @@ $(document).ready(function () {
 
                 default:
                     img = (img ? img : defimg);
-                    content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '" style="font-size:12px"><span style="display: inline-block; padding-top:5px;">' + el.HssType +
                         lowbat +
@@ -1242,7 +1468,7 @@ $(document).ready(function () {
             }
             img = (img ? img : defimg);
             if (readOnly) {
-                content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                     '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                     '<div class="yahui-bc" data-hm-id="' + id + '">';
                 switch (regaObjects[id].ValueType) {
@@ -1263,7 +1489,7 @@ $(document).ready(function () {
                 }
                 list.append(content);
             } else {
-                content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                     '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                     '<div class="yahui-bc" data-hm-id="' + id + '">';
                 switch (regaObjects[id].ValueType + "-" + regaObjects[id].ValueSubType) {
@@ -1329,7 +1555,7 @@ $(document).ready(function () {
             break;
         case "PROGRAM":
             img = (img ? img : defimg);
-            content = '<li class="yahui-widget' + (visible ? '" ' : ' invisible" ') + 'inedata-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+            content = '<li class="yahui-widget ' + visibleClass + 'inedata-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                 '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                 '<div class="yahui-bc" data-hm-id="' + id + '">' +
                 '<a href="#" class="yahui-program" data-hm-id="'+id+'" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +
@@ -1361,6 +1587,28 @@ $(document).ready(function () {
         if (regaObjects[id] && regaObjects[id].ValueUnit && regaObjects[id].ValueUnit == "100%") {
             val = (val * 100).toFixed(1);
         }
+
+        $(".hue-switch[data-hm-id='"+id+"']").each(function () {
+            console.log("hue switch "+JSON.stringify(val));
+
+            if (val === false) { val = "false"; }
+            if (val === true) { val = "true"; }
+
+            console.log("hue switch "+JSON.stringify(val));
+
+            $this = $(this);
+            $this.find("option[value!='"+val+"'").removeAttr("selected");
+            $this.find("option[value='"+val+"']").attr("selected", true);
+            $this.slider("refresh");
+
+            if (val == "ct") {
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").show();
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").hide();
+            } else if (val == "hs") {
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").hide();
+                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").show();
+            }
+        });
 
         $("img[data-hm-servicemsg='"+id+"']").each(function () {
             if (val == 1 || val === true || val === "true") {
@@ -1476,6 +1724,7 @@ $(document).ready(function () {
             var $this = $(this);
             var working = false;
             var direction = 0;
+
             // Eltern-Element aus Index suchen
             var channel     = regaObjects[regaObjects[id].Parent];
             if (channel) {
@@ -1601,10 +1850,8 @@ $(document).ready(function () {
                     for (var al in regaObjects[ch0Id].ALDPs) {
                         if (datapoints[regaObjects[ch0Id].ALDPs[al]][0] == 1) {
                             serviceMsgCount += 1;
-
                         }
                     }
-
                 }
             }
         }
@@ -1635,7 +1882,7 @@ $(document).ready(function () {
         if (count == 0) {
             $("div[data-hm-service-msg='"+en+"']").hide().html("");
         } else {
-            $("div[data-hm-service-msg='"+en+"']").show().html(count);
+            $("div[data-hm-service-msg='"+en+"']").show().html("<div class='service-message-count'>" + count + "</div>");
         }
     }
 

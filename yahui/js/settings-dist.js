@@ -30,6 +30,12 @@ var settings = {
     // Service-Meldungen bei Favoriten/Räumen/Gewerken anzeigen?
     showServiceMsgs: true,
 
+    // Menü-Punkte ausblenden
+    hideFavorites: false,
+    hideRooms: false,
+    hideFunctions: false,
+    hideExtensions: false,
+
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
 

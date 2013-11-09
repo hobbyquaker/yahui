@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.1.9",
+    version: "1.2.0",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -69,11 +69,10 @@ $(document).ready(function () {
             break;
     }
 
-
-
     var url = $.mobile.path.parseUrl(location.href);
 
-    if (url.pathname == "/yahui/" && url.hash == "" && startPage != "") {
+    var re = new RegExp('\/yahui\/$');
+    if (url.pathname.match(re) && url.hash == "" && startPage != "") {
         window.location.href = url.pathname + startPage;
     }
 
@@ -336,7 +335,7 @@ $(document).ready(function () {
     }
 
     // Menü-Seiten (Favoriten, Räume und Gewerke) aufbauen
-    function renderMenu(en, selector) {
+    function renderMenu(en, selector, linkclass) {
         //console.log("renderMenu "+en);
         var domObj = $(selector);
         var sortOrder = [];
@@ -369,7 +368,7 @@ $(document).ready(function () {
             for (var j = 0; j < sortOrder.length; j++) {
                 sortOrder[j] = parseInt(sortOrder[j], 10);
                 if (regaIndex[en].indexOf(sortOrder[j]) != -1) {
-                    domObj.append(renderMenuItem(sortOrder[j]));
+                    domObj.append(renderMenuItem(sortOrder[j], linkclass));
                     alreadyRendered.push(sortOrder[j]);
                 }
             }
@@ -380,20 +379,24 @@ $(document).ready(function () {
             //console.log("... "+regaIndex[en][i]);
             if (alreadyRendered.indexOf(regaIndex[en][i]) == -1) {
                 //console.log("..! "+regaIndex[en][i]);
-                domObj.append(renderMenuItem(regaIndex[en][i]));
+                domObj.append(renderMenuItem(regaIndex[en][i], linkclass));
             }
         }
 
         // jqMobile listview bereits initialisiert? Wenn ja refresh - wenn nein jetzt erledigen.
         if (domObj.hasClass('ui-listview')) {
-            domObj.listview('refresh');
+            try {
+                domObj.listview('refresh');
+            }
+            catch (err) {}
+
         } else {
             domObj.trigger("create");
         }
     }
 
     // Ein Element auf der Menüseite rendern
-    function renderMenuItem(enId) {
+    function renderMenuItem(enId, linkclass) {
 
         var enObj = (regaObjects[enId]);
 
@@ -416,11 +419,11 @@ $(document).ready(function () {
             img = defimg;
         }
 
-        return "<li data-hm-id='"+enId+"'><a href='#page_"+enId+"'>" +
+        return "<li data-hm-id='"+enId+"'><div data-hm-service-msg='"+enId+"' style='" + (serviceMsgCount==0 ? "display:none" : "") + "' class='service-message'><div class='service-message-count'>" + (serviceMsgCount == 0 ? "" : serviceMsgCount) + "</div></div><a href='#page_"+enId+"'" + (linkclass && linkclass != "" ? " class='" + linkclass + "'" : "") + ">" +
             "<img src='"+img+"'>" +
             "<h2>"+enObj.Name+ "</h2>"+
             "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
-            "</a><div data-hm-service-msg='"+enId+"' style='"+(serviceMsgCount==0?"display:none":"")+"' class='service-message'>"+(serviceMsgCount == 0?"":serviceMsgCount)+"</div></li>";
+            "</a></li>";
     }
 
     // Pages bei Bedarf rendern
@@ -546,42 +549,76 @@ $(document).ready(function () {
         var regaObj = (regaObjects[pageId]);
         var name, link;
         switch (regaObj.TypeName) {
-        case "FAVORITE":
-            name = "Favoriten";
-            link = "#favs";
-            break;
-        case "ENUM_ROOMS":
-            name = "Räume";
-            link = "#rooms";
-            break;
-        case "ENUM_FUNCTIONS":
-            name = "Gewerke";
-            link = "#funcs";
-            break;
-        default:
-            name = "Zurück";
-            link = "#";
+            case "FAVORITE":
+                name = "Favoriten";
+                link = "#favs";
+                break;
+            case "ENUM_ROOMS":
+                name = "Räume";
+                link = "#rooms";
+                break;
+            case "ENUM_FUNCTIONS":
+                name = "Gewerke";
+                link = "#funcs";
+                break;
+            default:
+                name = "Zurück";
+                link = "#";
         }
 
-        var page = '<div id="page_'+pageId+'" data-role="page" data-theme="'+settings.swatches.content+'">' +
-            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="'+settings.swatches.header+'">' +
-            '<a href="'+link+'" data-role="button" data-icon="arrow-l">'+name+'</a>' +
-            '<h1>' +settings.prefix+regaObj.Name + '</h1>';
+        var page = '<div id="page_' + pageId + '" data-role="page" data-theme="' + settings.swatches.content + '">' +
+            '<div data-role="header" data-position="fixed" data-id="f2" data-theme="' + settings.swatches.header + '">' +
+            '<a href="' + link + '" data-role="button" data-icon="arrow-l">'+name+'</a>' +
+            '<h1>' +settings.prefix + regaObj.Name + '</h1>';
         if (!settings.hideInfoButton) {
             page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
         }
-        page += '</div><div data-role="content">' +
-            '<ul data-role="listview" id="list_'+pageId+'" class="yahui-page yahui-sortable"></ul></div></div>';
+        page += '</div><div data-role="content"><div class="leftcolumn_collapsed" style="display: none;"><ul data-role="listview" id="ul_list_left_collapsed_' + pageId + '" data-inset="true" class="ul_list_left_collapsed yahui-page-left"></ul></div><div class="leftcolumn"><ul data-role="listview" id="ul_list_left_' + pageId + '" data-inset="true" class="yahui-page-left"></ul></div><div class="rightcolumn">' +
+            '<ul data-role="listview" id="list_' + pageId + '" data-inset="true" class="yahui-page yahui-sortable"></ul></div></div></div>';
         if (prepend) {
             body.prepend(page);
         } else {
             body.append(page);
         }
 
+        if (regaObj.TypeName == "ENUM_ROOMS" || regaObj.TypeName == "ENUM_FUNCTIONS") {
+            //falls die sortierung in der zwischenzeit geändert wurde, liste neu laden
+
+            var name = "";
+            var myid = "";
+            if (regaObj.TypeName == "ENUM_ROOMS") {
+                name = "Räume";
+                myid = "rooms";
+            }
+            else if (regaObj.TypeName == "ENUM_FUNCTIONS") {
+                name = "Gewerke";
+                myid = "functions";
+            }
+
+            $("ul#ul_list_left_" + pageId).empty();
+            $("ul#ul_list_left_" + pageId).append('<li id="heading_' + myid + '_' + pageId + '" data-role="list-divider" role="heading">' + name + '</li>');
+            $("ul#ul_list_left_collapsed_" + pageId).empty();
+            $("ul#ul_list_left_collapsed_" + pageId).append('<li id="heading_collapsed_' + myid + '_' + pageId + '" data-role="list-divider" role="heading">' + name + '</li>');
+            AnimateRotate("ul#ul_list_left_collapsed_" + pageId, 90);
+            $('#heading_' + myid + '_' + pageId).on("click", function() {
+                $("div.leftcolumn").toggle("slide");
+                $("div.leftcolumn_collapsed").toggle("slide");
+                $("div.rightcolumn").animate({marginLeft: "25px"});
+            });
+            $('#heading_collapsed_' + myid + '_' + pageId).on("click", function() {
+                $("div.leftcolumn").toggle("slide");
+                $("div.leftcolumn_collapsed").toggle("slide");
+                $("div.rightcolumn").animate({marginLeft: "295px"});
+            });
+            renderMenu(regaObj.TypeName, "ul#ul_list_left_" + pageId, "nopadding");
+        }
+
         var list = $("ul#list_"+pageId);
 
         var sortOrder = yahui.sortOrder["list_"+pageId];
         var alreadyRendered = [];
+
+        //console.log("renderPage - renderWidgets");
         if (sortOrder) {
             //console.log("SORT "+en)
             for (var j = 0; j < sortOrder.length; j++) {
@@ -598,6 +635,16 @@ $(document).ready(function () {
                 renderWidget(list, chId, false, pageId);
             }
         }
+    }
+
+    function AnimateRotate(elem, d){
+        $({deg: 0}).animate({deg: d}, {
+            step: function(now, fx){
+                $(elem).css({
+                    transform: "rotate(" + now + "deg)"
+                });
+            }
+        });
     }
 
     // Variablen-Erweiterung rendern
@@ -668,7 +715,7 @@ $(document).ready(function () {
         var alias = el.Name;
         var visible = true;
         var visibleClass = "visible";
-        
+
         if (pageId) {
             var optionKey;
             if (pageId == '#variables') {
@@ -692,8 +739,8 @@ $(document).ready(function () {
                 } else if (yahui.elementOptions["#page_" + pageId + "_" + id].visible !== "1") {
                     // verstecken
                     visibleClass = "invisible";
-                }
             }
+        }
         }
 
         var since = "";
@@ -714,7 +761,6 @@ $(document).ready(function () {
 
             if (regaObjects[el.Parent].Channels && regaObjects[el.Parent].Channels[0]) {
                 var serviceChannel = regaObjects[regaObjects[el.Parent].Channels[0]];
-
                 if (serviceChannel && serviceChannel.ALDPs) {
                     var unreach = false;
                     for (var alarmDp in serviceChannel.ALDPs) {
@@ -752,7 +798,6 @@ $(document).ready(function () {
                     var stateId = regaObjects[id].DPs.STATE;
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var unreachId = regaObjects[id].DPs.UNREACH;
-                    var unreachId = regaObjects[id].DPs.UNREACH;
                     if (datapoints[unreachId][0]) {
                         lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
                     } else {
@@ -766,7 +811,7 @@ $(document).ready(function () {
                         '<option value="true"'+((datapoints[stateId][0] !== "false" && datapoints[stateId][0] !== false) ?' selected':'')+'>An</option>' +
                         '</select> ' + lowbat;
                     content += '</div><div class="yahui-c">' +
-                        '<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
+                        '<input class="" id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
                         '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/>' +
                         '</div></li>';
                     list.append(content);
@@ -804,7 +849,7 @@ $(document).ready(function () {
                         '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
                         'Sättigung<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
                         '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
-                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<div class="yahui-slider-hue">Farbe'+
                         '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
                         '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></li>';
                     list.append(content);
@@ -846,13 +891,13 @@ $(document).ready(function () {
                     content += '</div><div class="yahui-c">' +
                         'Helligkeit<input id="slider_'+elId+'_LEVEL" type="range" data-hm-factor="1" data-hm-id="'+levelId +
                         '" name="slider_'+elId+'" min="0" max="255" value="'+(datapoints[levelId][0])+'"/><br/>' +
-                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "" : "display:none")+'" id="'+elId+'_CT"><div style="background-position: 2px 26px !important; background: url(images/default/ct.png) no-repeat; background-size:100%; background-height:26px; ">Farbtemperatur'+
-                        '<input id="slider_'+elId+'_CT" type="range" data-hm-factor="1" data-hm-id="'+ctId +
-                        '" name="slider_'+elId+'_CT"  min="153" max="500" value="'+(datapoints[ctId][0])+'"/></div><br/></div>' +
+                        '<div style="'+((datapoints[colormodeId][0] == "ct") ? "" : "display:none")+'" id="'+elId+'_CT"><div>Farbtemperatur'+
+                        '<div class="yahui-slider-ct"><input class="yahui-slider-ct" id="slider_'+elId+'_CT" type="range" data-hm-factor="1" data-hm-id="'+ctId +
+                        '" name="slider_'+elId+'_CT"  min="153" max="500" value="'+(datapoints[ctId][0])+'"/></div></div><br/></div>' +
                         '<div style="'+((datapoints[colormodeId][0] == "ct") ? "display:none" : "")+'" id="'+elId+'_HS">Sättigung'+
                         '<input id="slider_'+elId+'_SAT" type="range" data-hm-factor="1" data-hm-id="'+satId +
                         '" name="slider_'+elId+'_SAT" min="0" max="255" value="'+(datapoints[satId][0]*100)+'"/><br/>' +
-                        '<div style="background-position: 2px 26px !important; background: url(images/default/hue.png) no-repeat; background-size:100%; ">Farbe'+
+                        '<div class="yahui-slider-hue">Farbe'+
                         '<input id="slider_'+elId+'_HUE" type="range" data-hm-factor="1" data-hm-id="'+hueId +
                         '" name="slider_'+elId+'_HUE"  min="0" max="65535" value="'+(datapoints[hueId][0]*100)+'"/></div></div></div></li>';
 
@@ -988,7 +1033,7 @@ $(document).ready(function () {
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' +
-
+ 
                         '<select id="switch_'+elId+'" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="0">Aus</option>' +
                         '<option value="1"'+((datapoints[stateId][0] != 0) ? ' selected' : '')+'>An</option>' +
@@ -1347,7 +1392,7 @@ $(document).ready(function () {
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
                         '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
-                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">Trocken</span>' +
+                        '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="0" style="color: #080; '+(datapoints[el.DPs.STATE][0]!=0?'display:none':'')+'">trocken</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="1" style="color: #aa0; '+(datapoints[el.DPs.STATE][0]!=1?'display:none':'')+'">Feuchtigkeit erkannt</span>' +
                         '<span data-hm-id="'+el.DPs.STATE+'" data-hm-state="2" style="color: #c00; '+(datapoints[el.DPs.STATE][0]!=2?'display:none':'')+'">Wasserstand erkannt</span>' +
                         since + '</h3></div></li>';
@@ -1809,10 +1854,8 @@ $(document).ready(function () {
                     for (var al in regaObjects[ch0Id].ALDPs) {
                         if (datapoints[regaObjects[ch0Id].ALDPs[al]][0] == 1) {
                             serviceMsgCount += 1;
-
                         }
                     }
-
                 }
             }
         }
@@ -1843,7 +1886,7 @@ $(document).ready(function () {
         if (count == 0) {
             $("div[data-hm-service-msg='"+en+"']").hide().html("");
         } else {
-            $("div[data-hm-service-msg='"+en+"']").show().html(count);
+            $("div[data-hm-service-msg='"+en+"']").show().html("<div class='service-message-count'>" + count + "</div>");
         }
     }
 

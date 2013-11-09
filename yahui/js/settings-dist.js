@@ -36,7 +36,6 @@ var settings = {
     hideFunctions: false,
     hideExtensions: false,
 
-
     // Info-Button oben rechts ausblenden?
     hideInfoButton: false,
 

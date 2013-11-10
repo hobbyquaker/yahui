@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.0",
+    version: "1.2.1",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -1317,6 +1317,27 @@ $(document).ready(function () {
                     }
 
                     break;
+
+                case "PING":
+                    // Datum formatieren
+                    var dateSince;
+                    if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
+                        dateSince = formatDate(datapoints[el.DPs.STATE][3]);
+                    }
+                    if (dateSince) {
+                        since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.STATE+"'>" + dateSince + "</span></span>";
+                    }
+                    img = (img ? img : defimg);
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b" data-hm-id="' + id + '">' + lowbat +
+                        '</div><div class="yahui-c" data-hm-id="' + id + '"><h3>' +
+                        '<span style="color: #c00; '+(datapoints[el.DPs.STATE][0]?'display:none':'')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="false">unerreichbar</span>' +
+                        '<span style="color: #080; '+(datapoints[el.DPs.STATE][0]?'':'display:none')+'" data-hm-id="'+el.DPs.STATE+'" data-hm-state="true">ping ok</span>' +
+                        since +
+                        '</h3></div></li>';
+                    list.append(content);
+                    break;
                 case "SHUTTER_CONTACT":
                 case "TILT_SENSOR":
                 case "DIGITAL_INPUT":
@@ -1593,15 +1614,13 @@ $(document).ready(function () {
         }
 
         $(".hue-switch[data-hm-id='"+id+"']").each(function () {
-            console.log("hue switch "+JSON.stringify(val));
 
             if (val === false) { val = "false"; }
             if (val === true) { val = "true"; }
 
-            console.log("hue switch "+JSON.stringify(val));
 
             $this = $(this);
-            $this.find("option[value!='"+val+"'").removeAttr("selected");
+            $this.find("option[value!='"+val+"']").removeAttr("selected");
             $this.find("option[value='"+val+"']").attr("selected", true);
             $this.slider("refresh");
 
@@ -1637,11 +1656,14 @@ $(document).ready(function () {
                     } else {
                         if ($this.attr("data-hm-true")) {
                             val = (val ? $this.attr("data-hm-true") : $this.attr("data-hm-false"));
+                        } else {
+                            if (val === false) { val = "false"; }
                         }
                         $this.html(val);
                     }
                     break;
                 default:
+                    if (val === false) { val = "false"; }
                     $this.html(val);
             }
         });

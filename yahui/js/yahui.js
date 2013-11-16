@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.1",
+    version: "1.2.2",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -581,7 +581,7 @@ $(document).ready(function () {
             body.append(page);
         }
 
-        if (regaObj.TypeName == "ENUM_ROOMS" || regaObj.TypeName == "ENUM_FUNCTIONS") {
+        if (regaObj.TypeName == "ENUM_ROOMS" || regaObj.TypeName == "ENUM_FUNCTIONS" || regaObj.TypeName == "FAVORITE") {
             //falls die sortierung in der zwischenzeit geändert wurde, liste neu laden
 
             var name = "";
@@ -589,10 +589,12 @@ $(document).ready(function () {
             if (regaObj.TypeName == "ENUM_ROOMS") {
                 name = "Räume";
                 myid = "rooms";
-            }
-            else if (regaObj.TypeName == "ENUM_FUNCTIONS") {
+            } else if (regaObj.TypeName == "ENUM_FUNCTIONS") {
                 name = "Gewerke";
                 myid = "functions";
+            } else if (regaObj.TypeName == "FAVORITE") {
+                name = "Favoriten";
+                myid = "favorites";
             }
 
             $("ul#ul_list_left_" + pageId).empty();
@@ -799,11 +801,11 @@ $(document).ready(function () {
                     var stateId = regaObjects[id].DPs.STATE;
                     var levelId = regaObjects[id].DPs.LEVEL;
                     var unreachId = regaObjects[id].DPs.UNREACH;
-                    if (datapoints[unreachId][0]) {
-                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
-                    } else {
-                        lowbat = "";
+                    var msgVisible = "";
+                    if (!datapoints[unreachId][0]) {
+                        msgVisible="display:none;";
                     }
+                    lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
@@ -833,11 +835,11 @@ $(document).ready(function () {
                     var hueId = regaObjects[id].DPs.HUE;
                     var satId = regaObjects[id].DPs.SAT;
                     var unreachId = regaObjects[id].DPs.UNREACH;
-                    if (datapoints[unreachId][0]) {
-                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
-                    } else {
-                        lowbat = "";
+                    var msgVisible = "";
+                    if (!datapoints[unreachId][0]) {
+                        msgVisible="display:none;";
                     }
+                    lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
@@ -856,12 +858,13 @@ $(document).ready(function () {
                     list.append(content);
                     setTimeout(function () {
                         $("[id^='slider_"+elId+"_']").on( 'slidestop', function( event ) {
+
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
                         $("[id^='hueswitch_"+elId+"_']").on( 'slidestop', function( event ) {
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), (event.target.value == "true" ? true : false)]);
                         });
-                    }, 500);
+                    }, 750);
                     break;
                 case "HUE_EXTENDED_COLOR_LIGHT":
                     img = (img ? img : defimg);
@@ -870,14 +873,14 @@ $(document).ready(function () {
                     var ctId = regaObjects[id].DPs.CT;
                     var hueId = regaObjects[id].DPs.HUE;
                     var satId = regaObjects[id].DPs.SAT;
-                    var unreachId = regaObjects[id].DPs.UNREACH;
                     var colormodeId = regaObjects[id].DPs.COLORMODE;
 
-                    if (datapoints[unreachId][0]) {
-                        lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
-                    } else {
-                        lowbat = "";
+                    var unreachId = regaObjects[id].DPs.UNREACH;
+                    var msgVisible = "";
+                    if (!datapoints[unreachId][0]) {
+                        msgVisible="display:none;";
                     }
+                    lowbat = '<img style="'+msgVisible+'" data-hm-servicemsg="'+unreachId+'" class="yahui-lowbat" src="images/default/unreach.png" alt="Gerätekommunikation gestört" title="Gerätekommunikation gestört"/>';
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                         '<div class="yahui-b">' +
@@ -917,7 +920,7 @@ $(document).ready(function () {
                                 $("#"+elId+"_HS").show();
                             }
                         });
-                    }, 500);
+                    }, 750);
                     break;
                 case "DIMMER":
                     img = (img ? img : defimg);
@@ -1116,7 +1119,7 @@ $(document).ready(function () {
                 case "CLIMATECONTROL_REGULATOR":
                     img = (img ? img : defimg);
                     //since = " <span class='yahui-since'>seit <span class='hm-html-timestamp' data-hm-id='"+el.DPs.VALVE_STATE+"'>"+datapoints[el.DPs.VALVE_STATE][1]+"</span></span>";
-                    if (regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
+                    if (regaObjects[el.DPs.SETPOINT] && regaObjects[el.DPs.SETPOINT].ValueUnit && regaObjects[el.DPs.SETPOINT].ValueUnit !== "°C" && regaObjects[el.DPs.SETPOINT].ValueUnit.match(/C$/)) {
                         regaObjects[el.DPs.SETPOINT].ValueUnit = "°C";
                     }
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
@@ -1625,11 +1628,11 @@ $(document).ready(function () {
             $this.slider("refresh");
 
             if (val == "ct") {
-                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").show();
-                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").hide();
+                $("#"+$this.attr("id").replace(/hueswitch_/,"").replace(/_COLORMODE/,"")+"_CT").show();
+                $("#"+$this.attr("id").replace(/hueswitch_/,"").replace(/_COLORMODE/,"")+"_HS").hide();
             } else if (val == "hs") {
-                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_CT").hide();
-                $("#"+$this.attr("id").replace(/switch_/,"").replace(/_COLORMODE/,"")+"_HS").show();
+                $("#"+$this.attr("id").replace(/hueswitch_/,"").replace(/_COLORMODE/,"")+"_CT").hide();
+                $("#"+$this.attr("id").replace(/hueswitch_/,"").replace(/_COLORMODE/,"")+"_HS").show();
             }
         });
 

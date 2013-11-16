@@ -489,3 +489,7 @@ div.yahui-slider-ct div.ui-slider div.ui-slider-track {
     background: url(../images/default/ct.png) !important;
     background-size: 100% 100% !important;
 }
+
+ul.yahui-page-left h2 {
+    margin-left: 5px;
+}

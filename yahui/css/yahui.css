@@ -91,6 +91,11 @@ input.ui-slider-input {
 
 .leftcolumn_collapsed {
     display: none;
+    /*
+    transform:          rotate(90deg);
+    -ms-transform:      rotate(90deg);
+    -webkit-transform:  rotate(90deg);
+     */
 }
 
 .service-message {

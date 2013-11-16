@@ -22,7 +22,7 @@
         <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape)" href="images/yahui-splash-ipad-landscape.png">
 
         <!-- Hier den Pfad/Dateinamen anpassen für individuelle jqueryMobile Themes -->
-        <link rel="stylesheet" href="/lib/css/jquery.mobile-1.3.2.min.css" />
+        <link rel="stylesheet" href="../lib/css/jquery.mobile-1.3.2.min.css" />
 
         <link rel="shortcut icon" href="images/yahui-icon-32.ico" type="image/x-icon">
         <link rel="icon" href="images/yahui-icon-32.ico" type="image/x-icon">
@@ -30,19 +30,20 @@
 
         <!-- Hier Kommentarzeichen entfernen um eigene Style-Datei einzubinden -->
         <!-- <link rel="stylesheet" href="css/user.css" /> -->
-        <link rel="stylesheet" href="css/add2home.css" />
+        <link rel="stylesheet" href="../lib/css/add2home-2.0.8.css" />
 
-        <script src="/lib/js/jquery-1.10.2.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
+        <script src="../lib/js/jquery-1.10.2.min.js"></script>
+        <script src="../lib/js/loStorage.js"></script>
+        <script src="../socket.io/socket.io.js"></script>
         <script type="text/javascript">
             $(document).on("mobileinit", function(){
                 $.mobile.autoInitializePage = false;
             });
         </script>
-        <script src="/lib/js/jquery.mobile-1.3.2.min.js"></script>
+        <script src="../lib/js/jquery.mobile-1.3.2.min.js"></script>
         <script src="js/settings.js"></script>
         <script src="js/yahui.js"></script>
-        <script src="js/add2home.js"></script>
+        <script src="../lib/js/add2home-2.0.8.js"></script>
     </head>
 
     <body style="height:100%" >

@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.2",
+    version: "1.2.3",
     requiredCcuIoVersion: "0.9.70",
     images: [],
     defaultImages: [],
@@ -22,7 +22,8 @@ var yahui = {
     elementOptions: {},
     regaObjects: {},
     inEditMode: false,
-    ready: false
+    ready: false,
+    menuCollapsed: storage.get("yahui-menu-collapsed")
 };
 
 $(document).ready(function () {
@@ -419,7 +420,15 @@ $(document).ready(function () {
             img = defimg;
         }
 
-        return "<li data-hm-id='"+enId+"'><div data-hm-service-msg='"+enId+"' style='" + (serviceMsgCount==0 ? "display:none" : "") + "' class='service-message'><div class='service-message-count'>" + (serviceMsgCount == 0 ? "" : serviceMsgCount) + "</div></div><a href='#page_"+enId+"'" + (linkclass && linkclass != "" ? " class='" + linkclass + "'" : "") + ">" +
+        if (linkclass) {
+            if ("#page_"+enId == url.hash) {
+                var liClass = "ui-btn-active";
+            } else {
+                var liClass = "";
+            }
+        }
+
+        return "<li class='"+liClass+"' data-hm-id='"+enId+"'><div data-hm-service-msg='"+enId+"' style='" + (serviceMsgCount==0 ? "display:none" : "") + "' class='service-message'><div class='service-message-count'>" + (serviceMsgCount == 0 ? "" : serviceMsgCount) + "</div></div><a href='#page_"+enId+"'" + (linkclass && linkclass != "" ? " class='" + linkclass + "'" : "") + ">" +
             "<img src='"+img+"'>" +
             "<h2>"+enObj.Name+ "</h2>"+
             "<p>"+(enObj.EnumInfo?enObj.EnumInfo:"")+"</p>" +
@@ -430,6 +439,8 @@ $(document).ready(function () {
     $(document).bind( "pagebeforechange", function( e, data ) {
         if ( typeof data.toPage === "string" ) {
             var u = $.mobile.path.parseUrl( data.toPage );
+            url = u;
+
 
             if ($.mobile.activePage) {
                 $("a.yahui-noedit.yahui-editswitch").attr("href", "./?edit#"+ $.mobile.activePage.attr('id'));
@@ -602,12 +613,23 @@ $(document).ready(function () {
             $("ul#ul_list_left_collapsed_" + pageId).empty();
             $("ul#ul_list_left_collapsed_" + pageId).append('<li id="heading_collapsed_' + myid + '_' + pageId + '" data-role="list-divider" role="heading">' + name + '</li>');
             AnimateRotate("ul#ul_list_left_collapsed_" + pageId, 90);
+
+            if (yahui.menuCollapsed) {
+                $("div.leftcolumn").hide();
+                $("div.leftcolumn_collapsed").show();
+                $("div.rightcolumn").css("margin-left", "25px");
+            }
+
             $('#heading_' + myid + '_' + pageId).on("click", function() {
+                yahui.menuCollapsed = true;
+                storage.set("yahui-menu-collapsed", true);
                 $("div.leftcolumn").toggle("slide");
                 $("div.leftcolumn_collapsed").toggle("slide");
                 $("div.rightcolumn").animate({marginLeft: "25px"});
             });
             $('#heading_collapsed_' + myid + '_' + pageId).on("click", function() {
+                yahui.menuCollapsed = false;
+                storage.set("yahui-menu-collapsed", false);
                 $("div.leftcolumn").toggle("slide");
                 $("div.leftcolumn_collapsed").toggle("slide");
                 $("div.rightcolumn").animate({marginLeft: "295px"});
@@ -640,12 +662,15 @@ $(document).ready(function () {
     }
 
     function AnimateRotate(elem, d){
-        $({deg: 0}).animate({deg: d}, {
+       /* $({deg: 0}).animate({deg: d}, {
             step: function(now, fx){
                 $(elem).css({
                     transform: "rotate(" + now + "deg)"
                 });
             }
+        });*/
+        $(elem).css({
+            transform: "rotate(" + 90 + "deg)"
         });
     }
 

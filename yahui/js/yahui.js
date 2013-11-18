@@ -113,7 +113,7 @@ $(document).ready(function () {
     var regaObjects, datapoints = {}, regaIndex;
 
     // Verbindung zu CCU.IO herstellen.
-    yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host'));
+    yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host') + '?key=' + socketSession);
 
     yahui.socket.emit('getVersion', function(version) {
         if (version < yahui.requiredCcuIoVersion) {

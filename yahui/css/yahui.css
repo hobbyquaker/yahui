@@ -104,7 +104,10 @@ input.ui-slider-input {
     color: #fff;
     border-radius: 19px;
     width: 19px;
-    height: 19px;
+    height: 18px;
+    padding-top:1px;
+    font-size: 0.9em;
+    font-weight: normal;
     background-color: red;
     text-shadow: none !important;
 }

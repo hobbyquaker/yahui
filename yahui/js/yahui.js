@@ -183,6 +183,12 @@ $(document).ready(function () {
     });
     
     yahui.socket.on('error', function () {
+        $("#ccu-io-disconnect p").html("CCU.IO Kommunikationsfehler");
+        $("#ccu-io-disconnect").popup("open");
+        setTimeout(function () {
+            $("#ccu-io-disconnect").popup("close");
+            window.location.reload();
+        }, 2000);
         //console.log((new Date()) + " socket.io error");
     });
 
@@ -1347,8 +1353,11 @@ $(document).ready(function () {
                     break;
 
                 case "PING":
-                    // Datum formatieren
                     var dateSince;
+                    if (!el.DPs.STATE && el.DPs.ALIVE) {
+                        el.DPs.STATE = el.DPs.ALIVE;
+                    }
+                    // Datum formatieren
                     if (datapoints[el.DPs.STATE] && datapoints[el.DPs.STATE][3]) {
                         dateSince = formatDate(datapoints[el.DPs.STATE][3]);
                     }

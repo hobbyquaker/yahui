@@ -12,8 +12,8 @@
  */
 
 var yahui = {
-    version: "1.2.3",
-    requiredCcuIoVersion: "0.9.70",
+    version: "1.2.5",
+    requiredCcuIoVersion: "0.9.78",
     images: [],
     defaultImages: [],
     sortOrder: {},

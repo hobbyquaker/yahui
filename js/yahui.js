@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.5",
+    version: "1.2.6",
     requiredCcuIoVersion: "0.9.78",
     images: [],
     defaultImages: [],

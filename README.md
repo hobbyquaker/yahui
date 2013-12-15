@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.2.5
+aktuelle Version: 1.2.6
 
 yahui ist eine jQuery Mobile basierte alternative Weboberfläche für die HomeMatic CCU und ist für die Bedienung auf Tablets und Smartphones optimiert.
 
@@ -17,80 +17,13 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
 
 ## Dokumentation
 
-### Voraussetzungen
-
-* yahui setzt eine funktionierende [CCU.IO](https://github.com/hobbyquaker/ccu.io)-Installation voraus.
-* yahui benötigt einen modernen Browser (Chrome/Chromium/Iron, Firefox und Safari).
-
-
-### Installation
-
-Um yahui zu installieren genügt es das gesamte Verzeichnis
-yahui aus [diesem Zip-File](https://github.com/hobbyquaker/yahui/archive/master.zip) in den Ordner www/ der ccu.io-Installation
-zu kopieren und die Datei settings-dist.js (zu finden im Unterordner "js") in settings.js umzubenennen.
-
-yahui ist sobald [CCU.IO](https://github.com/hobbyquaker/ccu.io) bereit ist unter http://ccu-io-host:ccu-io-port/yahui erreichbar.
-
-### Favoriten
-
-Es werden nur Favoriten angezeigt die dem Benutzer "admin" zugeordnet sind.
-
-### Systemvariablen nur Anzeigen
-
-Systemvariablen können in yahui bearbeitet werden. Wie bei WebMatic können Systemvariablen über ein (r) in der
-Variablenbeschreibung auf nur-lesen gesetzt werden.
-
-### Einbinden eigener Bilder/Icons
-
-Bilder/Icons können einfach via Drag&Drop hochgeladen werden. Dazu muss sich yahui im "Edit-Modus" befinden (im
-Info-Dialog - erreichbar über den i-Button oben rechts - kann der Edit-Modus aktiviert und deaktiviert werden).
-Es sind alle Arten von Bilddateien erlaubt, empfohlen wird jedoch ein quadratisches PNG mit 230x230 Pixel Größe und
-leichter Transparenz. Wenn bereits Bilder von WebMatic vorhanden sind können diese einfach in das Verzeichnis
-yahui/images/user/ kopiert werden.
-
-### Sortierung der Elemente
-
-Sortieren ist im Edit-Modus ebenfalls via Drag&Drop möglich.
-
-### Umbenennen von Elementen
-
-Im Edit-Modus einfach auf einen Namen klicken.
-
-### Ändern der Farben und des Layouts
-
-in der Datei settings.js ist es möglich für die Kopfzeile, den Inhalt und das Menü unten getrennt aus 5
-vorgeingestellten Farb-Schemata zu wählen. Wer den Look darüber hinaus customizen will kann sich via
-http://jquerymobile.com/themeroller/index.php ein Theme "zusammenklicken". In Zeile 25 der Datei index.html muss dann
-die URL der jqueryMobile CSS-Datei entsprechend auf die mit dem Theme-Roller erstellte Datei angepasst werden.
-
-Eigene Style-Angaben zum Anpassen des Layouts können in der Datei yahui/css/user.css vorgenommen werden. In der Datei
-user-dist.css ist ein passendes Grundgerüst angelegt, diese einfach umbenennen und die Kommentarzeichen in index.html
-Zeile 32 entfernen.
-
-### Hinzufügen von Erweiterungen
-
-Wenn man sich im Edit-Modus befindet kann über den Button "hinzufügen" oben links eine neue Erweiterung angelegt werden.
-Zum bearbeiten oder löschen von Erweiterungen einfach im Edit-Modus die Erweiterung anklicken.
-
-### Ausblenden bestimmter Datenpunkte
-
-In der Datei settings.js können Datenpunkte angegeben werden die nicht angezeigt werden sollen.
-
-### Voranstellen eines "Prefix" vor den Seitentitel
-
-In der settings.js besteht die Möglichkeit einen Prefix anzugeben der vor jeden Seitentitel gesetzt wird.
-
-## ToDo/Roadmap
-
-  * Anzeige aktive Alarme?
-  * Liste aller Service-Meldungen mit Möglichkeit zum bestätigen unter Erweiterungen
-  * Widget Winmatic
-  * Widget Kapazitiver Füllstandsmesser
-  * Click-Handler-Initialisierung: passender Event statt setTimeout?
-  * Zustandsabhängige Bilder/Icons
-  * js/css kombiniert und minifiziert ausliefern
+siehe http://ccu.io/addons.html#yahui
 
 ## Changelog
+
+### 1.2.6
+* (Hobbyquaker) Verzeichnisstruktur geändert (kein Unterordner mehr im Repository)
+* (Hobbyquaker) Falls keine settings.js vorhanden ist wird settings-dist.js geladen
 
 ### 1.2.5
 * (Hobbyquaker) Bugfix PING Device

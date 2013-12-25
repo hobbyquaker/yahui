@@ -14,12 +14,21 @@ yahui verwendet die Software [CCU.IO](https://github.com/hobbyquaker/ccu.io) um 
   * Egal wieviele Instanzen von yahui oder DashUI gleichzeitig geöffnet sind - die Belastung für die CCU bleibt gleich gering
   (CCU.IO fungiert hier quasi als Proxy)
 
-
 ## Dokumentation
 
 siehe http://ccu.io/addons.html#yahui
 
+## Todo/Roadmap
+
+### 1.3
+* Settings komplett über die Oberfläche vornehmen
+* Minifiziert/Kombiniert ausliefern
+* offline.manifest
+
 ## Changelog
+
+### 1.2.7
+* (Hobbyquaker) Meta-Tags für Android Homescreen Bookmark, Icon 196x196px
 
 ### 1.2.6
 * (Hobbyquaker) Verzeichnisstruktur geändert (kein Unterordner mehr im Repository)

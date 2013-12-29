@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.7",
+    version: "1.2.8",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -1901,10 +1901,13 @@ $(document).ready(function () {
         var chIdArr = regaObjects[enId].Channels;
         var devIdArr = [];
         for (var k = 0; k < chIdArr.length; k++) {
-            var devId = regaObjects[chIdArr[k]].Parent;
-            if (devIdArr.indexOf(devId) == -1) {
-                devIdArr.push(devId);
+            if (regaObjects[chIdArr[k]]) {
+                var devId = regaObjects[chIdArr[k]].Parent;
+                if (devIdArr.indexOf(devId) == -1) {
+                    devIdArr.push(devId);
+                }
             }
+
         }
         var serviceMsgCount = 0;
         for (var k = 0; k < devIdArr.length; k++) {

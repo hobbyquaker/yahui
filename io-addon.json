@@ -1,9 +1,9 @@
 {
-    "version": "1.2.8",
+    "version": "1.2.9",
     "name": "yahui",
     "ident": "YAHUI",
     "dirname": "yahui",
-    "urlHomepage": "https://github.com/hobbyquaker/yahui",
+    "urlHomepage": "http://ccu.io/addons.html#yahui",
     "urlDownload": "https://github.com/hobbyquaker/yahui/archive/master.zip",
     "urlMeta": "https://raw.github.com/hobbyquaker/yahui/master/io-addon.json"
 }

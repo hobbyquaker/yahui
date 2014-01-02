@@ -86,7 +86,10 @@ $(document).ready(function () {
                     if (!id) {
                         id = parseInt($(this).attr("data-ext-id"), 10);
                     }
-                    sortOrder.push(id);
+                    if (id) {
+                        sortOrder.push(id);
+                    }
+
                 });
 
                 yahui.sortOrder[ui.item.parent().attr("id")] = sortOrder;
@@ -164,7 +167,17 @@ $(document).ready(function () {
                 var el = yahui.regaObjects[id];
 
                 // Typ-spezifischen Bereich des Edit-Fensters einblenden
-                var chType = yahui.regaObjects[id].HssType;
+                if (yahui.regaObjects[id] && yahui.regaObjects[id].HssType) {
+                    var chType = yahui.regaObjects[id].HssType;
+                } else if (yahui.regaObjects[id] && yahui.regaObjects[id].TypeName) {
+                    var chType = yahui.regaObjects[id].TypeName;
+                } else {
+                    var chType = "UNKNOWN";
+                }
+                console.log(chType);
+                console.log($(this).attr("id"));
+                console.log(id);
+                console.log(el);
                 if (chType == "VIRTUAL_KEY") { chType = "KEY"; }
                 $(".edit-area[data-edit-area!='"+chType+"']").hide();
                 $(".edit-area[data-edit-area='"+chType+"']").show();

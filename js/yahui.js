@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.8",
+    version: "1.2.9",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -693,7 +693,7 @@ $(document).ready(function () {
             }
 
             page += '</div><div data-role="content">' +
-                '<ul data-role="listview" id="list_variables" class="yahui-page"></ul></div></div>';
+                '<ul data-role="listview" id="list_variables" class="yahui-page yahui-sortable"></ul></div></div>';
             body.prepend(page);
             var list = $("ul#list_variables");
 
@@ -707,12 +707,30 @@ $(document).ready(function () {
             // Alphabetisch sortieren
             regaIndex.VARDP.sort(regaObjectAlphabetically);
 
-            for (var l = 0; l < regaIndex.VARDP.length; l++) {
-                var chId = regaIndex.VARDP[l];
-                if (chId != 40 && chId != 41) {
-                    renderWidget(list, chId, true, '#variables');
+
+            var sortOrder = yahui.sortOrder["list_variables"];
+            var alreadyRendered = [];
+
+            //console.log("renderPage - renderWidgets");
+            if (sortOrder) {
+                //console.log("SORT "+en)
+                for (var j = 0; j < sortOrder.length; j++) {
+                    sortOrder[j] = parseInt(sortOrder[j], 10);
+                    if ((regaIndex.VARDP.indexOf(sortOrder[j])) != -1 && (alreadyRendered.indexOf(sortOrder[j]) == -1)) {
+                        renderWidget(list, sortOrder[j], true, '#variables');
+                        alreadyRendered.push(sortOrder[j]);
+                    }
                 }
             }
+            for (var l=0; l < regaIndex.VARDP.length; l++) {
+                var chId = regaIndex.VARDP[l];
+                if (alreadyRendered.indexOf(chId) == -1) {
+                    if (chId != 40 && chId != 41) {
+                        renderWidget(list, chId, true, '#variables');
+                    }
+                }
+            }
+
         }
     }
 
@@ -727,17 +745,34 @@ $(document).ready(function () {
                 page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
             }
             page += '</div><div data-role="content">' +
-                '<ul data-role="listview" id="list_programs" class="yahui-page"></ul></div></div>';
+                '<ul data-role="listview" id="list_programs" class="yahui-page yahui-sortable"></ul></div></div>';
             body.prepend(page);
             var list = $("ul#list_programs");
 
             // Alphabetisch sortieren
             regaIndex.PROGRAM.sort(regaObjectAlphabetically);
 
-            for (var l = 0; l < regaIndex.PROGRAM.length; l++) {
-                var chId = regaIndex.PROGRAM[l];
-                renderWidget(list, chId, false, '#programs');
+            var sortOrder = yahui.sortOrder["list_programs"];
+            var alreadyRendered = [];
+
+            //console.log("renderPage - renderWidgets");
+            if (sortOrder) {
+                //console.log("SORT "+en)
+                for (var j = 0; j < sortOrder.length; j++) {
+                    sortOrder[j] = parseInt(sortOrder[j], 10);
+                    if ((regaIndex.PROGRAM.indexOf(sortOrder[j])) != -1 && (alreadyRendered.indexOf(sortOrder[j]) == -1)) {
+                        renderWidget(list, sortOrder[j], false, '#programs');
+                        alreadyRendered.push(sortOrder[j]);
+                    }
+                }
             }
+            for (var l=0; l < regaIndex.PROGRAM.length; l++) {
+                var chId = regaIndex.PROGRAM[l];
+                if (alreadyRendered.indexOf(chId) == -1) {
+                    renderWidget(list, chId, false, '#programs');
+                }
+            }
+
         }
     }
     // erzeugt ein Bedien-/Anzeige-Element
@@ -754,26 +789,24 @@ $(document).ready(function () {
             if (pageId == '#variables') {
                 optionKey = "#variables_" + id;
             } else if (pageId == '#programs') {
-                optionKey = "#programs" + id;
+                optionKey = "#programs_" + id;
             } else {
                 optionKey = "#page_" + pageId + "_" + id;
             }
 
             if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].alias) {
-                alias = yahui.elementOptions["#page_" + pageId + "_" + id].alias;
+                alias = yahui.elementOptions[optionKey].alias;
             }
 
             if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].visible) {
-
-
-                if (yahui.inEditMode && yahui.elementOptions["#page_" + pageId + "_" + id].visible !== "1") {
+                if (yahui.inEditMode && yahui.elementOptions[optionKey].visible !== "1") {
                     // ausgrauen
                     visibleClass = "edit_invisible";
-                } else if (yahui.elementOptions["#page_" + pageId + "_" + id].visible !== "1") {
+                } else if (yahui.elementOptions[optionKey].visible !== "1") {
                     // verstecken
                     visibleClass = "invisible";
+                }
             }
-        }
         }
 
         var since = "";
@@ -1026,10 +1059,10 @@ $(document).ready(function () {
                     var textPressShort = settings.defaultPressShort;
                     var textPressLong = settings.defaultPressLong;
                     if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].textPressShort) {
-                        textPressShort = yahui.elementOptions["#page_" + pageId + "_" + id].textPressShort;
+                        textPressShort = yahui.elementOptions[optionKey].textPressShort;
                     }
                     if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].textPressLong) {
-                        textPressLong = yahui.elementOptions["#page_" + pageId + "_" + id].textPressLong;
+                        textPressLong = yahui.elementOptions[optionKey].textPressLong;
                     }
                     if (!settings.hideKeys) {
                         img = (img ? img : defimg);
@@ -1617,7 +1650,7 @@ $(document).ready(function () {
             break;
         case "PROGRAM":
             img = (img ? img : defimg);
-            content = '<li class="yahui-widget ' + visibleClass + 'inedata-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+            content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
                 '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
                 '<div class="yahui-bc" data-hm-id="' + id + '">' +
                 '<a href="#" class="yahui-program" data-hm-id="'+id+'" data-role="button" data-icon="arrow-r">Programm ausf&uuml;hren</a>' +

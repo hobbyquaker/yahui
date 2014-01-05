@@ -115,8 +115,35 @@ $(document).ready(function () {
     // Verbindung zu CCU.IO herstellen.
     yahui.socket = io.connect( $(location).attr('protocol') + '//' +  $(location).attr('host') + '?key=' + socketSession);
 
+    function compareVersion(instVersion, availVersion) {
+        var instVersionArr = instVersion.replace(/beta/,".").split(".");
+        var availVersionArr = availVersion.replace(/beta/,".").split(".");
+
+        var updateAvailable = false;
+
+        for (var k = 0; k<3; k++) {
+            instVersionArr[k] = parseInt(instVersionArr[k], 10);
+            if (isNaN(instVersionArr[k])) { instVersionArr[k] = -1; }
+            availVersionArr[k] = parseInt(availVersionArr[k], 10);
+            if (isNaN(availVersionArr[k])) { availVersionArr[k] = -1; }
+        }
+
+        if (availVersionArr[0] > instVersionArr[0]) {
+            updateAvailable = true;
+        } else if (availVersionArr[0] == instVersionArr[0]) {
+            if (availVersionArr[1] > instVersionArr[1]) {
+                updateAvailable = true;
+            } else if (availVersionArr[1] == instVersionArr[1]) {
+                if (availVersionArr[2] > instVersionArr[2]) {
+                    updateAvailable = true;
+                }
+            }
+        }
+        return updateAvailable;
+    }
+
     yahui.socket.emit('getVersion', function(version) {
-        if (version < yahui.requiredCcuIoVersion) {
+        if (compareVersion(version < yahui.requiredCcuIoVersion)) {
             alert("Warning: requires CCU.IO version "+yahui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
         }
         $("#ccuioversion").html(version);

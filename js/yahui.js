@@ -143,7 +143,7 @@ $(document).ready(function () {
     }
 
     yahui.socket.emit('getVersion', function(version) {
-        if (compareVersion(version < yahui.requiredCcuIoVersion)) {
+        if (compareVersion(version, yahui.requiredCcuIoVersion)) {
             alert("Warning: requires CCU.IO version "+yahui.requiredCcuIoVersion+" - found CCU.IO version "+version+" - please update CCU.IO.");
         }
         $("#ccuioversion").html(version);

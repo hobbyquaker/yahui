@@ -27,6 +27,9 @@ siehe http://ccu.io/addons.html#yahui
 
 ## Changelog
 
+### 1.2.10
+* (Hobbyquaker) Bugfix CCU.IO Version Check
+
 ### 1.2.9
 * (Hobbyquaker) Sortierung von Variablen und Programmen
 * (Hobbyquaker) Bugfix optionKey

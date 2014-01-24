@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.10",
+    version: "1.2.11",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -1174,6 +1174,9 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "MOTION_DETECTOR":
+                    if (!datapoints[el.DPs.MOTION]) {
+                        break;
+                    }
                     // Datum formatieren
                     var dateSince;
                     if (datapoints[el.DPs.MOTION] && datapoints[el.DPs.MOTION][3]) {

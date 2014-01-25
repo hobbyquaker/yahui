@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.12",
+    version: "1.2.13",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -884,6 +884,7 @@ $(document).ready(function () {
             if (yahui.defaultImages[deviceType]) {
                 defimg = "images/default/"+yahui.defaultImages[deviceType];
             }
+            var chanVarsRendered = false;
 
             switch (el.HssType) {
                 case "HUE_DIMMABLE_LIGHT":
@@ -1542,6 +1543,7 @@ $(document).ready(function () {
                     break;
 
                 default:
+                    chanVarsRendered = true;
                     img = (img ? img : defimg);
                     content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
                         '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
@@ -1585,31 +1587,34 @@ $(document).ready(function () {
             }
 
             // Variablen die Kanälen zugeordnet sind
-            for (var childDP in el.DPs) {
-                if (regaObjects[el.DPs[childDP]].TypeName == "VARDP") {
-                    content = "<p class='ui-li-desc'>"+childDP+": ";
+            if (!chanVarsRendered) {
+                for (var childDP in el.DPs) {
+                    if (regaObjects[el.DPs[childDP]].TypeName == "VARDP") {
+                        content = "<p class='ui-li-desc'>"+childDP+": ";
 
-                    switch (regaObjects[el.DPs[childDP]].ValueType) {
-                        case 2:
-                        case 16:
-                            var val = datapoints[el.DPs[childDP]][0];
-                            if (val === true) { val = 1; }
-                            if (val === false) { val = 0; }
-                            if (regaObjects[el.DPs[childDP]].ValueList && regaObjects[el.DPs[childDP]].ValueList.match(/;/)) {
-                                var valueList = regaObjects[el.DPs[childDP]].ValueList.split(";");
-                                content += "<span class='hm-html' data-hm-id='"+el.DPs[childDP]+"'>"+valueList[val]+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
-                            } else {
-                                content += "<span class='hm-html' data-hm-id='"+el.DPs[childDP]+"'>"+val+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
-                            }
-                            break;
-                        default:
-                            content += "<span class='hm-html' data-hm-id='"+id+"'>"+datapoints[el.DPs[childDP]][0]+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
+                        switch (regaObjects[el.DPs[childDP]].ValueType) {
+                            case 2:
+                            case 16:
+                                var val = datapoints[el.DPs[childDP]][0];
+                                if (val === true) { val = 1; }
+                                if (val === false) { val = 0; }
+                                if (regaObjects[el.DPs[childDP]].ValueList && regaObjects[el.DPs[childDP]].ValueList.match(/;/)) {
+                                    var valueList = regaObjects[el.DPs[childDP]].ValueList.split(";");
+                                    content += "<span class='hm-html' data-hm-id='"+el.DPs[childDP]+"'>"+valueList[val]+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
+                                } else {
+                                    content += "<span class='hm-html' data-hm-id='"+el.DPs[childDP]+"'>"+val+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
+                                }
+                                break;
+                            default:
+                                content += "<span class='hm-html' data-hm-id='"+id+"'>"+datapoints[el.DPs[childDP]][0]+"</span>"+regaObjects[el.DPs[childDP]].ValueUnit;
+                        }
+                        content += "</p>";
+
+                        $("div[data-hm-id='"+id+"']:last").append(content);
                     }
-                    content += "</p>";
-
-                    $("div[data-hm-id='"+id+"']:last").append(content);
                 }
             }
+
 
 
             break;

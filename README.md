@@ -20,7 +20,7 @@ siehe http://ccu.io/addons.html#yahui
 
 ## Todo/Roadmap
 
-### 1.3
+* Darstellung von Variablen die Kanälen zugeordnet sind
 * Settings komplett über die Oberfläche vornehmen
 * Minifiziert/Kombiniert ausliefern
 * offline.manifest

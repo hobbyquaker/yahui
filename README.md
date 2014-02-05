@@ -29,6 +29,7 @@ siehe http://ccu.io/addons.html#yahui
 
 ### 1.2.14
 * (Hobbyquaker) Unterstützung für 16-fach LED-Anzeige
+* (Hobbyquaker) Bugfix initialer Status HUE State Datenpunkt
 
 ### 1.2.13
 * (Hobbyquaker) Bugfix doppelte Anzeige von zu Kanälen zugeordneten Variablen

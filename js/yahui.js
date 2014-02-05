@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.13",
+    version: "1.2.14",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -978,7 +978,7 @@ $(document).ready(function () {
                         '<div class="yahui-b">' +
                         '<select class="hue-switch" id="hueswitch_'+elId+'_STATE" data-hm-id="'+stateId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="false">Aus</option>' +
-                        '<option value="true"'+((datapoints[stateId][0] != "false") ?' selected':'')+'>An</option>' +
+                        '<option value="true"'+((datapoints[stateId][0] !== "false" && datapoints[stateId][0] !== false) ?' selected':'')+'>An</option>' +
                         '</select> ' +
                         '<select class="hue-switch" id="hueswitch_'+elId+'_COLORMODE" data-hm-id="'+colormodeId+'" name="switch_'+elId+'" data-role="slider">' +
                         '<option value="ct">Weiss</option>' +
@@ -1083,6 +1083,30 @@ $(document).ready(function () {
                     }, 500);
                     break;
                 case "KEY":
+                    // 16-Fach LED Anzeige
+                    if (el.Parent && regaObjects[el.Parent] && regaObjects[el.Parent].HssType == "HM-OU-LED16") {
+                        var textPressShort = settings.defaultPressShort;
+                        var ledstatusId = el.DPs.LED_STATUS;
+                        if (yahui.elementOptions[optionKey] && yahui.elementOptions[optionKey].textPressShort) {
+                            textPressShort = yahui.elementOptions[optionKey].textPressShort;
+                        }
+                        img = (img ? img : defimg);
+                        var shortId = regaObjects[id].DPs.PRESS_SHORT;
+                        content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                            '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                            '<div class="yahui-b" data-hm-id="' + id + '">' +
+                            '<input type="button" data-hm-id="'+shortId+'" id="press_short_'+elId+'" name="press_short_'+id+'" value="'+textPressShort+'" data-inline="true"/> ' +
+                            lowbat +
+                            '</div><div class="yahui-c">' +
+                            '<div data-hm-id="'+ledstatusId+'" id="led16_'+elId+'" class="led16 led16-'+datapoints[ledstatusId][0]+'"></div>' +
+                            '</div></li>';
+                        list.append(content);
+                        $("#press_short_"+elId).click(function (e) {
+                            //console.log("press short "+id);
+                            yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
+                        });
+                        break;
+                    }
                 case "VIRTUAL_KEY":
                     var textPressShort = settings.defaultPressShort;
                     var textPressLong = settings.defaultPressLong;
@@ -1746,6 +1770,14 @@ $(document).ready(function () {
         if (regaObjects[id] && regaObjects[id].ValueUnit && regaObjects[id].ValueUnit == "100%") {
             val = (val * 100).toFixed(1);
         }
+
+        $(".led16[data-hm-id='"+id+"']").each(function () {
+            $(this).removeClass("led16-0")
+                .removeClass("led16-1")
+                .removeClass("led16-2")
+                .removeClass("led16-3")
+                .addClass("led16-"+val);
+        });
 
         $(".hue-switch[data-hm-id='"+id+"']").each(function () {
 

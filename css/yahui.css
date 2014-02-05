@@ -501,3 +501,26 @@ div.yahui-slider-ct div.ui-slider div.ui-slider-track {
 ul.yahui-page-left h2 {
     margin-left: 5px;
 }
+
+div.led16 {
+    width: 15px;
+    height: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.led16-0 {
+    background: none;
+}
+
+.led16-1 {
+    background-color: red;
+}
+
+.led16-2 {
+    background-color: green;
+}
+
+.led16-3 {
+    background-color: yellow;
+}

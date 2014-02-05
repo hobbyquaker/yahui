@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.2.13
+aktuelle Version: 1.2.14
 
 yahui ist eine jQuery Mobile basierte alternative Weboberfläche für die HomeMatic CCU und ist für die Bedienung auf Tablets und Smartphones optimiert.
 
@@ -27,8 +27,11 @@ siehe http://ccu.io/addons.html#yahui
 
 ## Changelog
 
+### 1.2.14
+* (Hobbyquaker) Unterstützung für 16-fach LED-Anzeige
+
 ### 1.2.13
-* (Hobbyquaker) doppelte Anzeige von zu Kanälen zugeordneten Variablen unterbunden
+* (Hobbyquaker) Bugfix doppelte Anzeige von zu Kanälen zugeordneten Variablen
 
 ### 1.2.12
 * (Hobbyquaker) Anzeige von Variablen die Kanälen zugeordnet sind

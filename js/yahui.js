@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.2.14",
+    version: "1.2.15",
     requiredCcuIoVersion: "1.0.4",
     images: [],
     defaultImages: [],
@@ -1293,8 +1293,10 @@ $(document).ready(function () {
                         '<div style="display: inline-block; width: 70px;">' +
                         '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" class="hm-val" data-hm-id="'+el.DPs.SET_TEMPERATURE+'" value="'+datapoints[el.DPs.SET_TEMPERATURE][0]+'"  />' +
                         '</div> '+ regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit +
-                        '<span style="padding-left:16px;">Ist: <span data-hm-id="'+el.DPs.ACTUAL_TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.ACTUAL_TEMPERATURE][0]+'</span>'+regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit+'</span>' +
-                        '<span style="padding-left:16px;">Ventil: <span data-hm-id="'+el.DPs.VALVE_STATE+'" class="hm-html">'+datapoints[el.DPs.VALVE_STATE][0]+'</span>'+regaObjects[el.DPs.VALVE_STATE].ValueUnit+'</span>';
+                        '<span style="padding-left:16px;">Ist: <span data-hm-id="'+el.DPs.ACTUAL_TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.ACTUAL_TEMPERATURE][0]+'</span>'+regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit+'</span>';
+                    if (el.DPs.VALVE_STATE) {
+                        content += '<span style="padding-left:16px;">Ventil: <span data-hm-id="'+el.DPs.VALVE_STATE+'" class="hm-html">'+datapoints[el.DPs.VALVE_STATE][0]+'</span>'+regaObjects[el.DPs.VALVE_STATE].ValueUnit+'</span>';
+                    }
 
                     content += '</div></li>';
                     list.append(content);

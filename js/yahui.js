@@ -12,8 +12,8 @@
  */
 
 var yahui = {
-    version: "1.2.15",
-    requiredCcuIoVersion: "1.0.4",
+    version: "1.2.16",
+    requiredCcuIoVersion: "1.0.25",
     images: [],
     defaultImages: [],
     sortOrder: {},
@@ -21,6 +21,7 @@ var yahui = {
     extensions: {},
     elementOptions: {},
     regaObjects: {},
+    stringtable: {},
     inEditMode: false,
     ready: false,
     menuCollapsed: storage.get("yahui-menu-collapsed")
@@ -246,7 +247,8 @@ $(document).ready(function () {
         } else {
             yahui.extensions = {
                 0: {"text":"Variablen","subtext":"","url":"#variables","special":true},
-                1: {"text":"Programme","subtext":"","url":"#programs","special":true}
+                1: {"text":"Programme","subtext":"","url":"#programs","special":true},
+                2: {"text":"Servicemeldungen","subtext":"","url":"#alarms","special":true}
             };
             yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions);
         }
@@ -301,10 +303,20 @@ $(document).ready(function () {
     function getDatapoints() {
         yahui.socket.emit('getDatapoints', function(obj) {
             datapoints = obj;
+            // Weiter gehts mit der Stringtable
+            getStringtable();
+        });
+    }
+
+    // Laedt die Stringtable
+    function getStringtable() {
+        yahui.socket.emit('getStringtable', function(obj) {
+            yahui.stringtable = obj;
             // Weiter gehts mit den Rega Objekten
             getObjects();
         });
     }
+
 
     // Laedt Metainformationen zu Rega Objekten
     function getObjects() {
@@ -351,6 +363,8 @@ $(document).ready(function () {
                 renderPrograms();
             } else if (url.hash == "#variables") {
                 renderVariables();
+            } else if (url.hash == "#alarms") {
+                renderAlarms();
             }
 
             // Farbe übernehmen
@@ -496,6 +510,8 @@ $(document).ready(function () {
                 renderPrograms();
             } else if (u.hash == "#variables") {
                 renderVariables();
+            } else if (u.hash == "#alarms") {
+                renderAlarms();
             }
         }
     });
@@ -528,6 +544,16 @@ $(document).ready(function () {
     // Link-Seite aufbauen
     function renderLinks() {
 
+        // Fehlende Erweiterungen hinzufügen
+        var extArr = [];
+        for (var link in yahui.extensions) {
+            extArr.push(yahui.extensions[link].url);
+        }
+        if (extArr.indexOf("#alarms") == -1) {
+            yahui.extensions[parseInt(link,10)+1] = {"text":"Servicemeldungen","subtext":"","url":"#alarms","special":true};
+            yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions);
+        }
+
         var alreadyRendered = [];
 
         // Sortierung abarbeiten
@@ -546,6 +572,7 @@ $(document).ready(function () {
                 renderLink(id);
             }
         }
+
     }
 
     // Ein einzelnen Link rendern
@@ -752,7 +779,7 @@ $(document).ready(function () {
             for (var l=0; l < regaIndex.VARDP.length; l++) {
                 var chId = regaIndex.VARDP[l];
                 if (alreadyRendered.indexOf(chId) == -1) {
-                    if (chId != 40 && chId != 41) {
+                    if (chId != 40 && chId != 41 && chId != 69999) {
                         renderWidget(list, chId, true, '#variables');
                     }
                 }
@@ -760,6 +787,32 @@ $(document).ready(function () {
 
         }
     }
+
+    // Service-Meldungs-Erweiterung
+    function renderAlarms() {
+        if (!$("div#alarms").html()) {
+            var page = '<div id="alarms" data-role="page" data-theme="'+settings.swatches.content+'">' +
+                '<div data-role="header" data-position="fixed" data-id="f2"  data-theme="'+settings.swatches.header+'">' +
+                '<a href="#links" data-role="button" data-icon="arrow-l">Erweiterungen</a>' +
+                '<h1>Servicemeldungen</h1>';
+            if (!settings.hideInfoButton) {
+                page += '<a href="#info" data-rel="dialog" data-role="button" data-inline="true" data-icon="info" data-iconpos="notext" class="yahui-info ui-btn-right"></a>';
+            }
+            page += '</div><div data-role="content">' +
+                '<ul data-role="listview" id="list_alarms" class="yahui-page "></ul></div></div>';
+            body.prepend(page);
+            var list = $("ul#list_alarms");
+            var ALDPs = regaIndex.ALDP;
+            for (var i = 0; i < ALDPs.length; i++) {
+                if (datapoints[ALDPs[i]][0] == 1) {
+                    renderAlarmWidget(list, ALDPs[i], false, "#alarms");
+                }
+            }
+
+        }
+    }
+
+
 
     // Programme-Erweiterung rendern
     function renderPrograms() {
@@ -802,6 +855,56 @@ $(document).ready(function () {
 
         }
     }
+
+    function renderAlarmWidget(list, id, varEdit, pageId, cb) {
+        id = parseInt(id, 10);
+
+        if ($("li.yahui-alarm[data-hm-id='"+id+"']").html()) return;
+
+        var alarm = regaObjects[id];
+        var channel = regaObjects[alarm.Parent];
+        var device = regaObjects[channel.Parent];
+
+        var parts = alarm.Name.split(".");
+        var alarmType = parts[1];
+        var alarmText = alarmType;
+        if (yahui.stringtable.MAINTENANCE && yahui.stringtable.MAINTENANCE[alarmType] && yahui.stringtable.MAINTENANCE[alarmType].text) {
+            alarmText = yahui.stringtable.MAINTENANCE[alarmType].text;
+        }
+
+        // Default-Image für Gerät vorhanden?
+        var deviceType = device.HssType;
+        var img = "images/default/widget.png";
+        if (yahui.defaultImages[deviceType]) {
+            img = "images/default/"+yahui.defaultImages[deviceType];
+        }
+
+        // Zeitstempel
+        var alDateSince = formatDate(datapoints[id][1]);
+        var alSince = " <span class='yahui-since'>seit <span class='hm-html-alarm-timestamp' data-hm-id='"+id+"'>" + alDateSince + "</span></span>";
+
+        var content = '<li class="yahui-widget yahui-alarm" data-hm-id="'+id+'"><img src="'+img+'" alt="" />' +
+            '<div class="yahui-a" data-hm-id="' + id + '">' + device.Name + '</div>';
+        if (alarm.Operations & 2) {
+            content += '<div class="yahui-b" data-hm-id="' + id + '"><input type="button" value="Bestätigen" id="alarm_'+id+'" data-hm-id="'+id+'" data-inline="true"/></div>';
+        } else {
+            content += '<div class="yahui-b" data-hm-id="' + id + '"></div>';
+        }
+        content +=     '<div class="yahui-c" data-hm-id="' + id + '">' + alSince + " " + alarmText + '</div></li>';
+        list.append(content);
+
+        $("#alarm_"+id).click(function (e) {
+            console.log("alarmReceipt "+parseInt(event.target.dataset.hmId,10))
+            yahui.socket.emit("alarmReceipt", parseInt(event.target.dataset.hmId,10));
+            $(this).remove();
+        });
+
+        if (cb) {
+            cb();
+        }
+
+    }
+
     // erzeugt ein Bedien-/Anzeige-Element
     function renderWidget(list, id, varEdit, pageId) {
 
@@ -1773,6 +1876,25 @@ $(document).ready(function () {
             val = (val * 100).toFixed(1);
         }
 
+
+        // Servicemeldungen entfernen
+        $("li.yahui-alarm[data-hm-id='"+id+"']").each(function () {
+            if (val != 1) {
+                $(this).remove();
+            }
+        });
+
+        // Servicemeldung hinzufügen
+        if (val == 1 && regaIndex.ALDP && regaIndex.ALDP.indexOf(parseInt(id,10)) != -1) {
+            if ($("ul#list_alarms").html() && !$("li.yahui-alarm[data-hm-id='"+id+"']").html()) {
+                console.log("new alarm "+JSON.stringify(datapoints[parseInt(id,10)]));
+                renderAlarmWidget($("ul#list_alarms"), parseInt(id,10), false, "#alarms", function () {
+                    $("ul#list_alarms").listview('refresh');
+                });
+            }
+        }
+
+        // 16-Fach LED Anzeige
         $(".led16[data-hm-id='"+id+"']").each(function () {
             $(this).removeClass("led16-0")
                 .removeClass("led16-1")
@@ -1785,7 +1907,6 @@ $(document).ready(function () {
 
             if (val === false) { val = "false"; }
             if (val === true) { val = "true"; }
-
 
             $this = $(this);
             $this.find("option[value!='"+val+"']").removeAttr("selected");

@@ -894,7 +894,6 @@ $(document).ready(function () {
         list.append(content);
 
         $("#alarm_"+id).click(function (e) {
-            console.log("alarmReceipt "+parseInt(event.target.dataset.hmId,10))
             yahui.socket.emit("alarmReceipt", parseInt(event.target.dataset.hmId,10));
             $(this).remove();
         });
@@ -1887,7 +1886,6 @@ $(document).ready(function () {
         // Servicemeldung hinzufügen
         if (val == 1 && regaIndex.ALDP && regaIndex.ALDP.indexOf(parseInt(id,10)) != -1) {
             if ($("ul#list_alarms").html() && !$("li.yahui-alarm[data-hm-id='"+id+"']").html()) {
-                console.log("new alarm "+JSON.stringify(datapoints[parseInt(id,10)]));
                 renderAlarmWidget($("ul#list_alarms"), parseInt(id,10), false, "#alarms", function () {
                     $("ul#list_alarms").listview('refresh');
                 });

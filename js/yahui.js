@@ -549,6 +549,7 @@ $(document).ready(function () {
         for (var link in yahui.extensions) {
             extArr.push(yahui.extensions[link].url);
         }
+
         if (extArr.indexOf("#alarms") == -1) {
             yahui.extensions[parseInt(link,10)+1] = {"text":"Servicemeldungen","subtext":"","url":"#alarms","special":true};
             yahui.socket.emit("writeFile", "yahui-extensions.json", yahui.extensions);
@@ -1290,11 +1291,11 @@ $(document).ready(function () {
                         '</li>';
                     list.append(content);
                     setTimeout(function () {
-                        $("#switch_"+elId).on( 'slidestop', function( event ) {
+                        $("#switch_"+elId).on('slidestop', function(event) {
                             //console.log("slide "+event.target.value+" "+event.target.dataset.hmId);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), parseInt(event.target.value,10)]);
                         });
-                        $("#open_"+elId).click(function (e) {
+                        $("#open_"+elId).click(function (event) {
                             //console.log("press short "+id);
                             yahui.socket.emit("setState", [parseInt(event.target.dataset.hmId,10), true]);
                         });

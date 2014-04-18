@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.3.0",
+    version: "1.3.2",
     requiredCcuIoVersion: "1.0.25",
     images: [],
     defaultImages: [],
@@ -1850,9 +1850,35 @@ $(document).ready(function () {
                 "</div></li>";
             list.append(content);
             setTimeout(function () {
-                $('a.yahui-program[data-hm-id="'+id+'"]').on('click', function( event ) {
+                $('a.yahui-program[data-hm-id="'+id+'"]').on('click', function() {
+                    var $that = $(this);
                     //console.log("programExecute "+id);
-                    yahui.socket.emit("programExecute", [id]);
+                    yahui.socket.emit("programExecute", [id], function (res) {
+                        console.log("programExecute "+id+" result="+res+ " "+typeof res);
+                        if (res === "true" || res === true) {
+                            var cssClass = "yahui-program-confirm";
+                            if (settings.showProgramPopup) {
+                                $("#program-executed").popup().popup("open");
+                                setTimeout(function () {
+                                    $("#program-executed").popup("close");
+                                }, settings.timeProgramConfirm);
+                            }
+                        } else {
+                            var cssClass = "yahui-program-fail";
+                            if (settings.showProgramPopup) {
+                                $("#program-failed").popup().popup("open");
+                                setTimeout(function () {
+                                    $("#program-failed").popup("close");
+                                }, settings.timeProgramConfirm);
+                            }
+                        }
+                        console.log(cssClass);
+                        $that.addClass(cssClass);
+                        setTimeout(function (_that, _cssClass) {
+                            _that.removeClass(_cssClass);
+                        }, settings.timeProgramConfirm, $that, cssClass);
+
+                    });
                 });
             }, 500);
             break;

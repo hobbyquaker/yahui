@@ -2,7 +2,7 @@
 
 "yet another homematic user interface"
 
-aktuelle Version: 1.3.1
+aktuelle Version: 1.3.2
 
 yahui ist eine jQuery Mobile basierte alternative Weboberfläche für die HomeMatic CCU und ist für die Bedienung auf Tablets und Smartphones optimiert.
 
@@ -26,6 +26,9 @@ siehe http://ccu.io/addons.html#yahui
 * offline.manifest
 
 ## Changelog
+
+### 1.3.2
+* (Hobbyquaker) Visuelle bestätigung bei Programmausführung (Popup über settings aktivierbar, Anzeigezeit einstellbar, zusätzlich stehen auch CSS-Klassen bereit um den Button z.B. zu färben)
 
 ### 1.3.1
 * (Hobbyquaker) Bugfix Keymatic öffnen
@@ -57,7 +60,6 @@ siehe http://ccu.io/addons.html#yahui
 * (Hobbyquaker) Sortierung von Variablen und Programmen
 * (Hobbyquaker) Bugfix optionKey
 * (Hobbyquaker) Bugfix edit Program
-
 
 ### 1.2.8
 * (Hobbyquaker) Bugfix getServiceMsgCount()
@@ -98,7 +100,6 @@ siehe http://ccu.io/addons.html#yahui
 * (Hobbyquaker) Hue: HUE_DIMMABLE_LIGHT
 
 ### 1.1.9
-
  * (Anli) Kanäle können ausgeblendet werden
  * (Hobbyquaker) Menüpunkte können ausgeblendet werden
  * (Hobbyquaker) Hue: Bugfix: initialer Zustand des Scahlters für Zwischensteck-Dimmer
@@ -293,14 +294,12 @@ siehe http://ccu.io/addons.html#yahui
   * Kleine Bugfixes und Styleanpassungen
 
 ### 0.9.3
-
   * neue Widgets: WEATHER, CLIMATECONTROL_VENT_DRIVE, CLIMATE_CONTROL_REGULATOR, SMOKE_DETECTOR_TEAM
   * WINDOW_SWITCH_RECEIVER ausgeblendet
   * Links in "Erweiterungen" umbenannt
   * Neue Seiten Variablen und Programme unter Erweiterungen
 
 ### 0.9.2
-
   * neue Widgets: SHUTTER_CONTACT, ROTARY_HANDLE_SENSOR, MOTION_DETECTOR
   * Style-Anpassungen
   * Fehler behoben bei Variablentyp Werteliste

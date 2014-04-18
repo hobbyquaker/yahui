@@ -30,6 +30,12 @@ var settings = {
     // Service-Meldungen bei Favoriten/Räumen/Gewerken anzeigen?
     showServiceMsgs: true,
 
+    // Popup nach Programmausführung anzeigen
+    showProgramPopup: true,
+
+    // Wie lange soll das Popup bzw die CSS Klasse eine Programmausführung bestätigen? (millisekunden)
+    timeProgramConfirm: 1500,
+
     // Menü-Punkte ausblenden
     hideFavorites: false,
     hideRooms: false,

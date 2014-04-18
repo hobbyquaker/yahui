@@ -524,3 +524,11 @@ div.led16 {
 .led16-3 {
     background-color: yellow;
 }
+
+.yahui-program-confirm .ui-btn-inner {
+    /* background-color: green; */
+}
+
+.yahui-program-fail .ui-btn-inner {
+    /* background-color: red; */
+}

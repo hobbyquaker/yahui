@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.3.2",
+    version: "1.3.3",
     requiredCcuIoVersion: "1.0.25",
     images: [],
     defaultImages: [],
@@ -108,6 +108,8 @@ $(document).ready(function () {
     }
 
     $("#ccu-io-disconnect").popup();
+    $("#program-executed").popup();
+    $("#program-failed").popup();
 
     // Diese 3 Objekte beinhalten die CCU Daten.
     // Unter http://hostname:8080/ccu.io/ können diese Objekte inspiziert werden.
@@ -1858,7 +1860,7 @@ $(document).ready(function () {
                         if (res === "true" || res === true) {
                             var cssClass = "yahui-program-confirm";
                             if (settings.showProgramPopup) {
-                                $("#program-executed").popup().popup("open");
+                                $("#program-executed").popup("open");
                                 setTimeout(function () {
                                     $("#program-executed").popup("close");
                                 }, settings.timeProgramConfirm);
@@ -1866,7 +1868,7 @@ $(document).ready(function () {
                         } else {
                             var cssClass = "yahui-program-fail";
                             if (settings.showProgramPopup) {
-                                $("#program-failed").popup().popup("open");
+                                $("#program-failed").popup("open");
                                 setTimeout(function () {
                                     $("#program-failed").popup("close");
                                 }, settings.timeProgramConfirm);

@@ -27,6 +27,9 @@ siehe http://ccu.io/addons.html#yahui
 
 ## Changelog
 
+### 1.3.3
+* (Hobbyquaker) Programm-Ausführungspopup initialisierung korrigiert
+
 ### 1.3.2
 * (Hobbyquaker) Visuelle bestätigung bei Programmausführung (Popup über settings aktivierbar, Anzeigezeit einstellbar, zusätzlich stehen auch CSS-Klassen bereit um den Button z.B. zu färben)
 

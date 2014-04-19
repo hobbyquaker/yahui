@@ -12,7 +12,7 @@
  */
 
 var yahui = {
-    version: "1.3.3",
+    version: "1.3.4",
     requiredCcuIoVersion: "1.0.25",
     images: [],
     defaultImages: [],
@@ -2233,3 +2233,19 @@ $(document).ready(function () {
     }
 
 });
+
+// WebApp Cache Management
+if ('applicationCache' in window) {
+    window.addEventListener('load', function(e) {
+        window.applicationCache.addEventListener('updateready', function(e) {
+            if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+                try {
+                    window.applicationCache.swapCache();
+                } catch (e) {
+                    console.log(e);
+                }
+                window.location.reload();
+            }
+        }, false);
+    }, false);
+}

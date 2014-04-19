@@ -27,6 +27,9 @@ siehe http://ccu.io/addons.html#yahui
 
 ## Changelog
 
+### 1.3.4
+* (Hobbyquaker) WebApp Cache Management
+
 ### 1.3.3
 * (Hobbyquaker) Programm-Ausführungspopup initialisierung korrigiert
 

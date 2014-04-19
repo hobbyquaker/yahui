@@ -1,0 +1,13 @@
+CACHE MANIFEST
+
+# yahui Version 1.3.4
+
+NETWORK:
+*
+
+CACHE:
+../lib/css/jquery.mobile-1.3.2.min.css
+./offline.html
+
+FALLBACK:
+./index.html ./offline.html

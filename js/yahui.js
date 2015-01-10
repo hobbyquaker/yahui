@@ -1370,6 +1370,71 @@ $(document).ready(function () {
                         });
                     }, 500);
                     break;
+                case "THERMALCONTROL_TRANSMIT":
+                    img = (img ? img : defimg);
+                    var controlMode = el.DPs.CONTROL_MODE;
+                    if (regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit = "°C";
+                    }
+                    if (regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit !== "°C" && regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit.match(/C$/)) {
+                        regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit = "°C";
+                    }
+                    content = '<li class="yahui-widget ' + visibleClass + '" data-hm-id="'+id+'"><img src="'+img+'" alt="" data-hm-id="' + id + '" />' +
+                        '<div class="yahui-a" data-hm-id="' + id + '">' + alias + '</div>' +
+                        '<div class="yahui-b" data-hm-id="' + id + '">' +
+                        '<span style="display:inline-block; padding-right: 16px;"><select id="select_'+elId+'" data-hm-id="'+controlMode+'">';
+                    var valueList = regaObjects[controlMode].ValueList.split(";");
+                    for (var i = 0; i < valueList.length; i++) {
+                        if (datapoints[controlMode][0] == i) {
+                            selected = " selected";
+                        } else {
+                            selected = "";
+                        }
+                        content += '<option value="'+i+'"'+selected+'>'+valueList[i]+'</option>';
+                    }
+                    content += '</select></span>' +
+                        lowbat +
+                        '</div><div class="yahui-c" data-hm-id="' + id + '">' +
+                        '<div style="display: inline-block; width: 70px;">' +
+                        '<input id="input_'+id+'" size="3" type="number" pattern="[0-9\.]*" data-mini="false" class="hm-val" data-hm-id="'+el.DPs.SET_TEMPERATURE+'" value="'+datapoints[el.DPs.SET_TEMPERATURE][0]+'"  />' +
+                        '</div> '+ regaObjects[el.DPs.SET_TEMPERATURE].ValueUnit +
+                        '<span style="padding-left:16px;">Ist: <span data-hm-id="'+el.DPs.ACTUAL_TEMPERATURE+'" class="hm-html">'+datapoints[el.DPs.ACTUAL_TEMPERATURE][0]+'</span>'+regaObjects[el.DPs.ACTUAL_TEMPERATURE].ValueUnit+'</span>';
+                    if (el.DPs.ACTUAL_HUMIDITY) {
+                        content += '<span style="padding-left:16px;">Luftfeuchtigkeit: <span data-hm-id="'+el.DPs.ACTUAL_HUMIDITY+'" class="hm-html">'+datapoints[el.DPs.ACTUAL_HUMIDITY][0]+'</span>'+regaObjects[el.DPs.ACTUAL_HUMIDITY].ValueUnit+'</span>';
+                    }
+
+                    content += '</div></li>';
+                    list.append(content);
+                    setTimeout(function () {
+                        $("#input_"+id).change(function( event ) {
+                            var val = $("#input_"+id).val();
+                            var mode = parseInt($("#select_"+elId+" option:selected").val(), 10);
+                            if (mode == 1) {
+                                yahui.socket.emit("setState", [el.DPs.MANU_MODE, val]);
+                            } else {
+                                yahui.socket.emit("setState", [el.DPs.SET_TEMPERATURE, val]);
+                            }
+                        });
+                        $("#select_"+elId).on( 'change', function( event ) {
+                            var val = parseInt($("#select_"+elId+" option:selected").val(), 10);
+                            var setTemperature = $("#input_"+id).val();
+                            switch (val) {
+                                case 0:
+                                    yahui.socket.emit("setState", [el.DPs.AUTO_MODE, true]);
+                                    break;
+                                case 1:
+                                    yahui.socket.emit("setState", [el.DPs.MANU_MODE, setTemperature]);
+                                    break;
+                                case 2:
+                                    yahui.socket.emit("setState", [el.DPs.PARTY_MODE, setTemperature]);
+                                    break;
+                                case 3:
+                                    yahui.socket.emit("setState", [el.DPs.BOOST_MODE, true]);
+                                    break;
+                            }
+                        });
+                    }, 500);
+                    break;
                 case "CLIMATECONTROL_RT_TRANSCEIVER":
                     img = (img ? img : defimg);
                     var controlMode = el.DPs.CONTROL_MODE;
